@@ -696,7 +696,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:22px">&#8505;</div>
       <div class="at">
-        <div class="at-ttl">TripLog v1.0 (Local)</div>
+        <div class="at-ttl">TripLog v1.2 (Local)</div>
         <div class="at-sub">Data stored on this device · Firebase cloud sync coming next session</div>
       </div>
     </div>
@@ -1279,7 +1279,7 @@ function savePLInvoice(status){
   const toName=document.getElementById('plToName').value;
 
   const inv={
-    id:'pl-'+Date.now(),
+    id:S.editId||('pl-'+Date.now()),
     invNum,date:dateVal,
     custId:'phillong',custName:'Phil Long Ford',
     custColor:'#1c6ea4',custShort:'PhilLong',
@@ -1291,9 +1291,16 @@ function savePLInvoice(status){
     total:parseFloat((patFee+diaFee+washPat+washDia).toFixed(2)),
     status:status==='draft'?'draft':'ready',
     billed:false,
-    createdAt:Date.now(),updatedAt:Date.now()
+    createdAt:S.editId?((S.invoices.find(i=>i.id===S.editId)||{}).createdAt||Date.now()):Date.now(),
+    updatedAt:Date.now()
   };
-  S.invoices.unshift(inv);
+  if(S.editId){
+    const idx=S.invoices.findIndex(i=>i.id===S.editId);
+    if(idx>=0) S.invoices[idx]=inv;
+    S.editId=null;
+  } else {
+    S.invoices.unshift(inv);
+  }
   save();
   updatePLBanner();
   showToast(status==='draft'?'Draft saved':'Trip added to billing period');
@@ -1582,7 +1589,8 @@ function renderList(){
           ${inv.totalMiles?' · '+inv.totalMiles+' mi':''}
           ${inv.custId==='reliable'&&inv.dealNum?' · Deal: '+inv.dealNum:''}
           ${inv.custId==='chalmers'&&inv.vehicles&&inv.vehicles[0]&&inv.vehicles[0].stk?' · Stock: '+inv.vehicles[0].stk:''}
-          ${inv.type==='phillong'&&inv.patVehicles&&inv.patVehicles[0]&&inv.patVehicles[0].vin?' · VIN: '+inv.patVehicles[0].vin:''}
+          ${inv.type==='phillong'&&inv.patVehicles&&inv.patVehicles[0]?((inv.patVehicles[0].vin?' · VIN: '+inv.patVehicles[0].vin:'')+(inv.patVehicles[0].stk?' · Stk: '+inv.patVehicles[0].stk:'')):''}
+          ${inv.type==='phillong'&&inv.patVehicles&&inv.patVehicles.length>1?' · '+inv.patVehicles.length+' vehs':''}
           </div>
         <span class="ic-tag ${inv.driver==='diana'?'tag-d':'tag-p'}">${inv.driver==='diana'?'Diana':'Patrick'}</span>
         ${inv.type==='phillong'&&inv.billed?'<span class="ic-tag" style="background:#FFF8E1;color:#b05c00;margin-left:4px">Billed</span>':''}
@@ -1680,6 +1688,7 @@ function openDetail(id){
     <div class="status-actions">
       ${!isPL?`<button class="sa-btn" onclick="generateStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">📄 PDF</button>`:''}
       ${!isPL?`<button class="sa-btn" style="background:var(--primary-light);color:var(--primary);border-color:var(--primary)" onclick="editInvoice('${inv.id}')">✏️ Edit</button>`:''}
+      ${isPL&&inv.status!=='paid'?`<button class="sa-btn" style="background:var(--primary-light);color:var(--primary);border-color:var(--primary)" onclick="editPLInvoice('${inv.id}')">✏️ Edit</button>`:''}
       <button class="sa-btn" onclick="copyInvoice('${inv.id}')">📋 Copy</button>
       ${isPL&&!inv.billed?`<button class="sa-btn" onclick="generatePLCheckRequests()">📋 Check Req.</button>`:''}
       <button class="sa-btn ${inv.status==='paid'?'active':''}" onclick="markPaid('${inv.id}')">
@@ -1773,6 +1782,58 @@ function editInvoice(id){
   document.getElementById('totalDisplay').textContent='$'+inv.total.toFixed(2);
   S._filteredForDetail=null;
   goScreen('form');
+}
+function editPLInvoice(id){
+  const inv=S.invoices.find(i=>i.id===id);
+  if(!inv)return;
+  S.editId=id;
+  // Date and invoice number
+  document.getElementById('plDate').value=inv.date||'';
+  const base=dateToInvNum(inv.date);
+  const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';
+  document.getElementById('plSuffix').value=suf;
+  updatePLInvNum();
+  // Route
+  document.getElementById('plFromCity').value=inv.fromCity||'';
+  document.getElementById('plFromLoc').value=inv.fromLoc||'';
+  document.getElementById('plToName').value=inv.toName||'';
+  // Fees
+  document.getElementById('plPatMiles').value=inv.patMiles||'';
+  document.getElementById('plPatFee').value=inv.patFee||'';
+  document.getElementById('plDiaMiles').value=inv.diaMiles||'';
+  document.getElementById('plDiaFee').value=inv.diaFee||'';
+  // Wash
+  setWash(inv.wash||'none');
+  // Patrick vehicles
+  document.getElementById('plPatVehicles').innerHTML='';
+  S.plPatVehicleCount=0;
+  (inv.patVehicles||[]).forEach(v=>{
+    addPLVehicle('pat');
+    const n=S.plPatVehicleCount;
+    const ve=document.getElementById(`pl-vin-pat-${n}`);
+    const ye=document.getElementById(`pl-ymm-pat-${n}`);
+    const se=document.getElementById(`pl-stk-pat-${n}`);
+    if(ve)ve.value=v.vin||'';
+    if(ye)ye.value=v.ymm||'';
+    if(se)se.value=v.stk||'';
+  });
+  if((inv.patVehicles||[]).length===0) addPLVehicle('pat');
+  // Diana vehicles
+  document.getElementById('plDiaVehicles').innerHTML='';
+  S.plDiaVehicleCount=0;
+  (inv.diaVehicles||[]).forEach(v=>{
+    addPLVehicle('dia');
+    const n=S.plDiaVehicleCount;
+    const ve=document.getElementById(`pl-vin-dia-${n}`);
+    const ye=document.getElementById(`pl-ymm-dia-${n}`);
+    const se=document.getElementById(`pl-stk-dia-${n}`);
+    if(ve)ve.value=v.vin||'';
+    if(ye)ye.value=v.ymm||'';
+    if(se)se.value=v.stk||'';
+  });
+  calcPLTotal();
+  S._filteredForDetail=null;
+  goScreen('pl');
 }
 function copyInvoice(id){
   const inv=S.invoices.find(i=>i.id===id);
