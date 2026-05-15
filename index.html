@@ -1558,7 +1558,7 @@ function renderList(){
     (i.invNum+i.custName+i.fromDealer+i.toName+i.toCity+i.fromCity).toLowerCase()
     .includes(S.search.toLowerCase())
     || (i.vehicles||[]).some(function(v){return ((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())})
-    || (i.patVehicles||[]).some(function(v){return ((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())})))
+    || (i.patVehicles||[]).some(function(v){return ((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())}))
   if(S.filter!=='all') invs=invs.filter(i=>
     S.filter==='billed'?(i.status==='billed'||i.billed):i.status===S.filter);
 
@@ -1651,17 +1651,18 @@ function openDetail(id){
 
   const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:60px;height:60px">`).join('');
 
-  // Store filtered list for prev/next
+  // Store prev/next IDs as globals for nav buttons
   if(!S._filteredForDetail){S._filteredForDetail=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});}
   const detList = S._filteredForDetail;
   const detIdx = detList.findIndex(function(i){return i.id===id;});
-  const prevId = detIdx>0?detList[detIdx-1].id:null;
-  const nextId = detIdx<detList.length-1?detList[detIdx+1].id:null;
+  S._prevDetId = detIdx>0?detList[detIdx-1].id:null;
+  S._nextDetId = detIdx<detList.length-1?detList[detIdx+1].id:null;
+  S._detPos = (detIdx+1)+' of '+detList.length;
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--primary-dark)">
-      <button style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;opacity:${prevId?1:.3}" onclick="${prevId?'openDetail(''+prevId+'')':''}" ${prevId?'':'disabled'}>&#8592; Prev</button>
-      <span style="color:rgba(255,255,255,.7);font-size:12px">${detIdx+1} of ${detList.length}</span>
-      <button style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;opacity:${nextId?1:.3}" onclick="${nextId?'openDetail(''+nextId+'')':''}" ${nextId?'':'disabled'}>Next &#8594;</button>
+      <button id="prevDetBtn" style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit" onclick="navDetail(-1)">&#8592; Prev</button>
+      <span style="color:rgba(255,255,255,.7);font-size:12px">${S._detPos}</span>
+      <button id="nextDetBtn" style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit" onclick="navDetail(1)">Next &#8594;</button>
     </div>
     <div class="det-hdr" style="border-left:5px solid ${inv.custColor||'#aaa'}">
       <div class="det-inv">${inv.invNum}</div>
@@ -1786,6 +1787,10 @@ function copyInvoice(id){
   document.getElementById('invSuffix').value='';
   document.getElementById('tripDate').value=`${y}-${m}-${d}`;
   showToast('Copied - update as needed');
+}
+function navDetail(dir){
+  var id = dir<0?S._prevDetId:S._nextDetId;
+  if(id) openDetail(id);
 }
 function exportCSV(){
   const headers=['Invoice #','Date','Customer','Type','Driver','From','To City','Vehicles',
