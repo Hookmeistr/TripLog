@@ -1630,31 +1630,23 @@ function openDetail(id){
   const isPL=inv.type==='phillong';
   let rows='';
   if(!isPL){
-    if(inv.fromDealer) rows+=detRow('From',inv.fromDealer+(inv.fromContact?' – '+inv.fromContact:''));
-    if(inv.fromPhone) rows+=detRow('Phone','<a class="tel" href="tel:'+inv.fromPhone+'">📞 '+inv.fromPhone+'</a>');
-    if(inv.toName) rows+=detRow('To',inv.toName);
-    if(inv.toPhone) rows+=detRow('To phone','<a class="tel" href="tel:'+inv.toPhone+'">📞 '+inv.toPhone+'</a>');
-    if(inv.toAddress) rows+=detRow('Address',inv.toAddress+(inv.toCity?', '+inv.toCity:''));
+    if(inv.fromDealer) rows+=detRow('From',inv.fromDealer);
+    if(inv.toName) rows+=detRow('To',inv.toName+(inv.toCity?' \u00b7 '+inv.toCity:''));
     if(inv.dealNum) rows+=detRow('Deal #',inv.dealNum);
-    (inv.vehicles||[]).forEach((v,i)=>{
-      rows+=detRow('Vehicle '+(i+1),`${v.vin||''}${v.ymm?' '+v.ymm:''}`);
-      if(v.stk) rows+=detRow('Stock #',v.stk);
-    });
-    if(inv.totalMiles) rows+=detRow('Total miles',inv.totalMiles);
-    rows+=detRow('Drive fee','$'+((inv.driveFee||0)*inv.drivers).toFixed(2)+
-      (inv.drivers===2?' (2 drivers)':''));
-    if(inv.fuel>0) rows+=detRow('Fuel','$'+inv.fuel.toFixed(2));
-    if(inv.meals>0) rows+=detRow('Meals','$'+inv.meals.toFixed(2));
-    if(inv.wash>0) rows+=detRow('Wash','$'+inv.wash.toFixed(2));
-    if(inv.other>0) rows+=detRow(inv.otherDesc||'Other','$'+inv.other.toFixed(2));
+    const vehs=inv.vehicles||[];
+    if(vehs.length>0){
+      rows+=detRow('Vehicles',vehs.length+' vehicle'+(vehs.length>1?'s':''));
+      if(vehs[0].vin) rows+=detRow('VIN',vehs[0].vin);
+      if(vehs[0].stk) rows+=detRow('Stock #',vehs[0].stk);
+    }
+    if(inv.totalMiles) rows+=detRow('Miles',inv.totalMiles);
   } else {
-    if(inv.fromCity||inv.fromLoc) rows+=detRow('From',`${inv.fromCity||''} – ${inv.fromLoc||''}`);
+    if(inv.fromCity||inv.fromLoc) rows+=detRow('From',(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:''));
     if(inv.toName) rows+=detRow('To',inv.toName);
-    (inv.patVehicles||[]).forEach((v,i)=>rows+=detRow('Patrick Veh '+(i+1),`${v.vin||''} ${v.ymm||''} Stock:${v.stk||''}`));
-    (inv.diaVehicles||[]).forEach((v,i)=>rows+=detRow('Diana Veh '+(i+1),`${v.vin||''} ${v.ymm||''} Stock:${v.stk||''}`));
+    (inv.patVehicles||[]).forEach((v,i)=>rows+=detRow('Patrick Veh '+(i+1),(v.vin?'VIN: '+v.vin:'')+(v.stk?' \u00b7 Stk: '+v.stk:'')));
+    (inv.diaVehicles||[]).forEach((v,i)=>rows+=detRow('Diana Veh '+(i+1),(v.vin?'VIN: '+v.vin:'')+(v.stk?' \u00b7 Stk: '+v.stk:'')));
     if(inv.patFee) rows+=detRow('Patrick fee','$'+(inv.patFee+(inv.washPat||0)).toFixed(2));
     if(inv.diaFee) rows+=detRow('Diana fee','$'+(inv.diaFee+(inv.washDia||0)).toFixed(2));
-    if(inv.wash&&inv.wash!=='none') rows+=detRow('Wash',inv.wash);
   }
 
   const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:60px;height:60px">`).join('');
