@@ -85,23 +85,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   cursor:pointer;font-family:inherit;transition:all .15s}
 .ftab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-.inv-card{background:#fff;border-left:5px solid #ccc;margin:8px 12px;
-  border-radius:10px;padding:11px 13px;display:flex;justify-content:space-between;
-  align-items:flex-start;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;transition:transform .1s}
-.inv-card:active{transform:scale(.98)}
-.ic-num{font-size:14px;font-weight:800;color:var(--text)}
-.ic-cust{font-size:13px;color:#555;margin-top:2px}
-.ic-detail{font-size:11px;color:#999;margin-top:4px;line-height:1.4}
-.ic-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;margin-top:4px}
-.tag-p{background:#E8EDF5;color:#003594}.tag-d{background:#FDF0F2;color:#722F37}
-.ic-amt{font-size:17px;font-weight:800;color:var(--text);text-align:right;white-space:nowrap}
-.sbadge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;
-  display:inline-block;margin-top:4px}
-.s-draft{background:#f0f0f0;color:#777}
-.s-sent{background:#E8EDF5;color:#003594}
-.s-billed{background:#FFF8E1;color:#b05c00}
-.s-paid{background:#E8F5E9;color:#2e7d32}
-.s-excl{background:#fce4ec;color:#880e4f}
+/* NEW CARD DESIGN */
+.inv-card2{border-left:4px solid #ccc;margin:8px 12px;border-radius:10px;
+  padding:10px 12px;cursor:pointer;transition:transform .1s;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.inv-card2:active{transform:scale(.98)}
+.ic2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.ic2-cust{font-size:13px;font-weight:700;flex:1;padding-right:8px}
+.ic2-meta{text-align:right;flex-shrink:0}
+.ic2-metarow{display:grid;grid-template-columns:auto 1fr;gap:0 6px;font-size:13px}
+.ic2-lbl{text-align:right;white-space:nowrap}
+.ic2-mid{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:13px}
+.ic2-div{border-top:0.5px solid #ccc;margin:5px 0}
+.ic2-route{font-size:13px;margin-bottom:6px;line-height:1.4}
+.ic2-bottom{display:flex;justify-content:space-between;align-items:center}
+.ic2-amt{font-size:15px;font-weight:700}
+.sbadge{font-size:13px;padding:2px 9px;border-radius:10px;font-weight:500;display:inline-block}
 .empty{text-align:center;padding:60px 20px;color:#bbb}
 .empty p{font-size:15px;margin-top:10px}
 
@@ -697,8 +696,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:22px">&#8505;</div>
       <div class="at">
-        <div class="at-ttl">TripLog v1.3 (Cloud)</div>
-        <div class="at-sub">Data synced to Firebase · works offline automatically</div>
+        <div class="at-ttl">TripLog v1.4 (Cloud)</div>
+        <div class="at-sub">New card &amp; preview design · Firebase sync · works offline</div>
       </div>
     </div>
 
@@ -1023,8 +1022,8 @@ function addVehicle(){
   div.className='vcard'; div.id='veh-'+n;
   div.innerHTML=`<div class="vcard-hdr">Vehicle ${n-1}
     <button class="rm-btn" onclick="removeVehicle(${n})">&#10005;</button></div>
-    <div class="vr"><span class="vl">VIN #</span>
-      <input class="vi" id="vin-${n}" placeholder="VIN number" autocomplete="off"></div>
+    <div class="vr"><span class="vl">VIN # (last 8)</span>
+      <input class="vi" id="vin-${n}" placeholder="Last 8 digits" maxlength="8" autocomplete="off"></div>
     <div class="vr"><span class="vl">Year/Make/Model/Color</span>
       <input class="vi" id="ymm-${n}" placeholder="Year Make Model Color"></div>
     <div class="vr"><span class="vl">Stock #</span>
@@ -1049,8 +1048,8 @@ function addPLVehicle(who){
     color:${who==='pat'?'#003594':'#722F37'}">
     ${who==='pat'?'Patrick':'Diana'} – Vehicle ${count}
     <button class="rm-btn" onclick="this.closest('.vcard').remove()">&#10005;</button></div>
-    <div class="vr"><span class="vl">VIN out</span>
-      <input class="vi" id="pl-vin-${who}-${count}" placeholder="VIN number"></div>
+    <div class="vr"><span class="vl">VIN out (last 8)</span>
+      <input class="vi" id="pl-vin-${who}-${count}" placeholder="Last 8 digits" maxlength="8"></div>
     <div class="vr"><span class="vl">Year/Make/Model/Color</span>
       <input class="vi" id="pl-ymm-${who}-${count}" placeholder="Year Make Model Color"></div>
     <div class="vr"><span class="vl">Stock #</span>
@@ -1215,12 +1214,23 @@ function addPhoto(input){
   files.forEach(file=>{
     const reader = new FileReader();
     reader.onload = e=>{
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className='ph-thumb';
-      img.onclick=()=>{ if(confirm('Remove this receipt?')) img.remove(); };
-      document.getElementById('photoList').insertBefore(img,
-        document.querySelector('.ph-add').parentElement||document.querySelector('label.ph-add'));
+      const original = new Image();
+      original.onload = ()=>{
+        const MAX=800;
+        let w=original.width, h=original.height;
+        if(w>h){ if(w>MAX){h=Math.round(h*MAX/w);w=MAX;} }
+        else { if(h>MAX){w=Math.round(w*MAX/h);h=MAX;} }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(original,0,0,w,h);
+        const compressed=canvas.toDataURL('image/jpeg',0.70);
+        const img=document.createElement('img');
+        img.src=compressed; img.className='ph-thumb';
+        img.onclick=()=>{ if(confirm('Remove this receipt?')) img.remove(); };
+        document.getElementById('photoList').insertBefore(img,
+          document.querySelector('label.ph-add'));
+      };
+      original.src=e.target.result;
     };
     reader.readAsDataURL(file);
   });
@@ -1522,6 +1532,7 @@ function generatePLCheckRequests(){
       if(idx>=0){
         S.invoices[idx].billed=true;
         S.invoices[idx].status='billed';
+        S.invoices[idx].billedAt=Date.now();
         syncInvoice(S.invoices[idx]);
       }
     });
@@ -1642,58 +1653,84 @@ function generatePLPDF(trips, name, who){
 function lhFromLines(arr){ return Array.isArray(arr)?arr.length:1; }
 
 // ============================================================
+// CUSTOMER CARD STYLES
+// ============================================================
+const CUST_CARD_STYLES={
+  phillong:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',sub:'#3B6D11',div:'#C0DD97'},
+  chalmers:{bg:'#E6F1FB',border:'#185FA5',text:'#042C53',sub:'#185FA5',div:'#85B7EB'},
+  reliable:{bg:'#B5D4F4',border:'#0C447C',text:'#042C53',sub:'#0C447C',div:'#378ADD'},
+};
+function custStyle(custId){
+  return CUST_CARD_STYLES[custId]||{bg:'#fff',border:'#888',text:'#333',sub:'#666',div:'#eee'};
+}
+function billedBadge(inv){
+  if(inv.status==='paid') return {bg:'#CECBF6',color:'#26215C',label:'Paid'};
+  if(inv.status==='draft') return {bg:'#D3D1C7',color:'#444441',label:'Draft'};
+  if(inv.status==='sent'||inv.status==='ready') return {bg:'#B5D4F4',color:'#0C447C',label:'Sent'};
+  if(inv.status==='billed'||inv.billed){
+    const billedAt=inv.billedAt||inv.updatedAt||inv.createdAt||Date.now();
+    const days=Math.floor((Date.now()-billedAt)/(1000*60*60*24));
+    if(days>=30) return {bg:'#F7C1C1',color:'#791F1F',label:'Billed 30d+'};
+    if(days>=14) return {bg:'#FAC775',color:'#633806',label:'Billed 2wk+'};
+    return {bg:'#C0DD97',color:'#27500A',label:'Billed'};
+  }
+  return {bg:'#D3D1C7',color:'#444441',label:'Draft'};
+}
+
+// ============================================================
 // LIST RENDERING
 // ============================================================
 function renderList(){
   let invs=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
   if(S.search) invs=invs.filter(i=>
-    (i.invNum+i.custName+i.fromDealer+i.toName+i.toCity+i.fromCity).toLowerCase()
+    ((i.invNum||'')+(i.custName||'')+(i.fromDealer||'')+(i.toName||'')+(i.toCity||'')+(i.fromCity||'')).toLowerCase()
     .includes(S.search.toLowerCase())
-    || (i.vehicles||[]).some(function(v){return ((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())})
-    || (i.patVehicles||[]).some(function(v){return ((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())}))
+    ||(i.vehicles||[]).some(function(v){return((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())})
+    ||(i.patVehicles||[]).some(function(v){return((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())}));
   if(S.filter!=='all') invs=invs.filter(i=>
     S.filter==='billed'?(i.status==='billed'||i.billed):i.status===S.filter);
 
   const el=document.getElementById('invoiceList');
   if(invs.length===0){
-    el.innerHTML=`<div class="empty">
-      <div style="font-size:48px">📋</div>
+    el.innerHTML=`<div class="empty"><div style="font-size:48px">📋</div>
       <p>${S.filter==='all'?'No invoices yet. Tap + to add your first trip.':'No '+S.filter+' invoices.'}</p>
     </div>`;return;
   }
-  el.innerHTML=invs.map(inv=>`
-    <div class="inv-card" style="border-left-color:${inv.custColor||'#aaa'}"
-      onclick="openDetail('${inv.id}')">
-      <div>
-        <div class="ic-num">${inv.invNum}</div>
-        <div class="ic-cust">${inv.custName}</div>
-        <div class="ic-detail">${inv.type==='phillong'?
-          `${inv.fromCity||''}${inv.fromLoc?' – '+inv.fromLoc:''} → ${inv.toName||''}`:
-          `${inv.fromCity||inv.fromDealer||''}${inv.toCity?' → '+inv.toCity:''}`}
-          ${inv.vehicles&&inv.vehicles.length>0?' · '+inv.vehicles.length+' veh':''}
-          ${inv.totalMiles?' · '+inv.totalMiles+' mi':''}
-          ${inv.custId==='reliable'&&inv.dealNum?' · Deal: '+inv.dealNum:''}
-          ${inv.custId==='chalmers'&&inv.vehicles&&inv.vehicles[0]&&inv.vehicles[0].stk?' · Stock: '+inv.vehicles[0].stk:''}
-          ${inv.type==='phillong'&&inv.patVehicles&&inv.patVehicles[0]?((inv.patVehicles[0].vin?' · VIN: '+inv.patVehicles[0].vin:'')+(inv.patVehicles[0].stk?' · Stk: '+inv.patVehicles[0].stk:'')):''}
-          ${inv.type==='phillong'&&inv.patVehicles&&inv.patVehicles.length>1?' · '+inv.patVehicles.length+' vehs':''}
-          </div>
-        <span class="ic-tag ${inv.driver==='diana'?'tag-d':'tag-p'}">${inv.driver==='diana'?'Diana':'Patrick'}</span>
-        ${inv.type==='phillong'&&inv.billed?'<span class="ic-tag" style="background:#FFF8E1;color:#b05c00;margin-left:4px">Billed</span>':''}
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  el.innerHTML=invs.map(inv=>{
+    const cs=custStyle(inv.custId);
+    const badge=billedBadge(inv);
+    const isPL=inv.type==='phillong';
+    const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;
+    const mon=dObj?MONTHS[dObj.getMonth()]:'';
+    const fmtDate=dObj?mon+' '+dObj.getDate()+', '+dObj.getFullYear():'';
+    const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':'';
+    const line2Left=isPL
+      ?(inv.fromCity?'From:&nbsp;&nbsp;'+inv.fromCity:'')
+      :(inv.dealNum?'Deal #:&nbsp;&nbsp;'+inv.dealNum:'');
+    const routeLine=isPL
+      ?(mon+(inv.fromCity?', '+inv.fromCity:'')+'&nbsp;&#x279C;&nbsp;'+(inv.toName||''))
+      :(mon+(inv.fromCity?', '+inv.fromCity:(inv.fromDealer?', '+inv.fromDealer:''))+'&nbsp;&#x279C;&nbsp;'+(inv.toName||'')+(inv.toAddress?', '+inv.toAddress:''));
+    return `<div class="inv-card2" style="background:${cs.bg};border-left-color:${cs.border}" onclick="openDetail('${inv.id}')">
+      <div class="ic2-top">
+        <span class="ic2-cust" style="color:${cs.text}">${inv.custName}</span>
+        <div class="ic2-meta" style="color:${cs.text}">
+          <div class="ic2-metarow"><span class="ic2-lbl">Inv #:&nbsp;&nbsp;</span><span>${inv.invNum}</span></div>
+          ${fmtDate?`<div class="ic2-metarow"><span class="ic2-lbl">Date:&nbsp;&nbsp;</span><span>${fmtDate}</span></div>`:''}
+        </div>
       </div>
-      <div style="text-align:right">
-        <div class="ic-amt">$${(inv.total||0).toFixed(2)}</div>
-        <span class="sbadge ${statusClass(inv)}">${statusLabel(inv)}</span>
+      <div class="ic2-mid">
+        <span style="color:${cs.sub}">${line2Left}</span>
+        <span style="background:${badge.bg};color:${badge.color}" class="sbadge">${badge.label}</span>
       </div>
-    </div>`).join('');
-}
-
-function statusClass(inv){
-  if(inv.type==='phillong'&&inv.billed) return 's-billed';
-  return {'draft':'s-draft','sent':'s-sent','billed':'s-billed','paid':'s-paid','ready':'s-sent'}[inv.status]||'s-draft';
-}
-function statusLabel(inv){
-  if(inv.type==='phillong'&&inv.billed) return 'Billed';
-  return {'draft':'Draft','sent':'Sent','billed':'Billed','paid':'Paid','ready':'Saved'}[inv.status]||'Draft';
+      <div class="ic2-div" style="border-color:${cs.div}"></div>
+      <div class="ic2-route" style="color:${cs.text}">${routeLine}</div>
+      <div class="ic2-bottom">
+        <span class="ic2-amt" style="color:${cs.text}">$${(inv.total||0).toFixed(2)}</span>
+        <span style="color:${cs.sub};font-size:13px">${driverFirst?'Driver:&nbsp;&nbsp;'+driverFirst:''}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function filterList(q){ S.search=q; renderList(); }
@@ -1705,7 +1742,7 @@ function setFilter(f,btn){
 }
 
 // ============================================================
-// INVOICE DETAIL
+// INVOICE DETAIL / PREVIEW
 // ============================================================
 function openDetail(id){
   const inv=S.invoices.find(i=>i.id===id);
@@ -1713,71 +1750,143 @@ function openDetail(id){
   S.editId=id;
   const el=document.getElementById('detailContent');
   const isPL=inv.type==='phillong';
-  let rows='';
-  if(!isPL){
-    if(inv.fromDealer) rows+=detRow('From',inv.fromDealer);
-    if(inv.toName) rows+=detRow('To',inv.toName+(inv.toCity?' \u00b7 '+inv.toCity:''));
-    if(inv.dealNum) rows+=detRow('Deal #',inv.dealNum);
-    const vehs=inv.vehicles||[];
-    if(vehs.length>0){
-      rows+=detRow('Vehicles',vehs.length+' vehicle'+(vehs.length>1?'s':''));
-      if(vehs[0].vin) rows+=detRow('VIN',vehs[0].vin);
-      if(vehs[0].stk) rows+=detRow('Stock #',vehs[0].stk);
-    }
-    if(inv.totalMiles) rows+=detRow('Miles',inv.totalMiles);
-  } else {
-    if(inv.fromCity||inv.fromLoc) rows+=detRow('From',(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:''));
-    if(inv.toName) rows+=detRow('To',inv.toName);
-    (inv.patVehicles||[]).forEach((v,i)=>rows+=detRow('Patrick Veh '+(i+1),(v.vin?'VIN: '+v.vin:'')+(v.stk?' \u00b7 Stk: '+v.stk:'')));
-    (inv.diaVehicles||[]).forEach((v,i)=>rows+=detRow('Diana Veh '+(i+1),(v.vin?'VIN: '+v.vin:'')+(v.stk?' \u00b7 Stk: '+v.stk:'')));
-    if(inv.patFee) rows+=detRow('Patrick fee','$'+(inv.patFee+(inv.washPat||0)).toFixed(2));
-    if(inv.diaFee) rows+=detRow('Diana fee','$'+(inv.diaFee+(inv.washDia||0)).toFixed(2));
-  }
-
-  const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:60px;height:60px">`).join('');
+  const cs=custStyle(inv.custId);
+  const badge=billedBadge(inv);
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;
+  const fmtDate=dObj?MONTHS[dObj.getMonth()]+' '+dObj.getDate()+', '+dObj.getFullYear():'';
+  const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':'';
 
   if(!S._filteredForDetail){S._filteredForDetail=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});}
-  const detList = S._filteredForDetail;
-  const detIdx = detList.findIndex(function(i){return i.id===id;});
-  S._prevDetId = detIdx>0?detList[detIdx-1].id:null;
-  S._nextDetId = detIdx<detList.length-1?detList[detIdx+1].id:null;
-  S._detPos = (detIdx+1)+' of '+detList.length;
+  const detList=S._filteredForDetail;
+  const detIdx=detList.findIndex(function(i){return i.id===id;});
+  S._prevDetId=detIdx>0?detList[detIdx-1].id:null;
+  S._nextDetId=detIdx<detList.length-1?detList[detIdx+1].id:null;
+  S._detPos=(detIdx+1)+' of '+detList.length;
+
+  // Header meta block (right column)
+  let metaRows=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Inv #:&nbsp;&nbsp;</span><span style="text-align:right">${inv.invNum}</span></div>`;
+  if(!isPL&&inv.dealNum) metaRows+=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Deal #:&nbsp;&nbsp;</span><span style="text-align:right">${inv.dealNum}</span></div>`;
+  if(fmtDate) metaRows+=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Date:&nbsp;&nbsp;</span><span style="text-align:right">${fmtDate}</span></div>`;
+
+  // Body rows
+  function pRow(lbl,val,italic){
+    return `<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:3px 0">
+      <span style="font-size:12px;color:#888;white-space:nowrap">${lbl}</span>
+      <span style="font-size:13px;color:${italic?'#bbb':'#1a1a2e'};font-style:${italic?'italic':'normal'}">${val}</span></div>`;
+  }
+
+  let body='';
+  if(!isPL){
+    // From / To
+    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
+    if(inv.fromDealer||inv.fromCity) body+=pRow('From',inv.fromDealer+(inv.fromCity?' · '+inv.fromCity:''));
+    if(inv.toName) body+=pRow('To',inv.toName+(inv.toAddress?', '+inv.toAddress:'')+(inv.toCity?' · '+inv.toCity:''));
+    body+=`</div>`;
+    // Vehicles
+    const vehs=inv.vehicles||[];
+    if(vehs.length>0){
+      vehs.forEach((v,i)=>{
+        body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
+        if(vehs.length>1) body+=`<div style="font-size:11px;font-weight:700;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Vehicle ${i+1}</div>`;
+        body+=pRow('VIN #:',v.vin||'',!v.vin);
+        body+=pRow('Stock #:',v.stk||'',!v.stk);
+        body+=`</div>`;
+      });
+    } else {
+      body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
+      body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);
+      body+=`</div>`;
+    }
+    // Miles / fee
+    body+=`<div style="padding:8px 0">`;
+    if(inv.totalMiles) body+=pRow('Miles:',inv.totalMiles);
+    if(inv.driveFee) body+=pRow('Drive fee:','$'+Number(inv.driveFee).toFixed(2)+(inv.drivers===2?' × 2 drivers':''));
+    if(inv.fuel) body+=pRow('Fuel:','$'+Number(inv.fuel).toFixed(2));
+    body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px">
+      <span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span>
+      <span style="font-size:16px;font-weight:700;color:#1a1a2e">$${(inv.total||0).toFixed(2)}</span></div>`;
+    body+=`</div>`;
+  } else {
+    // Phil Long
+    const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');
+    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
+    body+=pRow('From',from||'');
+    body+=pRow('To',inv.toName||'');
+    body+=`</div>`;
+    // Patrick vehicles
+    const patVehs=inv.patVehicles||[];
+    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">
+      <div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick — Vehicle${patVehs.length>1?'s':''}</div>`;
+    if(patVehs.length>0){
+      patVehs.forEach((v,i)=>{
+        if(patVehs.length>1) body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;
+        body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);
+      });
+    } else {
+      body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);
+    }
+    body+=`</div>`;
+    // Diana vehicles — only if she was on the trip
+    const diaVehs=inv.diaVehicles||[];
+    if(diaVehs.length>0){
+      body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">
+        <div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana — Vehicle${diaVehs.length>1?'s':''}</div>`;
+      diaVehs.forEach((v,i)=>{
+        if(diaVehs.length>1) body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;
+        body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);
+      });
+      body+=`</div>`;
+    }
+    // Fees
+    body+=`<div style="padding:8px 0">`;
+    if(inv.patFee) body+=pRow('Patrick fee:','$'+(inv.patFee+(inv.washPat||0)).toFixed(2));
+    if(inv.diaFee) body+=pRow('Diana fee:','$'+(inv.diaFee+(inv.washDia||0)).toFixed(2));
+    body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px">
+      <span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span>
+      <span style="font-size:16px;font-weight:700;color:#1a1a2e">$${(inv.total||0).toFixed(2)}</span></div>`;
+    body+=`</div>`;
+  }
+
+  const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:56px;height:56px">`).join('');
+
+  // Action buttons
+  const btnStyle='flex:1;padding:8px 4px;border-radius:8px;border:0.5px solid #ddd;background:#fff;font-size:12px;font-family:inherit;color:#444;text-align:center;cursor:pointer';
+  let actions='';
+  if(!isPL) actions+=`<button style="${btnStyle}" onclick="generateStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">📄 PDF</button>`;
+  actions+=`<button style="${btnStyle}" onclick="${isPL?'editPLInvoice':'editInvoice'}('${inv.id}')">✏️ Edit</button>`;
+  actions+=`<button style="${btnStyle}" onclick="copyInvoice('${inv.id}')">📋 Copy</button>`;
+  if(isPL&&!inv.billed) actions+=`<button style="${btnStyle}" onclick="generatePLCheckRequests()">📋 Check Req.</button>`;
+  const paidStyle=inv.status==='paid'?'flex:1;padding:8px 4px;border-radius:8px;border:0.5px solid #CECBF6;background:#CECBF6;font-size:12px;font-family:inherit;color:#26215C;text-align:center;cursor:pointer':btnStyle;
+  actions+=`<button style="${paidStyle}" onclick="markPaid('${inv.id}')">${inv.status==='paid'?'✓ Paid':'Mark Paid'}</button>`;
+  if(inv.status!=='paid'&&!inv.billed) actions+=`<button style="${btnStyle};color:#791F1F" onclick="deleteInvoice('${inv.id}')">🗑 Delete</button>`;
+
   el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--primary-dark)">
-      <button id="prevDetBtn" style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit" onclick="navDetail(-1)">&#8592; Prev</button>
-      <span style="color:rgba(255,255,255,.7);font-size:12px">${S._detPos}</span>
-      <button id="nextDetBtn" style="background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;font-weight:700;font-family:inherit" onclick="navDetail(1)">Next &#8594;</button>
+    <div style="background:var(--primary-dark);display:flex;justify-content:space-between;align-items:center;padding:8px 12px">
+      <button onclick="navDetail(-1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">&#8592; Prev</button>
+      <span style="color:rgba(255,255,255,.6);font-size:12px">${S._detPos}</span>
+      <button onclick="navDetail(1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">Next &#8594;</button>
     </div>
-    <div class="det-hdr" style="border-left:5px solid ${inv.custColor||'#aaa'}">
-      <div class="det-inv">${inv.invNum}</div>
-      <div class="det-cust">${inv.custName}</div>
-      <div class="det-tag ${inv.driver==='diana'?'tag-d':'tag-p'}">${inv.driver==='diana'?'Diana':'Patrick'}</div>
-      &nbsp;<span class="sbadge ${statusClass(inv)}">${statusLabel(inv)}</span>
+    <div style="background:${cs.bg};border-left:4px solid ${cs.border};padding:10px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <span style="font-size:13px;font-weight:700;color:${cs.text};flex:1;padding-right:8px">${inv.custName}</span>
+        <div style="text-align:right">${metaRows}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+        <span style="font-size:13px;color:${cs.sub}">${driverFirst?'Driver:&nbsp;&nbsp;'+driverFirst:''}</span>
+        <span style="font-size:13px;color:#888">Status:&nbsp;&nbsp;<span style="background:${badge.bg};color:${badge.color};padding:2px 9px;border-radius:10px;font-size:13px">${badge.label}</span></span>
+      </div>
     </div>
-    ${rows}
-    <div class="det-row" style="background:#fff">
-      <span class="det-lbl" style="font-weight:700">Total Due</span>
-      <span class="det-val" style="font-size:18px;font-weight:800">$${(inv.total||0).toFixed(2)}</span>
+    <div style="background:#fff;padding:0 14px">
+      ${body}
+      ${photos?`<div style="padding:8px 0;border-top:0.5px solid #eee"><div style="font-size:12px;color:#888;margin-bottom:5px">Receipts</div><div style="display:flex;gap:6px;flex-wrap:wrap">${photos}</div></div>`:''}
+      ${inv.notes?`<div style="padding:8px 0;border-top:0.5px solid #eee">${pRow('Notes:',inv.notes)}</div>`:''}
     </div>
-    ${photos?`<div class="det-row"><span class="det-lbl">Receipts</span><div>${photos}</div></div>`:''}
-    ${inv.notes?`<div class="det-row"><span class="det-lbl">Notes</span><span class="det-val">${inv.notes}</span></div>`:''}
-    <div class="status-actions">
-      ${!isPL?`<button class="sa-btn" onclick="generateStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">📄 PDF</button>`:''}
-      ${!isPL?`<button class="sa-btn" style="background:var(--primary-light);color:var(--primary);border-color:var(--primary)" onclick="editInvoice('${inv.id}')">✏️ Edit</button>`:''}
-      ${isPL&&inv.status!=='paid'?`<button class="sa-btn" style="background:var(--primary-light);color:var(--primary);border-color:var(--primary)" onclick="editPLInvoice('${inv.id}')">✏️ Edit</button>`:''}
-      <button class="sa-btn" onclick="copyInvoice('${inv.id}')">📋 Copy</button>
-      ${isPL&&!inv.billed?`<button class="sa-btn" onclick="generatePLCheckRequests()">📋 Check Req.</button>`:''}
-      <button class="sa-btn ${inv.status==='paid'?'active':''}" onclick="markPaid('${inv.id}')">
-        ${inv.status==='paid'?'✓ Paid':'Mark Paid'}
-      </button>
-      ${inv.status!=='paid'&&!inv.billed?`<button class="sa-btn" onclick="deleteInvoice('${inv.id}')">🗑</button>`:''}
+    <div style="display:flex;gap:6px;padding:10px 12px;border-top:0.5px solid #eee;flex-wrap:wrap;background:#fff">
+      ${actions}
     </div>
     <div style="height:20px"></div>`;
   goScreen('detail');
-}
-
-function detRow(lbl,val){
-  return `<div class="det-row"><span class="det-lbl">${lbl}</span><span class="det-val">${val}</span></div>`;
 }
 
 function markPaid(id){
