@@ -776,12 +776,8 @@ let db = null;
 
 function initFirebase(){
   try {
-    firebase.initializeApp(firebaseConfig);
+    const fbApp = firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    db.enablePersistence().catch(function(err){
-      if(err.code!=='failed-precondition'&&err.code!=='unimplemented')
-        console.warn('Firestore persistence:', err.code);
-    });
     setupFirestoreListener();
   } catch(e){
     console.warn('Firebase init error:', e);
