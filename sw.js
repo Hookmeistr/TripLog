@@ -1,5 +1,11 @@
-const CACHE = 'triplog-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'triplog-v2';
+const ASSETS = [
+  '/TripLog/',
+  '/TripLog/index.html',
+  '/TripLog/manifest.json',
+  '/TripLog/icon-192.png',
+  '/TripLog/icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
