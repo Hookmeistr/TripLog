@@ -72,6 +72,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   font-weight:700;border:1.5px solid var(--border);background:#fff;color:#777;
   cursor:pointer;font-family:inherit;transition:all .15s}
 .ftab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.sort-bar{display:flex;align-items:center;padding:5px 12px;gap:5px;overflow-x:auto;background:#f8f9fb;border-bottom:1px solid var(--border);scrollbar-width:none}
+.sort-bar::-webkit-scrollbar{display:none}
+.sort-lbl{font-size:10px;color:#bbb;font-weight:700;flex-shrink:0;letter-spacing:.5px;text-transform:uppercase;padding-right:2px}
+.stab{white-space:nowrap;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;border:1px solid var(--border);background:#fff;color:#777;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
+.stab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .inv-card2{border-left:4px solid #ccc;margin:6px 12px;border-radius:10px;
   padding:8px 12px;cursor:pointer;transition:transform .1s;
   box-shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -107,8 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   border-bottom:1px solid var(--faint);min-height:46px}
 .fr:last-child{border-bottom:none}
 .fl{font-size:12px;color:var(--muted);min-width:88px;flex-shrink:0;line-height:1.3}
-.fi{flex:1;font-size:15px;color:var(--text);border:none;background:transparent;
-  padding:0;font-family:inherit}
+.fi{flex:1;font-size:15px;color:var(--text);border:none;background:transparent;padding:0;font-family:inherit}
 .fi:focus{outline:none}
 .fi::placeholder{color:#ccc;font-style:italic}
 .fi-sm{font-size:14px}
@@ -116,14 +120,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .fn{font-size:11px;color:#bbb;margin-left:6px;flex-shrink:0}
 .in-row{display:flex;align-items:center;flex:1;gap:8px}
 .in-num{font-size:15px;font-weight:700;color:var(--text)}
-.in-suf{width:46px;border:1px solid var(--border);border-radius:6px;
-  padding:4px 8px;font-size:14px;color:#555;text-align:center;
-  background:#fafafa;font-family:inherit}
+.in-suf{width:46px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:14px;color:#555;text-align:center;background:#fafafa;font-family:inherit}
 .in-suf:focus{outline:none;border-color:var(--primary)}
 .vcard{background:#fff;border:1px solid #e8ecf2;border-radius:10px;margin:8px 14px;overflow:hidden}
-.vcard-hdr{background:var(--primary-light);padding:8px 12px;
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:12px;font-weight:800;color:var(--primary)}
+.vcard-hdr{background:var(--primary-light);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:var(--primary)}
 .rm-btn{background:none;border:none;color:#c62828;font-size:18px;cursor:pointer;padding:0 4px;line-height:1}
 .vr{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid #f8f8f8}
 .vr:last-child{border-bottom:none}
@@ -131,57 +131,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .vi{flex:1;font-size:13px;border:none;background:transparent;color:var(--text);font-family:inherit;padding:0}
 .vi:focus{outline:none}
 .vi::placeholder{color:#ccc;font-style:italic;font-size:12px}
-.add-btn{display:flex;align-items:center;justify-content:center;gap:6px;
-  margin:6px 14px 10px;padding:10px;border:1.5px dashed #ccd;border-radius:10px;
-  background:transparent;font-size:14px;color:#aaa;cursor:pointer;
-  width:calc(100% - 28px);font-family:inherit}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 14px 10px;padding:10px;border:1.5px dashed #ccd;border-radius:10px;background:transparent;font-size:14px;color:#aaa;cursor:pointer;width:calc(100% - 28px);font-family:inherit}
 .dtog{display:flex;flex:1;gap:8px}
-.dt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);
-  background:#fafafa;font-size:13px;font-weight:700;color:#888;
-  cursor:pointer;font-family:inherit;transition:all .15s}
+.dt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:#fafafa;font-size:13px;font-weight:700;color:#888;cursor:pointer;font-family:inherit;transition:all .15s}
 .dt.p-on{background:#003594;color:#fff;border-color:#003594}
 .dt.d-on{background:#722F37;color:#fff;border-color:#722F37}
 .wtog{display:flex;flex:1;gap:5px}
-.wt{flex:1;padding:6px 2px;border-radius:7px;border:1px solid var(--border);
-  background:#fafafa;font-size:11px;font-weight:700;color:#888;
-  cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
+.wt{flex:1;padding:6px 2px;border-radius:7px;border:1px solid var(--border);background:#fafafa;font-size:11px;font-weight:700;color:#888;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
 .wt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .opt{transition:opacity .2s}
-.tbar{background:var(--primary-dark);padding:14px 16px;
-  display:flex;justify-content:space-between;align-items:center;margin-top:8px;transition:background .3s}
+.tbar{background:var(--primary-dark);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;transition:background .3s}
 .tl{color:rgba(255,255,255,.7);font-size:14px}
 .ta{color:#fff;font-size:26px;font-weight:800}
 .abar{display:flex;gap:10px;padding:12px 14px;background:#fff;border-top:1px solid var(--border)}
-.abtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);
-  background:#fff;font-size:13px;font-weight:700;cursor:pointer;
-  font-family:inherit;display:flex;align-items:center;justify-content:center;
-  gap:6px;color:#444;transition:all .15s}
+.abtn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;color:#444;transition:all .15s}
 .abtn:active{transform:scale(.97)}
 .abtn.pri{background:var(--primary);color:#fff;border-color:var(--primary);transition:background .3s}
-.photo-row{display:flex;align-items:center;flex-wrap:wrap;
-  gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--faint)}
+.photo-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--faint)}
 .ph-lbl{font-size:12px;color:var(--muted);min-width:88px}
 .ph-list{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .ph-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
-.ph-add{width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  background:#fafafa;font-size:22px;color:#bbb;border:none}
+.ph-add{width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;font-size:22px;color:#bbb;border:none}
 .ph-input{display:none}
 .pl-sh{display:flex;align-items:center;gap:10px;padding:10px 16px 0;background:#fff}
 .pl-pill{padding:4px 14px;border-radius:16px;font-size:12px;font-weight:800;flex-shrink:0}
 .pp-p{background:#003594;color:#fff}.pp-d{background:#722F37;color:#fff}
-.ti{flex:1;font-size:15px;border:1px solid var(--border);border-radius:8px;
-  padding:6px 10px;background:#fafafa;font-family:inherit;color:var(--text)}
+.ti{flex:1;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fafafa;font-family:inherit;color:var(--text)}
 .ti:focus{outline:none;border-color:var(--primary)}
-.pb{background:var(--primary);color:#fff;padding:10px 14px;
-  display:flex;justify-content:space-between;align-items:center;transition:background .3s}
+.pb{background:var(--primary);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;transition:background .3s}
 .pb-txt{font-size:12px;opacity:.85}
 .pb-cnt{font-size:20px;font-weight:800}
-.gen-btn{background:#fff;color:var(--primary);border:none;border-radius:8px;
-  padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:color .3s}
+.gen-btn{background:#fff;color:var(--primary);border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:color .3s}
 .a-sh{padding:14px 16px 6px;font-size:11px;font-weight:800;color:#aaa;letter-spacing:.8px;text-transform:uppercase}
-.ar{background:#fff;display:flex;align-items:center;padding:14px 16px;
-  border-bottom:1px solid var(--faint);cursor:pointer;gap:14px}
+.ar{background:#fff;display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--faint);cursor:pointer;gap:14px}
 .ai{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .at{flex:1}
 .at-ttl{font-size:15px;font-weight:700;color:var(--text)}
@@ -189,18 +171,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .a-arr{color:#ddd;font-size:16px}
 .spill{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700}
 .sp-on{background:#E8F5E9;color:#2e7d32}.sp-off{background:#f0f0f0;color:#888}
-.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
-  background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:20px;
-  font-size:14px;font-weight:600;z-index:999;opacity:0;
-  transition:opacity .3s;white-space:nowrap;pointer-events:none}
+.dia-dash{background:#fff;margin:8px 12px;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.dia-dash-hdr{background:#4a1a1f;color:#fff;padding:8px 12px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.dia-dash-row{display:flex;justify-content:space-around;padding:10px 0;border-bottom:0.5px solid var(--faint)}
+.dia-dash-row:last-child{border-bottom:none}
+.dia-stat{text-align:center;flex:1}
+.dia-stat-num{font-size:20px;font-weight:800;color:var(--text)}
+.dia-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1}
 .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-end}
 .mo.open{display:flex}
 .ms{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:82vh;overflow-y:auto;padding:16px}
 .mh{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px}
 .mt{font-size:18px;font-weight:800;color:var(--text);margin-bottom:14px;text-align:center}
-.co{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:12px;
-  cursor:pointer;margin-bottom:8px;border:2px solid var(--faint);transition:all .15s}
+.co{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:12px;cursor:pointer;margin-bottom:8px;border:2px solid var(--faint);transition:all .15s}
 .co:active{transform:scale(.98)}
 .co.sel{border-color:var(--primary);background:var(--primary-light)}
 .co-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
@@ -234,7 +219,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <button class="ftab" onclick="setFilter('billed',this)">Billed</button>
       <button class="ftab" onclick="setFilter('paid',this)">Paid</button>
     </div>
+    <div class="sort-bar">
+      <span class="sort-lbl">Sort</span>
+      <button class="stab on" id="st-invnum" onclick="setSort('invnum')">Date ↓</button>
+      <button class="stab" id="st-cust" onclick="setSort('cust')">Customer</button>
+      <button class="stab" id="st-amt" onclick="setSort('amt')">Amount</button>
+      <button class="stab" id="st-status" onclick="setSort('status')">Status</button>
+      <button class="stab" id="st-driver" onclick="setSort('driver')">Driver</button>
+    </div>
     <div id="invoiceList"></div>
+    <div id="diaDashboard"></div>
   </div>
 
   <div class="sc" id="sc-form">
@@ -405,7 +399,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="a-sh">App Info</div>
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-      <div class="at"><div class="at-ttl">TripLog v1.5 (Cloud)</div><div class="at-sub">Card spacing · city abbrev · feedback area · auto-deploy</div></div>
+      <div class="at"><div class="at-ttl">TripLog v1.6 (Cloud)</div><div class="at-sub">Sort options · Inv # default · Diana dashboard</div></div>
     </div>
     <div style="height:20px"></div>
   </div>
@@ -441,14 +435,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 const firebaseConfig={apiKey:"AIzaSyApwbUUT_XeixGvxCduZ8iBkt7tdwvXdvQ",authDomain:"triplog-6b5ab.firebaseapp.com",projectId:"triplog-6b5ab",storageBucket:"triplog-6b5ab.firebasestorage.app",messagingSenderId:"895721792752",appId:"1:895721792752:web:8738716cbe13ded3130e35"};
 let db=null;
 function initFirebase(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();setupFirestoreListener();}catch(e){console.warn('Firebase init error:',e);updateSyncUI('offline');}}
-function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnapshot(function(snapshot){var cloud=[];snapshot.forEach(function(doc){cloud.push(doc.data());});if(cloud.length>0){cloud.sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});S.invoices=cloud;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));renderList();updatePLBanner();}updateSyncUI('synced');},function(err){console.warn('Firestore listener error:',err);updateSyncUI('offline');});}
+function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnapshot(function(snapshot){var cloud=[];snapshot.forEach(function(doc){cloud.push(doc.data());});if(cloud.length>0){cloud.sort(function(a,b){return(b.invNum||'').localeCompare(a.invNum||'');});S.invoices=cloud;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));renderList();updatePLBanner();renderDiaDashboard();}updateSyncUI('synced');},function(err){console.warn('Firestore listener error:',err);updateSyncUI('offline');});}
 function syncInvoice(inv){if(!db||!inv)return;db.collection('invoices').doc(inv.id).set(inv).catch(function(e){console.warn('Firestore sync error:',e);});}
 function deleteFromFirestore(id){if(!db)return;db.collection('invoices').doc(id).delete().catch(function(e){console.warn('Firestore delete error:',e);});}
 function updateSyncUI(status){var badge=document.getElementById('syncBadge');var sub=document.getElementById('syncSub');if(!badge)return;if(status==='synced'){badge.textContent='Synced';badge.className='spill sp-on';if(sub)sub.textContent='Cloud sync active · data backed up';}else{badge.textContent='Offline';badge.className='spill sp-off';if(sub)sub.textContent='No cloud connection · using local data';}}
 
-const S={user:'patrick',screen:'list',prevScreen:null,filter:'all',search:'',editId:null,invoices:[],customers:[],plWash:'none',plPatVehicleCount:1,plDiaVehicleCount:0,stdVehicleCount:1,stdDrivers:1};
+const S={
+  user:'patrick', screen:'list', prevScreen:null,
+  filter:'all', search:'', editId:null,
+  invoices:[], customers:[],
+  plWash:'none', plPatVehicleCount:1, plDiaVehicleCount:0,
+  stdVehicleCount:1, stdDrivers:1,
+  sortBy:'invnum', sortDir:'desc',
+};
 
-function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();setDate();setPLDate();addVehicle();addPLVehicle('pat');renderList();updatePLBanner();populateAutocomplete();document.getElementById('driverBar').style.display='flex';initFirebase();}
+function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();setDate();setPLDate();addVehicle();addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();document.getElementById('driverBar').style.display='flex';initFirebase();}
 function setDate(){const d=new Date();document.getElementById('tripDate').value=d.toISOString().split('T')[0];updateInvNum();}
 function setPLDate(){const d=new Date();document.getElementById('plDate').value=d.toISOString().split('T')[0];updatePLInvNum();}
 function loadData(){S.invoices=JSON.parse(localStorage.getItem('tl_inv')||'[]');S.customers=JSON.parse(localStorage.getItem('tl_cust')||'[]');}
@@ -465,7 +466,7 @@ function goScreen(name){
   if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.user==='patrick'?'Patrick':'Diana')+' Massengale</span>';}
   else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.user==='patrick'?'Patrick':'Diana')+' Massengale</span>';}
   document.getElementById('mainScroll').scrollTop=0;
-  if(name==='list'){S._filteredForDetail=null;renderList();}
+  if(name==='list'){S._filteredForDetail=null;renderList();renderDiaDashboard();}
   if(name==='pl')updatePLBanner();
   if(name==='admin')renderFeedback();
 }
@@ -520,12 +521,63 @@ function abbrevCity(city){if(!city)return '';const lc=city.toLowerCase().trim();
 function saveFeedback(){const input=document.getElementById('feedbackInput');const text=input.value.trim();if(!text){showToast('Enter feedback first');return;}const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');fb.unshift({text,ts:new Date().toLocaleString()});localStorage.setItem('tl_feedback',JSON.stringify(fb.slice(0,50)));input.value='';renderFeedback();showToast('Feedback saved');}
 function renderFeedback(){const el=document.getElementById('feedbackList');if(!el)return;const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');if(fb.length===0){el.innerHTML='';return;}el.innerHTML=fb.slice(0,5).map(f=>`<div style="border-top:0.5px solid var(--faint);padding:6px 0"><div style="font-size:11px;color:var(--muted)">${f.ts}</div><div style="font-size:13px;color:var(--text);margin-top:2px">${f.text}</div></div>`).join('');}
 
+// Diana visibility dashboard — shown to Patrick only, below invoice list
+function renderDiaDashboard(){
+  const el=document.getElementById('diaDashboard');
+  if(!el||S.user==='diana'){if(el)el.innerHTML='';return;}
+  const diaInvs=S.invoices.filter(i=>i.driver==='diana');
+  if(diaInvs.length===0){el.innerHTML='';return;}
+  const drafts=diaInvs.filter(i=>i.status==='draft').length;
+  const sent=diaInvs.filter(i=>i.status==='sent'||i.status==='ready').length;
+  const billed=diaInvs.filter(i=>i.status==='billed'||i.billed).length;
+  const unpaidAmt=diaInvs.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.total||0),0);
+  el.innerHTML=`<div class="dia-dash" style="margin-top:4px">
+    <div class="dia-dash-hdr">
+      <span>&#9670; Diana's Status</span>
+      <span style="font-size:11px;opacity:.7">${diaInvs.length} total trips</span>
+    </div>
+    <div class="dia-dash-row">
+      <div class="dia-stat"><div class="dia-stat-num" style="color:#444441">${drafts}</div><div class="dia-stat-lbl">Drafts</div></div>
+      <div class="dia-stat"><div class="dia-stat-num" style="color:#0C447C">${sent}</div><div class="dia-stat-lbl">Sent</div></div>
+      <div class="dia-stat"><div class="dia-stat-num" style="color:#27500A">${billed}</div><div class="dia-stat-lbl">Billed</div></div>
+      <div class="dia-stat"><div class="dia-stat-num" style="color:#c62828">$${unpaidAmt.toFixed(0)}</div><div class="dia-stat-lbl">Unpaid</div></div>
+    </div>
+  </div>`;
+}
+
 const CUST_CARD_STYLES={phillong:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',sub:'#3B6D11',div:'#C0DD97'},chalmers:{bg:'#E6F1FB',border:'#185FA5',text:'#042C53',sub:'#185FA5',div:'#85B7EB'},reliable:{bg:'#B5D4F4',border:'#0C447C',text:'#042C53',sub:'#0C447C',div:'#378ADD'}};
 function custStyle(custId){return CUST_CARD_STYLES[custId]||{bg:'#fff',border:'#888',text:'#333',sub:'#666',div:'#eee'};}
 function billedBadge(inv){if(inv.status==='paid')return {bg:'#CECBF6',color:'#26215C',label:'Paid'};if(inv.status==='draft')return {bg:'#D3D1C7',color:'#444441',label:'Draft'};if(inv.status==='sent'||inv.status==='ready')return {bg:'#B5D4F4',color:'#0C447C',label:'Sent'};if(inv.status==='billed'||inv.billed){const billedAt=inv.billedAt||inv.updatedAt||inv.createdAt||Date.now();const days=Math.floor((Date.now()-billedAt)/(1000*60*60*24));if(days>=30)return {bg:'#F7C1C1',color:'#791F1F',label:'Billed 30d+'};if(days>=14)return {bg:'#FAC775',color:'#633806',label:'Billed 2wk+'};return {bg:'#C0DD97',color:'#27500A',label:'Billed'};}return {bg:'#D3D1C7',color:'#444441',label:'Draft'};}
 
+function setSort(key){
+  if(S.sortBy===key){S.sortDir=S.sortDir==='desc'?'asc':'desc';}
+  else{S.sortBy=key;S.sortDir='desc';}
+  updateSortBar();renderList();
+}
+function updateSortBar(){
+  const keys=['invnum','cust','amt','status','driver'];
+  const labels={invnum:'Date',cust:'Customer',amt:'Amount',status:'Status',driver:'Driver'};
+  keys.forEach(k=>{
+    const btn=document.getElementById('st-'+k);if(!btn)return;
+    const on=S.sortBy===k;btn.classList.toggle('on',on);
+    btn.textContent=labels[k]+(on?(S.sortDir==='desc'?' ↓':' ↑'):'');
+  });
+}
+function sortInvoices(invs){
+  const dir=S.sortDir==='desc'?1:-1;
+  const SO={sent:1,ready:1,billed:2,draft:3,paid:4};
+  const byInv=(a,b)=>(b.invNum||'').localeCompare(a.invNum||'');
+  switch(S.sortBy){
+    case 'cust': return invs.sort((a,b)=>{const c=dir*(a.custName||'').localeCompare(b.custName||'');return c!==0?c:byInv(a,b);});
+    case 'amt':  return invs.sort((a,b)=>{const c=dir*((b.total||0)-(a.total||0));return c!==0?c:byInv(a,b);});
+    case 'status': return invs.sort((a,b)=>{const as=SO[a.status]||(a.billed?2:3);const bs=SO[b.status]||(b.billed?2:3);const c=dir*(as-bs);return c!==0?c:byInv(a,b);});
+    case 'driver': return invs.sort((a,b)=>{const c=dir*(a.driver||'').localeCompare(b.driver||'');return c!==0?c:byInv(a,b);});
+    default: return invs.sort((a,b)=>dir*(b.invNum||'').localeCompare(a.invNum||''));
+  }
+}
+
 function renderList(){
-  let invs=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+  let invs=sortInvoices([...S.invoices]);
   if(S.search)invs=invs.filter(i=>((i.invNum||'')+(i.custName||'')+(i.fromDealer||'')+(i.toName||'')+(i.toCity||'')+(i.fromCity||'')).toLowerCase().includes(S.search.toLowerCase())||(i.vehicles||[]).some(function(v){return((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase());})||(i.patVehicles||[]).some(function(v){return((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase());}));
   if(S.filter!=='all')invs=invs.filter(i=>S.filter==='billed'?(i.status==='billed'||i.billed):i.status===S.filter);
   const el=document.getElementById('invoiceList');
@@ -562,7 +614,7 @@ function openDetail(id){
   const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;
   const fmtDate=dObj?MONTHS[dObj.getMonth()]+' '+dObj.getDate()+', '+dObj.getFullYear():'';
   const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':'';
-  if(!S._filteredForDetail){S._filteredForDetail=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});}
+  if(!S._filteredForDetail){S._filteredForDetail=sortInvoices([...S.invoices]);}
   const detList=S._filteredForDetail;const detIdx=detList.findIndex(function(i){return i.id===id;});
   S._prevDetId=detIdx>0?detList[detIdx-1].id:null;S._nextDetId=detIdx<detList.length-1?detList[detIdx+1].id:null;S._detPos=(detIdx+1)+' of '+detList.length;
   let metaRows=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Inv&nbsp;#:&nbsp;&nbsp;</span><span style="text-align:right">${inv.invNum}</span></div>`;
