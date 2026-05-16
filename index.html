@@ -9,6 +9,8 @@
 <title>TripLog</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --primary:#003594;--primary-dark:#041E42;--primary-mid:#1a4a8a;
@@ -221,7 +223,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .ar{background:#fff;display:flex;align-items:center;padding:14px 16px;
   border-bottom:1px solid var(--faint);cursor:pointer;gap:14px}
 .ai{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0}
+  justify-content:20px;font-size:20px;flex-shrink:0}
 .at{flex:1}
 .at-ttl{font-size:15px;font-weight:700;color:var(--text)}
 .at-sub{font-size:12px;color:var(--muted);margin-top:2px}
@@ -683,21 +685,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       </div>
       <span class="a-arr">&#8250;</span>
     </div>
-    <div class="ar" onclick="showToast('Google Drive sync – coming next session (Firebase setup)')">
+    <div class="ar">
       <div class="ai" style="background:#E8F5E9;font-size:22px">&#9729;</div>
       <div class="at">
-        <div class="at-ttl">Google Drive backup <span class="spill sp-off">Not set up</span></div>
-        <div class="at-sub">Auto-saves every PDF · requires Firebase setup</div>
+        <div class="at-ttl">Cloud Sync <span class="spill sp-off" id="syncBadge">Connecting…</span></div>
+        <div class="at-sub" id="syncSub">Connecting to Firebase…</div>
       </div>
-      <span class="a-arr">&#8250;</span>
     </div>
 
     <div class="a-sh">App Info</div>
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:22px">&#8505;</div>
       <div class="at">
-        <div class="at-ttl">TripLog v1.2 (Local)</div>
-        <div class="at-sub">Data stored on this device · Firebase cloud sync coming next session</div>
+        <div class="at-ttl">TripLog v1.3 (Cloud)</div>
+        <div class="at-sub">Data synced to Firebase · works offline automatically</div>
       </div>
     </div>
 
@@ -761,6 +762,83 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
 <script>
 // ============================================================
+// FIREBASE
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyApwbUUT_XeixGvxCduZ8iBkt7tdwvXdvQ",
+  authDomain: "triplog-6b5ab.firebaseapp.com",
+  projectId: "triplog-6b5ab",
+  storageBucket: "triplog-6b5ab.firebasestorage.app",
+  messagingSenderId: "895721792752",
+  appId: "1:895721792752:web:8738716cbe13ded3130e35"
+};
+
+let db = null;
+
+function initFirebase(){
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    db.enablePersistence({synchronizeTabs:true}).catch(function(err){
+      console.warn('Firestore persistence:', err.code);
+    });
+    setupFirestoreListener();
+  } catch(e){
+    console.warn('Firebase init error:', e);
+    updateSyncUI('offline');
+  }
+}
+
+function setupFirestoreListener(){
+  if(!db) return;
+  db.collection('invoices').onSnapshot(function(snapshot){
+    var cloud = [];
+    snapshot.forEach(function(doc){ cloud.push(doc.data()); });
+    if(cloud.length > 0){
+      // Sort by createdAt descending to match expected order
+      cloud.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
+      S.invoices = cloud;
+      localStorage.setItem('tl_inv', JSON.stringify(S.invoices));
+      renderList();
+      updatePLBanner();
+    }
+    updateSyncUI('synced');
+  }, function(err){
+    console.warn('Firestore listener error:', err);
+    updateSyncUI('offline');
+  });
+}
+
+function syncInvoice(inv){
+  if(!db || !inv) return;
+  db.collection('invoices').doc(inv.id).set(inv).catch(function(e){
+    console.warn('Firestore sync error:', e);
+  });
+}
+
+function deleteFromFirestore(id){
+  if(!db) return;
+  db.collection('invoices').doc(id).delete().catch(function(e){
+    console.warn('Firestore delete error:', e);
+  });
+}
+
+function updateSyncUI(status){
+  var badge = document.getElementById('syncBadge');
+  var sub = document.getElementById('syncSub');
+  if(!badge) return;
+  if(status === 'synced'){
+    badge.textContent = 'Synced';
+    badge.className = 'spill sp-on';
+    if(sub) sub.textContent = 'Cloud sync active · data backed up';
+  } else {
+    badge.textContent = 'Offline';
+    badge.className = 'spill sp-off';
+    if(sub) sub.textContent = 'No cloud connection · using local data';
+  }
+}
+
+// ============================================================
 // STATE
 // ============================================================
 const S = {
@@ -801,6 +879,7 @@ function init(){
   updatePLBanner();
   populateAutocomplete();
   document.getElementById('driverBar').style.display = 'flex';
+  initFirebase();
 }
 
 function setDate(){
@@ -1224,12 +1303,13 @@ function saveInvoice(status){
 
   if(S.editId){
     const idx=S.invoices.findIndex(i=>i.id===S.editId);
-    if(idx>=0) S.invoices[idx]=inv;
+    if(idx>=0){ inv.createdAt=S.invoices[idx].createdAt||inv.createdAt; S.invoices[idx]=inv; }
   } else {
     S.invoices.unshift(inv);
   }
   updateAutocomplete(inv);
   save();
+  syncInvoice(inv);
   showToast(status==='draft'?'Draft saved':'Invoice saved');
   if(status==='ready'){
     setTimeout(()=>generateStdPDF(inv),400);
@@ -1302,6 +1382,7 @@ function savePLInvoice(status){
     S.invoices.unshift(inv);
   }
   save();
+  syncInvoice(inv);
   updatePLBanner();
   showToast(status==='draft'?'Draft saved':'Trip added to billing period');
   if(status==='ready'){
@@ -1423,7 +1504,7 @@ function generateStdPDF(inv){
   showToast('PDF saved: '+fname);
   // Mark as sent
   const idx=S.invoices.findIndex(i=>i.id===inv.id);
-  if(idx>=0){ S.invoices[idx].status='sent'; save(); renderList(); }
+  if(idx>=0){ S.invoices[idx].status='sent'; save(); syncInvoice(S.invoices[idx]); renderList(); }
 }
 
 // ============================================================
@@ -1438,7 +1519,11 @@ function generatePLCheckRequests(){
     if(withDiana.length>0) setTimeout(()=>generatePLPDF(withDiana,'Diana Massengale','diana'),800);
     unbilled.forEach(inv=>{
       const idx=S.invoices.findIndex(i=>i.id===inv.id);
-      if(idx>=0){ S.invoices[idx].billed=true; S.invoices[idx].status='billed'; }
+      if(idx>=0){
+        S.invoices[idx].billed=true;
+        S.invoices[idx].status='billed';
+        syncInvoice(S.invoices[idx]);
+      }
     });
     save(); updatePLBanner(); renderList();
     showToast('Check Requests generated!');
@@ -1651,7 +1736,6 @@ function openDetail(id){
 
   const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:60px;height:60px">`).join('');
 
-  // Store prev/next IDs as globals for nav buttons
   if(!S._filteredForDetail){S._filteredForDetail=[...S.invoices].sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});}
   const detList = S._filteredForDetail;
   const detIdx = detList.findIndex(function(i){return i.id===id;});
@@ -1700,14 +1784,19 @@ function markPaid(id){
   const idx=S.invoices.findIndex(i=>i.id===id);
   if(idx>=0){
     S.invoices[idx].status=S.invoices[idx].status==='paid'?'sent':'paid';
-    save(); openDetail(id); renderList();
+    save();
+    syncInvoice(S.invoices[idx]);
+    openDetail(id);
+    renderList();
   }
 }
 
 function deleteInvoice(id){
   if(confirm('Delete this invoice? This cannot be undone.')){
     S.invoices=S.invoices.filter(i=>i.id!==id);
-    save(); goScreen('list');
+    save();
+    deleteFromFirestore(id);
+    goScreen('list');
   }
 }
 
@@ -1745,7 +1834,7 @@ function openNewTripMenu(){ document.getElementById('newTripModal').classList.ad
 function closeNewTripModal(){ document.getElementById('newTripModal').classList.remove('open'); }
 
 // ============================================================
-// EXPORT CSV
+// EDIT FUNCTIONS
 // ============================================================
 function editInvoice(id){
   const inv=S.invoices.find(i=>i.id===id);
@@ -1775,28 +1864,24 @@ function editInvoice(id){
   S._filteredForDetail=null;
   goScreen('form');
 }
+
 function editPLInvoice(id){
   const inv=S.invoices.find(i=>i.id===id);
   if(!inv)return;
   S.editId=id;
-  // Date and invoice number
   document.getElementById('plDate').value=inv.date||'';
   const base=dateToInvNum(inv.date);
   const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';
   document.getElementById('plSuffix').value=suf;
   updatePLInvNum();
-  // Route
   document.getElementById('plFromCity').value=inv.fromCity||'';
   document.getElementById('plFromLoc').value=inv.fromLoc||'';
   document.getElementById('plToName').value=inv.toName||'';
-  // Fees
   document.getElementById('plPatMiles').value=inv.patMiles||'';
   document.getElementById('plPatFee').value=inv.patFee||'';
   document.getElementById('plDiaMiles').value=inv.diaMiles||'';
   document.getElementById('plDiaFee').value=inv.diaFee||'';
-  // Wash
   setWash(inv.wash||'none');
-  // Patrick vehicles
   document.getElementById('plPatVehicles').innerHTML='';
   S.plPatVehicleCount=0;
   (inv.patVehicles||[]).forEach(v=>{
@@ -1810,7 +1895,6 @@ function editPLInvoice(id){
     if(se)se.value=v.stk||'';
   });
   if((inv.patVehicles||[]).length===0) addPLVehicle('pat');
-  // Diana vehicles
   document.getElementById('plDiaVehicles').innerHTML='';
   S.plDiaVehicleCount=0;
   (inv.diaVehicles||[]).forEach(v=>{
@@ -1827,6 +1911,7 @@ function editPLInvoice(id){
   S._filteredForDetail=null;
   goScreen('pl');
 }
+
 function copyInvoice(id){
   const inv=S.invoices.find(i=>i.id===id);
   if(!inv)return;
@@ -1841,10 +1926,15 @@ function copyInvoice(id){
   document.getElementById('tripDate').value=`${y}-${m}-${d}`;
   showToast('Copied - update as needed');
 }
+
 function navDetail(dir){
   var id = dir<0?S._prevDetId:S._nextDetId;
   if(id) openDetail(id);
 }
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
 function exportCSV(){
   const headers=['Invoice #','Date','Customer','Type','Driver','From','To City','Vehicles',
     'Miles','Drive Fee','Drivers','Fuel','Meals','Wash','Other','Total','Status'];
