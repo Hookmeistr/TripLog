@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a4a8a"/>
+      <stop offset="100%" stop-color="#041E42"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <rect x="56" y="390" width="400" height="6" rx="3" fill="#869397" opacity="0.7"/>
+  <text x="256" y="340" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="260" text-anchor="middle" fill="white" letter-spacing="-16">TL</text>
+  <text x="256" y="460" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="52" text-anchor="middle" fill="#869397" letter-spacing="14">TRIPLOG</text>
+</svg>
