@@ -20,58 +20,32 @@
   --border:#E0E4EA;--text:#1a1a2e;--muted:#555;--faint:#f0f2f5;
   --success:#2e7d32;--warning:#b05c00;--danger:#c62828;
 }
-.diana-active{
-  --primary:#722F37;--primary-dark:#4a1a1f;--primary-mid:#8B3A44;
-  --primary-light:#FDF0F2;--accent:#C4687A;--surface:#FDF5F6;
-}
+.diana-active{--primary:#722F37;--primary-dark:#4a1a1f;--primary-mid:#8B3A44;--primary-light:#FDF0F2;--accent:#C4687A;--surface:#FDF5F6;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;height:-webkit-fill-available}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--surface);color:var(--text);
-  max-width:480px;margin:0 auto;
-  min-height:100vh;min-height:-webkit-fill-available;min-height:100dvh;
-  height:100dvh;overflow:hidden;display:flex;flex-direction:column}
-#app{display:flex;flex-direction:column;
-  height:100vh;height:-webkit-fill-available;height:100dvh;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--surface);color:var(--text);max-width:480px;margin:0 auto;min-height:100vh;min-height:-webkit-fill-available;min-height:100dvh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+#app{display:flex;flex-direction:column;height:100vh;height:-webkit-fill-available;height:100dvh;overflow:hidden}
 .app-bar{background:var(--primary-dark);flex-shrink:0;z-index:50;transition:background .3s}
 .ab-top{display:flex;align-items:center;padding:12px 14px 0;gap:10px}
 .ab-title{color:#fff;font-size:17px;font-weight:700;flex:1;letter-spacing:.2px}
 .ab-sub{font-size:11px;opacity:.65;font-weight:400;display:block;margin-top:1px}
-.ib{background:rgba(255,255,255,.15);border:none;border-radius:8px;
-  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:16px;cursor:pointer;flex-shrink:0}
+.ib{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0}
 .ib:active{background:rgba(255,255,255,.25)}
 .driver-bar{display:flex;padding:10px 14px 12px;gap:8px}
-.dc{flex:1;padding:7px 10px;border-radius:20px;font-size:13px;font-weight:700;
-  text-align:center;border:2px solid transparent;cursor:pointer;
-  background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);
-  font-family:inherit;transition:all .2s;letter-spacing:.3px}
+.dc{flex:1;padding:7px 10px;border-radius:20px;font-size:13px;font-weight:700;text-align:center;border:2px solid transparent;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:inherit;transition:all .2s;letter-spacing:.3px}
 .dc.pat-on{background:#003594;color:#fff;border-color:#5b8de8}
 .dc.dia-on{background:#722F37;color:#fff;border-color:#C4687A}
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:max(env(safe-area-inset-bottom,0px),24px)}
-.bnav{display:flex;background:#fff;border-top:1px solid var(--border);flex-shrink:0;
-  padding-bottom:max(env(safe-area-inset-bottom,0px),16px)}
-.nt{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 10px;
-  border:none;background:transparent;cursor:pointer;font-size:10px;font-weight:700;
-  color:#aaa;gap:3px;letter-spacing:.3px;border-top:2.5px solid transparent;
-  font-family:inherit;transition:all .15s}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(env(safe-area-inset-bottom,0px),24px)}
+.bnav{display:flex;background:#fff;border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(env(safe-area-inset-bottom,0px),16px)}
+.nt{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 10px;border:none;background:transparent;cursor:pointer;font-size:10px;font-weight:700;color:#aaa;gap:3px;letter-spacing:.3px;border-top:2.5px solid transparent;font-family:inherit;transition:all .15s}
 .nt.on{color:var(--primary);border-top-color:var(--primary)}
-.nt svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;
-  stroke-linecap:round;stroke-linejoin:round}
+.nt svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sc{display:none}.sc.on{display:block}
-.lhdr{display:flex;align-items:center;gap:8px;padding:10px 14px;
-  background:#fff;border-bottom:1px solid var(--border)}
-.sbox{flex:1;background:var(--faint);border:1px solid var(--border);border-radius:10px;
-  padding:8px 12px 8px 34px;font-size:14px;color:var(--text);font-family:inherit;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:10px center}
+.lhdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--border)}
+.sbox{flex:1;background:var(--faint);border:1px solid var(--border);border-radius:10px;padding:8px 12px 8px 34px;font-size:14px;color:var(--text);font-family:inherit;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
 .sbox:focus{outline:none;border-color:var(--primary)}
-.ftabs{display:flex;padding:8px 14px;gap:6px;overflow-x:auto;
-  background:#fff;border-bottom:1px solid var(--border)}
-.ftab{white-space:nowrap;padding:5px 13px;border-radius:16px;font-size:12px;
-  font-weight:700;border:1.5px solid var(--border);background:#fff;color:#555;
-  cursor:pointer;font-family:inherit;transition:all .15s}
+.ftabs{display:flex;padding:8px 14px;gap:6px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--border)}
+.ftab{white-space:nowrap;padding:5px 13px;border-radius:16px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:#fff;color:#555;cursor:pointer;font-family:inherit;transition:all .15s}
 .ftab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .sort-bar{display:flex;align-items:center;padding:5px 12px;gap:5px;overflow-x:auto;background:#f8f9fb;border-bottom:1px solid var(--border);scrollbar-width:none}
 .sort-bar::-webkit-scrollbar{display:none}
@@ -85,9 +59,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .pl-ps-sub{font-size:11px;color:#3B6D11;margin-left:4px}
 .pl-ps-amt{font-size:15px;font-weight:800;color:#27500A}
 .pl-ps-divider{border:none;border-top:1px solid #C0DD97;margin:6px 0}
-.inv-card2{border-left:4px solid #ccc;margin:6px 12px;border-radius:10px;
-  padding:8px 12px;cursor:pointer;transition:transform .1s;
-  box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.inv-card2{border-left:4px solid #ccc;margin:6px 12px;border-radius:10px;padding:8px 12px;cursor:pointer;transition:transform .1s;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .inv-card2:active{transform:scale(.98)}
 .ic2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
 .ic2-cust{font-size:13px;font-weight:700;flex:1;padding-right:8px}
@@ -101,29 +73,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .sbadge{font-size:12px;padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block}
 .empty{text-align:center;padding:60px 20px;color:#888}
 .empty p{font-size:15px;margin-top:10px}
-.fab{position:fixed;bottom:calc(76px + max(env(safe-area-inset-bottom,0px),16px));
-  right:16px;width:56px;height:56px;border-radius:28px;
-  background:var(--primary);color:#fff;border:none;font-size:30px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:40;transition:background .3s}
+.fab{position:fixed;bottom:calc(76px + max(env(safe-area-inset-bottom,0px),16px));right:16px;width:56px;height:56px;border-radius:28px;background:var(--primary);color:#fff;border:none;font-size:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:40;transition:background .3s}
 .fab:active{transform:scale(.95)}
 .cust-bar{background:var(--primary-dark);padding:0 14px 12px;transition:background .3s}
-.cust-sel-btn{width:100%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);
-  border-radius:10px;padding:10px 14px;color:#fff;font-size:15px;font-weight:700;
-  display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit}
-.sh{background:var(--primary-light);padding:6px 16px;font-size:11px;
-  font-weight:800;color:var(--primary);letter-spacing:.8px;text-transform:uppercase;
-  border-top:1px solid rgba(0,0,0,.06);transition:all .3s}
+.cust-sel-btn{width:100%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 14px;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit}
+.sh{background:var(--primary-light);padding:6px 16px;font-size:11px;font-weight:800;color:var(--primary);letter-spacing:.8px;text-transform:uppercase;border-top:1px solid rgba(0,0,0,.06);transition:all .3s}
 .fg{background:#fff;margin-bottom:1px}
-.fr{display:flex;align-items:center;padding:10px 16px;
-  border-bottom:1px solid var(--faint);min-height:46px}
+.fr{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--faint);min-height:46px}
 .fr:last-child{border-bottom:none}
-.fl{font-size:12px;color:#555;min-width:88px;flex-shrink:0;line-height:1.3}
-.fi{flex:1;font-size:15px;color:var(--text);border:none;background:transparent;padding:0;font-family:inherit}
+.fl{font-size:12px;color:#555;min-width:82px;flex-shrink:0;line-height:1.3}
+.fl2{font-size:11px;color:#aaa;min-width:82px;flex-shrink:0;line-height:1.3}
+.fi{flex:1;font-size:15px;color:var(--text);border:none;background:transparent;padding:0;font-family:inherit;min-width:0}
 .fi:focus{outline:none}
 .fi::placeholder{color:#aaa;font-style:italic}
 .fi-sm{font-size:14px}
-.tel{color:var(--primary);font-size:15px;text-decoration:none;display:flex;align-items:center;gap:6px}
+.fi-tel{font-size:13px;color:var(--primary);border-left:1px solid var(--faint);padding-left:6px;min-width:0}
 .fn{font-size:11px;color:#666;margin-left:6px;flex-shrink:0}
 .in-row{display:flex;align-items:center;flex:1;gap:8px}
 .in-num{font-size:15px;font-weight:700;color:var(--text)}
@@ -135,7 +99,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .vr{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid #f8f8f8}
 .vr:last-child{border-bottom:none}
 .vl{font-size:11px;color:#555;min-width:88px;flex-shrink:0}
-.vi{flex:1;font-size:13px;border:none;background:transparent;color:var(--text);font-family:inherit;padding:0}
+.vi{flex:1;font-size:13px;border:none;background:transparent;color:var(--text);font-family:inherit;padding:0;min-width:0}
 .vi:focus{outline:none}
 .vi::placeholder{color:#aaa;font-style:italic;font-size:12px}
 .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 14px 10px;padding:10px;border:1.5px dashed #ccd;border-radius:10px;background:transparent;font-size:14px;color:#666;cursor:pointer;width:calc(100% - 28px);font-family:inherit}
@@ -155,10 +119,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .abtn:active{transform:scale(.97)}
 .abtn.pri{background:var(--primary);color:#fff;border-color:var(--primary);transition:background .3s}
 .photo-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--faint)}
-.ph-lbl{font-size:12px;color:#555;min-width:88px}
+.ph-lbl{font-size:12px;color:#555;min-width:82px}
 .ph-list{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .ph-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
-.ph-add{width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;font-size:22px;color:#bbb;border:none}
+.ph-add{display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;color:#bbb;border:none;background:none}
 .ph-input{display:none}
 .pl-sh{display:flex;align-items:center;gap:8px;padding:10px 16px 0;background:#fff}
 .pl-pill{padding:4px 14px;border-radius:16px;font-size:12px;font-weight:800;flex-shrink:0}
@@ -172,7 +136,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .pb{background:var(--primary-dark);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;transition:background .3s}
 .pb-txt{font-size:12px;color:rgba(255,255,255,.85)}
 .pb-cnt{font-size:20px;font-weight:800}
-.gen-btn{background:#fff;color:var(--primary);border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:color .3s}
+.gen-btn{background:#fff;color:var(--primary);border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
 .a-sh{padding:14px 16px 6px;font-size:11px;font-weight:800;color:#555;letter-spacing:.8px;text-transform:uppercase}
 .ar{background:#fff;display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--faint);cursor:pointer;gap:14px}
 .ai{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -201,8 +165,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .co-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
 .co-name{font-size:16px;font-weight:700;color:var(--text)}
 .co-rate{font-size:12px;color:#555;margin-top:2px}
-.icon-btn{background:none;border:none;padding:0 4px;font-size:16px;cursor:pointer;color:#555;flex-shrink:0;line-height:1}
+.icon-btn{background:none;border:none;padding:0 3px;font-size:15px;cursor:pointer;color:#555;flex-shrink:0;line-height:1}
 .icon-btn:active{color:var(--primary)}
+.phone-icon{background:none;border:none;padding:0 3px;font-size:15px;cursor:pointer;color:var(--primary);flex-shrink:0;line-height:1}
 .dist-badge{font-size:11px;color:var(--primary);background:var(--primary-light);border-radius:10px;padding:2px 8px;margin-left:6px;display:none}
 .dflt-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700;color:#555;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;margin-left:4px}
 .dflt-btn:active{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
@@ -232,9 +197,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <div class="scroll" id="mainScroll">
 
   <div class="sc on" id="sc-list">
-    <div class="lhdr">
-      <input class="sbox" type="search" placeholder="Search invoices…" oninput="filterList(this.value)">
-    </div>
+    <div class="lhdr"><input class="sbox" type="search" placeholder="Search invoices…" oninput="filterList(this.value)"></div>
     <div class="ftabs">
       <button class="ftab on" onclick="setFilter('all',this)">All</button>
       <button class="ftab" onclick="setFilter('draft',this)">Drafts</button>
@@ -273,12 +236,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     </div>
     <div class="sh">From (Origin / Dealer)</div>
     <div class="fg">
-      <div class="fr"><span class="fl">Dealer name</span><input class="fi" id="fromDealer" placeholder="e.g. Reliable Chevrolet" list="dealerHist"><datalist id="dealerHist"></datalist></div>
-      <div class="fr"><span class="fl">Contact</span><input class="fi" id="fromContact" placeholder="Contact name" list="contactHist"><datalist id="contactHist"></datalist></div>
-      <div class="fr"><span class="fl">Phone</span>
-        <a class="tel" id="fromPhoneLink" href="#"><span>&#128222;</span>
-          <input class="fi" id="fromPhone" placeholder="Contact phone" type="tel" style="color:var(--primary)" oninput="updatePhoneLink('fromPhone','fromPhoneLink')"></a>
-        <button class="icon-btn" onclick="pickContact('fromContact','fromPhone')" title="Pick from contacts">&#128101;</button></div>
+      <div class="fr"><span class="fl">Dealer</span><input class="fi" id="fromDealer" placeholder="e.g. Reliable Chevrolet" list="dealerHist"><datalist id="dealerHist"></datalist></div>
+      <div class="fr" style="min-height:40px">
+        <span class="fl">Contact 1</span>
+        <input class="fi" id="fromContact" placeholder="Name" list="contactHist" style="flex:2">
+        <datalist id="contactHist"></datalist>
+        <input class="fi fi-tel" id="fromPhone" type="tel" placeholder="Phone" style="flex:1.5">
+        <button class="phone-icon" onclick="dialPhone('fromPhone')" title="Call">&#128222;</button>
+        <button class="icon-btn" onclick="pickContact('fromContact','fromPhone')" title="Pick contact">&#128101;</button>
+      </div>
+      <div class="fr" style="min-height:38px;padding-top:6px;padding-bottom:6px">
+        <span class="fl2">Contact 2</span>
+        <input class="fi fi-sm" id="fromContact2" placeholder="Name (optional)" list="contactHist2" style="flex:2">
+        <datalist id="contactHist2"></datalist>
+        <input class="fi fi-tel" id="fromPhone2" type="tel" placeholder="Phone" style="flex:1.5">
+        <button class="phone-icon" onclick="dialPhone('fromPhone2')" title="Call">&#128222;</button>
+        <button class="icon-btn" onclick="pickContact('fromContact2','fromPhone2')" title="Pick contact">&#128101;</button>
+      </div>
       <div class="fr"><span class="fl">City</span>
         <input class="fi" id="fromCity" placeholder="Origin city" autocomplete="off" oninput="scheduleDistCalc()">
         <button class="icon-btn" onclick="useMyLocation()" title="Use my location">&#128205;</button>
@@ -287,11 +261,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     </div>
     <div class="sh">To (Delivery Destination)</div>
     <div class="fg">
-      <div class="fr"><span class="fl">Recipient</span><input class="fi" id="toName" placeholder="Name / business" list="recipHist"><datalist id="recipHist"></datalist></div>
-      <div class="fr"><span class="fl">Phone</span>
-        <a class="tel" id="toPhoneLink" href="#"><span>&#128222;</span>
-          <input class="fi" id="toPhone" placeholder="Recipient phone" type="tel" style="color:var(--primary)" oninput="updatePhoneLink('toPhone','toPhoneLink')"></a>
-        <button class="icon-btn" onclick="pickContact('toName','toPhone')" title="Pick from contacts">&#128101;</button></div>
+      <div class="fr" style="min-height:40px">
+        <span class="fl">Recipient 1</span>
+        <input class="fi" id="toName" placeholder="Name / business" list="recipHist" style="flex:2">
+        <datalist id="recipHist"></datalist>
+        <input class="fi fi-tel" id="toPhone" type="tel" placeholder="Phone" style="flex:1.5">
+        <button class="phone-icon" onclick="dialPhone('toPhone')" title="Call">&#128222;</button>
+        <button class="icon-btn" onclick="pickContact('toName','toPhone')" title="Pick contact">&#128101;</button>
+      </div>
+      <div class="fr" style="min-height:38px;padding-top:6px;padding-bottom:6px">
+        <span class="fl2">Recipient 2</span>
+        <input class="fi fi-sm" id="toName2" placeholder="Name (optional)" list="recipHist2" style="flex:2">
+        <datalist id="recipHist2"></datalist>
+        <input class="fi fi-tel" id="toPhone2" type="tel" placeholder="Phone" style="flex:1.5">
+        <button class="phone-icon" onclick="dialPhone('toPhone2')" title="Call">&#128222;</button>
+        <button class="icon-btn" onclick="pickContact('toName2','toPhone2')" title="Pick contact">&#128101;</button>
+      </div>
       <div class="fr"><span class="fl">Address</span><input class="fi fi-sm" id="toAddress" placeholder="Full delivery address" autocomplete="off" oninput="scheduleDistCalc()"></div>
       <div class="fr"><span class="fl">City, State</span><input class="fi" id="toCity" placeholder="City, State ZIP" autocomplete="off" oninput="scheduleDistCalc()"></div>
     </div>
@@ -313,7 +298,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <div class="fr"><span class="fl">Fuel</span><input class="fi" id="fuel" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()" autocomplete="off"><span class="fn">receipt</span></div>
       <div class="fr opt" id="mealsRow"><span class="fl">Meals</span><input class="fi" id="meals" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()" autocomplete="off"></div>
       <div class="fr opt" id="washRow"><span class="fl">Wash</span><input class="fi" id="wash" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()" autocomplete="off"></div>
-      <div class="fr opt" id="otherRow"><span class="fl">Other</span><input class="fi" id="otherAmt" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()" autocomplete="off"><input class="fi" id="otherDesc" placeholder="describe" style="max-width:120px;font-size:12px;margin-left:6px"></div>
+      <div class="fr opt" id="otherRow"><span class="fl">Other</span><input class="fi" id="otherAmt" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()" autocomplete="off"><input class="fi" id="otherDesc" placeholder="describe" style="max-width:110px;font-size:12px;margin-left:6px"></div>
     </div>
     <div class="sh">Receipts / Photos</div>
     <div class="photo-row"><span class="ph-lbl">Attach</span>
@@ -322,7 +307,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
           &#128247;<input type="file" class="ph-input" accept="image/*" capture="environment" onchange="addPhoto(this)" multiple></label></div></div>
     <div class="fr" style="background:#fff"><span class="fl">Receipt total</span><input class="fi" id="receiptTotal" type="number" step=".01" placeholder="Enter total manually" oninput="calcTotal()" autocomplete="off"><span class="fn">incl. in fuel</span></div>
     <div class="tbar" id="tbarStd"><span class="tl">Total Due</span><span class="ta" id="totalDisplay">$0.00</span></div>
-    <div class="fr" style="background:#fff;border-top:1px solid var(--border)"><span class="fl" style="font-size:11px;color:#666">Notes (internal)</span><input class="fi" id="invoiceNotes" placeholder="Optional notes…" style="font-size:13px"></div>
+    <div class="fr" style="background:#fff;border-top:1px solid var(--border)"><span class="fl" style="font-size:11px;color:#666">Notes</span><input class="fi" id="invoiceNotes" placeholder="Optional internal notes…" style="font-size:13px"></div>
     <div class="abar">
       <button class="abtn" onclick="saveInvoice('draft')">&#128190; Save draft</button>
       <button class="abtn pri" onclick="saveInvoice('ready')">&#9654; Save &amp; PDF</button>
@@ -369,7 +354,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="fg">
       <div class="fr"><span class="fl">Patrick miles</span>
         <input class="fi" id="plPatMiles" type="number" step="0.01" placeholder="454.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700" autocomplete="off">
-        <button class="dflt-btn" onclick="setPLDefault('pat')" title="Save as default miles for Patrick">★ Default</button>
+        <button class="dflt-btn" onclick="setPLDefault('pat')">★ Default</button>
       </div>
       <div class="fr"><span class="fl">Patrick fee</span>
         <span class="dollar-pre">$</span>
@@ -378,7 +363,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       </div>
       <div class="fr" id="plDiaMilesRow"><span class="fl">Diana miles</span>
         <input class="fi" id="plDiaMiles" type="number" step="0.01" placeholder="454.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700" autocomplete="off">
-        <button class="dflt-btn" onclick="setPLDefault('dia')" title="Save as default miles for Diana">★ Default</button>
+        <button class="dflt-btn" onclick="setPLDefault('dia')">★ Default</button>
       </div>
       <div class="fr" id="plDiaFeeRow"><span class="fl">Diana fee</span>
         <span class="dollar-pre">$</span>
@@ -462,7 +447,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="a-sh">App Info</div>
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-      <div class="at"><div class="at-ttl">TripLog v2.0 (Cloud)</div><div class="at-sub">Chase driver · Stock autofill · Vehicle numbering fix · Readability</div></div>
+      <div class="at"><div class="at-ttl">TripLog v2.1 (Cloud)</div><div class="at-sub">2 contacts per dealer/recipient · Veh renumber · Phone fix · No USA suffix</div></div>
     </div>
     <div style="height:20px"></div>
   </div>
@@ -489,7 +474,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <button class="fab" id="fab" onclick="openNewTripMenu()">&#43;</button>
 
 <div class="mo" id="custModal"><div class="ms"><div class="mh"></div><div class="mt">Select Customer</div><div id="custOptions"></div><button class="abtn" onclick="closeCustModal()" style="margin-top:10px;width:100%">Cancel</button></div></div>
-
 <div class="mo" id="newTripModal"><div class="ms"><div class="mh"></div><div class="mt">New Trip</div>
   <div class="co" onclick="newStandardInvoice();closeNewTripModal()"><div class="co-dot" style="background:#2e7d32"></div><div><div class="co-name">Standard Invoice</div><div class="co-rate">Reliable, Chalmers, ABQ Auto Deals, other dealers</div></div></div>
   <div class="co" id="plNewTripOption" onclick="goScreen('pl');closeNewTripModal()"><div class="co-dot" style="background:#1c6ea4"></div><div><div class="co-name">Phil Long Ford</div><div class="co-rate">Adds to current billing period</div></div></div>
@@ -499,17 +483,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   <div class="ms">
     <div class="mh"></div>
     <div class="mt">&#128663; Welcome to TripLog</div>
-    <p style="font-size:13px;color:#555;text-align:center;margin-bottom:16px">Enter your full name to get started. This identifies you in all trip records.</p>
+    <p style="font-size:13px;color:#555;text-align:center;margin-bottom:16px">Enter your full name to get started.</p>
     <input id="driverRegInput" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:15px;font-family:inherit;margin-bottom:12px;color:var(--text)" placeholder="Your full name (e.g. Steve Goodhue)">
     <div class="reg-warning">
       <input type="checkbox" id="driverRegCheck" style="margin-top:2px;flex-shrink:0;width:16px;height:16px">
-      <label for="driverRegCheck" style="font-size:12px;color:#444;line-height:1.5">I understand that my name <strong>cannot be changed</strong> after registration. Choose carefully.</label>
+      <label for="driverRegCheck" style="font-size:12px;color:#444;line-height:1.5">I understand my name <strong>cannot be changed</strong> after registration.</label>
     </div>
     <div id="driverRegMsg" style="font-size:12px;color:#c62828;margin-bottom:10px;min-height:16px;text-align:center"></div>
     <button onclick="submitDriverReg()" class="abtn pri" style="width:100%">Register &amp; Start</button>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -517,22 +500,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 const firebaseConfig={apiKey:"AIzaSyApwbUUT_XeixGvxCduZ8iBkt7tdwvXdvQ",authDomain:"triplog-6b5ab.firebaseapp.com",projectId:"triplog-6b5ab",storageBucket:"triplog-6b5ab.firebasestorage.app",messagingSenderId:"895721792752",appId:"1:895721792752:web:8738716cbe13ded3130e35"};
 let db=null;
 function initFirebase(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();setupFirestoreListener();}catch(e){console.warn('Firebase init error:',e);updateSyncUI('offline');}}
-function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnapshot(function(snapshot){var cloud=[];snapshot.forEach(function(doc){cloud.push(doc.data());});if(cloud.length>0){cloud.sort(function(a,b){return(b.invNum||'').localeCompare(a.invNum||'');});S.invoices=cloud;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));renderList();updatePLBanner();renderDiaDashboard();}updateSyncUI('synced');},function(err){console.warn('Firestore listener error:',err);updateSyncUI('offline');});}
-function syncInvoice(inv){if(!db||!inv)return;db.collection('invoices').doc(inv.id).set(inv).catch(function(e){console.warn('Firestore sync error:',e);});}
-function deleteFromFirestore(id){if(!db)return;db.collection('invoices').doc(id).delete().catch(function(e){console.warn('Firestore delete error:',e);});}
-function updateSyncUI(status){var badge=document.getElementById('syncBadge');var sub=document.getElementById('syncSub');if(!badge)return;if(status==='synced'){badge.textContent='Synced';badge.className='spill sp-on';if(sub)sub.textContent='Cloud sync active · data backed up';}else{badge.textContent='Offline';badge.className='spill sp-off';if(sub)sub.textContent='No cloud connection · using local data';}}
+function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnapshot(function(snap){var cloud=[];snap.forEach(d=>cloud.push(d.data()));if(cloud.length>0){cloud.sort((a,b)=>(b.invNum||'').localeCompare(a.invNum||''));S.invoices=cloud;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));renderList();updatePLBanner();renderDiaDashboard();}updateSyncUI('synced');},function(err){console.warn('Firestore error:',err);updateSyncUI('offline');});}
+function syncInvoice(inv){if(!db||!inv)return;db.collection('invoices').doc(inv.id).set(inv).catch(e=>console.warn('Sync error:',e));}
+function deleteFromFirestore(id){if(!db)return;db.collection('invoices').doc(id).delete().catch(e=>console.warn('Delete error:',e));}
+function updateSyncUI(s){const b=document.getElementById('syncBadge'),sub=document.getElementById('syncSub');if(!b)return;if(s==='synced'){b.textContent='Synced';b.className='spill sp-on';if(sub)sub.textContent='Cloud sync active · data backed up';}else{b.textContent='Offline';b.className='spill sp-off';if(sub)sub.textContent='No cloud connection · using local data';}}
 
 // ── GOOGLE MAPS ───────────────────────────────────────────────────────
-let mapsReady=false;let distService=null;let geocoder=null;let distTimer=null;
+let mapsReady=false,distService=null,geocoder=null,distTimer=null;
+function stripUSA(s){// Remove ", USA" or " USA" suffix Google appends
+  if(!s)return s;
+  if(s.endsWith(', USA'))return s.slice(0,-5);
+  if(s.endsWith(' USA'))return s.slice(0,-4);
+  return s;
+}
 function initMaps(){mapsReady=true;distService=new google.maps.DistanceMatrixService();geocoder=new google.maps.Geocoder();setupAC('fromCity',{types:['(cities)'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('toCity',{types:['(cities)'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('toAddress',{types:['address'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('plFromCity',{types:['(cities)'],componentRestrictions:{country:'us'}},null);const ms=document.getElementById('mapsStatus');if(ms){ms.textContent='Active';ms.className='spill sp-on';}}
-function setupAC(id,opts,cb){const el=document.getElementById(id);if(!el)return;try{const ac=new google.maps.places.Autocomplete(el,opts);ac.addListener('place_changed',()=>{if(cb)cb();});}catch(e){}}
+function setupAC(id,opts,cb){const el=document.getElementById(id);if(!el)return;try{const ac=new google.maps.places.Autocomplete(el,opts);ac.addListener('place_changed',()=>{el.value=stripUSA(el.value);if(cb)cb();});}catch(e){}}
 function scheduleDistCalc(){clearTimeout(distTimer);distTimer=setTimeout(calcDistanceIfReady,1200);}
 function calcDistanceIfReady(){if(!mapsReady||!distService)return;const fromCity=document.getElementById('fromCity').value.trim();const fromDealer=document.getElementById('fromDealer').value.trim();const toAddr=document.getElementById('toAddress').value.trim();const toCity=document.getElementById('toCity').value.trim();const origin=fromCity||(fromDealer?fromDealer+', NM':'');const dest=toAddr||toCity;if(!origin||!dest)return;distService.getDistanceMatrix({origins:[origin],destinations:[dest],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.IMPERIAL},(resp,status)=>{if(status!=='OK')return;const el=resp.rows[0]?.elements[0];if(el?.status==='OK'){const miles=Math.round(el.distance.value/1609.34);const mEl=document.getElementById('totalMiles');if(mEl&&!mEl.value){mEl.value=miles;calcTotal();}const badge=document.getElementById('distBadge');if(badge){badge.textContent='~'+miles+' mi';badge.style.display='inline-block';}showToast('Distance: ~'+miles+' miles');}});}
 function useMyLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city){document.getElementById('fromCity').value=city;scheduleDistCalc();}showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
 function usePLLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city)document.getElementById('plFromCity').value=city;showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
 
+// ── PHONE – no anchor tags, just direct dial ──────────────────────────
+function dialPhone(inputId){const val=(document.getElementById(inputId)||{}).value||'';const clean=val.replace(/\D/g,'');if(clean.length>=10)window.location.href='tel:'+clean;else showToast('No valid phone entered');}
+
 // ── CONTACT PICKER ────────────────────────────────────────────────────
-async function pickContact(nameId,phoneId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];if(nameId&&c.name?.[0])document.getElementById(nameId).value=c.name[0];if(phoneId&&c.tel?.[0]){const ph=c.tel[0].replace(/\D/g,'');document.getElementById(phoneId).value=ph;const linkId=phoneId+'Link';if(document.getElementById(linkId))updatePhoneLink(phoneId,linkId);}}}catch(e){showToast('Could not open contacts');}}
+async function pickContact(nameId,phoneId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];if(nameId&&c.name?.[0])document.getElementById(nameId).value=c.name[0];if(phoneId&&c.tel?.[0]){const ph=c.tel[0].replace(/\D/g,'');document.getElementById(phoneId).value=ph;}}}catch(e){showToast('Could not open contacts');}}
 
 // ── DRIVER REGISTRATION ───────────────────────────────────────────────
 const RESERVED_NAMES=['patrick','patrick massengale','diana','diana massengale'];
@@ -549,72 +541,49 @@ function fmtMoney(n){return '$'+Number(n).toLocaleString('en-US',{minimumFractio
 function fmtField(el){const v=parseFloat(el.value);if(!isNaN(v))el.value=v.toFixed(2);}
 
 // ── STOCK # AUTOFILL FROM VIN ─────────────────────────────────────────
-// Stock = optional 2-alpha prefix + last 5 chars of 8-char VIN (positions 3-7)
-function checkStkAutofill(stkEl, vinEl, dlId){
-  const dl=document.getElementById(dlId);
-  if(!dl||!stkEl||!vinEl)return;
+function checkStkAutofill(stkEl,vinEl,dlId){
+  const dl=document.getElementById(dlId);if(!dl||!stkEl||!vinEl)return;
   dl.innerHTML='';
-  const vin=vinEl.value.trim().toUpperCase();
-  if(vin.length<8)return;
-  const stk=stkEl.value;
-  if(!stk)return;
-  // Parse: leading alpha chars + first digit onwards
-  const m=stk.match(/^([A-Za-z]*)(\d[\dA-Za-z]*)$/);
-  if(!m)return;
-  const prefix=m[1];
-  const digitPart=m[2].toUpperCase();
-  const vinLast5=vin.slice(3); // chars 3..7 = last 5
+  const vin=vinEl.value.trim().toUpperCase();if(vin.length<8)return;
+  const stk=stkEl.value;if(!stk)return;
+  const m=stk.match(/^([A-Za-z]*)(\d[\dA-Za-z]*)$/);if(!m)return;
+  const prefix=m[1];const digitPart=m[2].toUpperCase();
+  const vinLast5=vin.slice(3);
   if(!vinLast5.startsWith(digitPart))return;
-  if(digitPart===vinLast5)return; // already complete
+  if(digitPart===vinLast5)return;
   const suggestion=prefix+vinLast5;
   if(suggestion.toUpperCase()===stk.toUpperCase())return;
-  const opt=document.createElement('option');
-  opt.value=suggestion;
-  dl.appendChild(opt);
+  const opt=document.createElement('option');opt.value=suggestion;dl.appendChild(opt);
 }
 function stkKeydown(e,stkEl,dlId){
-  const dl=document.getElementById(dlId);
-  if(!dl||!dl.firstElementChild)return;
-  if(e.key==='Tab'||e.key==='Enter'){
-    const opt=dl.firstElementChild;
-    if(opt&&opt.value&&stkEl.value.toUpperCase()!==opt.value.toUpperCase()){
-      e.preventDefault();
-      stkEl.value=opt.value;
-      dl.innerHTML='';
-    }
-  }
+  const dl=document.getElementById(dlId);if(!dl||!dl.firstElementChild)return;
+  if(e.key==='Tab'||e.key==='Enter'){const opt=dl.firstElementChild;if(opt&&opt.value&&stkEl.value.toUpperCase()!==opt.value.toUpperCase()){e.preventDefault();stkEl.value=opt.value;dl.innerHTML='';}}
+}
+
+// ── VEHICLE RENUMBERING ───────────────────────────────────────────────
+function renumberVehicles(){
+  const cards=[...document.querySelectorAll('#vehicleList .vcard')];
+  cards.forEach((card,i)=>{const hdr=card.querySelector('.vcard-hdr');if(!hdr)return;const rmBtn=hdr.querySelector('.rm-btn');hdr.textContent='Vehicle '+(i+1);if(rmBtn)hdr.appendChild(rmBtn);});
+}
+function renumberPLVehicles(who){
+  const cId=who==='pat'?'plPatVehicles':'plDiaVehicles';
+  const label=who==='pat'?'Patrick':'Diana';
+  const cards=[...document.querySelectorAll('#'+cId+' .vcard')];
+  cards.forEach((card,i)=>{const hdr=card.querySelector('.vcard-hdr');if(!hdr)return;const rmBtn=hdr.querySelector('.rm-btn');hdr.textContent=label+' \u2013 Vehicle '+(i+1);if(rmBtn)hdr.appendChild(rmBtn);});
 }
 
 // ── CHASE DRIVER ──────────────────────────────────────────────────────
 function togglePLChase(who){
-  if(who==='pat'){
-    S.plPatChase=!S.plPatChase;
-    document.getElementById('plPatVehicles').style.display=S.plPatChase?'none':'';
-    document.getElementById('addPatVehBtn').style.display=S.plPatChase?'none':'';
-    document.getElementById('patChaseIndicator').style.display=S.plPatChase?'block':'none';
-    const btn=document.getElementById('patChaseBtn');
-    if(btn)btn.classList.toggle('chase-on',S.plPatChase);
-  }else{
-    S.plDiaChase=!S.plDiaChase;
-    document.getElementById('plDiaVehicles').style.display=S.plDiaChase?'none':'';
-    document.getElementById('addDiaBtnPL').style.display=S.plDiaChase?'none':'';
-    document.getElementById('diaChaseIndicator').style.display=S.plDiaChase?'block':'none';
-    const btn=document.getElementById('diaChaseBtn');
-    if(btn)btn.classList.toggle('chase-on',S.plDiaChase);
-  }
+  if(who==='pat'){S.plPatChase=!S.plPatChase;document.getElementById('plPatVehicles').style.display=S.plPatChase?'none':'';document.getElementById('addPatVehBtn').style.display=S.plPatChase?'none':'';document.getElementById('patChaseIndicator').style.display=S.plPatChase?'block':'none';document.getElementById('patChaseBtn')?.classList.toggle('chase-on',S.plPatChase);}
+  else{S.plDiaChase=!S.plDiaChase;document.getElementById('plDiaVehicles').style.display=S.plDiaChase?'none':'';document.getElementById('addDiaBtnPL').style.display=S.plDiaChase?'none':'';document.getElementById('diaChaseIndicator').style.display=S.plDiaChase?'block':'none';document.getElementById('diaChaseBtn')?.classList.toggle('chase-on',S.plDiaChase);}
 }
 function toggleStdChase(n){
-  const btn=document.getElementById('chase-'+n);
-  const fields=document.getElementById('veh-fields-'+n);
-  if(!btn||!fields)return;
-  const isChase=btn.textContent==='No';
-  btn.textContent=isChase?'Yes':'No';
-  btn.classList.toggle('chase-on',isChase);
-  fields.style.display=isChase?'none':'';
+  const btn=document.getElementById('chase-'+n);const fields=document.getElementById('veh-fields-'+n);if(!btn||!fields)return;
+  const isChase=btn.textContent==='No';btn.textContent=isChase?'Yes':'No';btn.classList.toggle('chase-on',isChase);fields.style.display=isChase?'none':'';
 }
 
 // ── CUSTOMER BILLING CONTACTS ─────────────────────────────────────────
-function renderCustMgmt(){const el=document.getElementById('custMgmtList');if(!el)return;el.innerHTML=S.customers.map(c=>`<div class="cust-billing-card"><div class="cust-billing-title" style="color:${c.color}">${c.name}</div><div class="cust-billing-row"><span class="cust-billing-lbl">Billing name</span><input class="cust-billing-input" value="${c.billingContact?.name||''}" placeholder="Contact name" onchange="updateCustBilling('${c.id}','name',this.value)"></div><div class="cust-billing-row"><span class="cust-billing-lbl">Phone</span><input class="cust-billing-input" type="tel" value="${c.billingContact?.phone||''}" placeholder="Phone number" onchange="updateCustBilling('${c.id}','phone',this.value)"><button class="icon-btn" onclick="pickContactForBilling('${c.id}')" title="Pick from contacts">&#128101;</button></div><div class="cust-billing-row"><span class="cust-billing-lbl">Address</span><input class="cust-billing-input" value="${c.billingContact?.address||''}" placeholder="Billing address" onchange="updateCustBilling('${c.id}','address',this.value)"></div></div>`).join('');}
+function renderCustMgmt(){const el=document.getElementById('custMgmtList');if(!el)return;el.innerHTML=S.customers.map(c=>`<div class="cust-billing-card"><div class="cust-billing-title" style="color:${c.color}">${c.name}</div><div class="cust-billing-row"><span class="cust-billing-lbl">Billing name</span><input class="cust-billing-input" value="${c.billingContact?.name||''}" placeholder="Contact name" onchange="updateCustBilling('${c.id}','name',this.value)"></div><div class="cust-billing-row"><span class="cust-billing-lbl">Phone</span><input class="cust-billing-input" type="tel" value="${c.billingContact?.phone||''}" placeholder="Phone number" onchange="updateCustBilling('${c.id}','phone',this.value)"><button class="icon-btn" onclick="pickContactForBilling('${c.id}')">&#128101;</button></div><div class="cust-billing-row"><span class="cust-billing-lbl">Address</span><input class="cust-billing-input" value="${c.billingContact?.address||''}" placeholder="Billing address" onchange="updateCustBilling('${c.id}','address',this.value)"></div></div>`).join('');}
 function updateCustBilling(custId,field,value){const idx=S.customers.findIndex(c=>c.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};S.customers[idx].billingContact[field]=value;save();showToast('Saved');}
 async function pickContactForBilling(custId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];const idx=S.customers.findIndex(cu=>cu.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};if(c.name?.[0])S.customers[idx].billingContact.name=c.name[0];if(c.tel?.[0])S.customers[idx].billingContact.phone=c.tel[0];save();renderCustMgmt();showToast('Contact saved');}}catch(e){showToast('Could not open contacts');}}
 
@@ -642,12 +611,13 @@ function updatePLInvNum(){const base=dateToInvNum(document.getElementById('plDat
 function addVehicle(){
   S.stdVehicleCount++;
   const n=S.stdVehicleCount;
-  const vinId='vin-'+n;const ymmId='ymm-'+n;const stkId='stk-'+n;const dlId='dl-std-'+n;
-  // Pre-fill YMM from vehicle 1 if adding vehicle 2+
-  const firstYmm=n>1?(document.getElementById('ymm-1')?.value||''):'';
-  const div=document.createElement('div');
-  div.className='vcard';div.id='veh-'+n;
-  div.innerHTML=`<div class="vcard-hdr">Vehicle ${n}<button class="rm-btn" onclick="removeVehicle(${n})">&#10005;</button></div>
+  const existingCards=document.querySelectorAll('#vehicleList .vcard');
+  const displayNum=existingCards.length+1;
+  let firstYmm='';
+  if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="ymm-"]');firstYmm=yEl?yEl.value:'';}
+  const vinId='vin-'+n,ymmId='ymm-'+n,stkId='stk-'+n,dlId='dl-std-'+n;
+  const div=document.createElement('div');div.className='vcard';div.id='veh-'+n;
+  div.innerHTML=`<div class="vcard-hdr">Vehicle ${displayNum}<button class="rm-btn" onclick="removeVehicle(${n})">&#10005;</button></div>
     <div class="vr"><span class="vl">Chase driver</span><button class="chase-btn" id="chase-${n}" onclick="toggleStdChase(${n})">No</button></div>
     <div id="veh-fields-${n}">
       <div class="vr"><span class="vl">VIN # (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div>
@@ -656,22 +626,20 @@ function addVehicle(){
     </div>`;
   document.getElementById('vehicleList').appendChild(div);
 }
-function removeVehicle(n){const el=document.getElementById('veh-'+n);if(el)el.remove();}
+function removeVehicle(n){const el=document.getElementById('veh-'+n);if(el){el.remove();renumberVehicles();}}
 
 function addPLVehicle(who){
   const key=who==='pat'?'plPatVehicles':'plDiaVehicles';
   const count=who==='pat'?++S.plPatVehicleCount:++S.plDiaVehicleCount;
-  const vinId=`pl-vin-${who}-${count}`;
-  const ymmId=`pl-ymm-${who}-${count}`;
-  const stkId=`pl-stk-${who}-${count}`;
-  const dlId=`pl-dl-${who}-${count}`;
-  // Pre-fill YMM from vehicle 1 of same driver
-  const firstYmm=count>1?(document.getElementById(`pl-ymm-${who}-1`)?.value||''):'';
-  const hdrBg=who==='pat'?'#E8EDF5':'#FDF0F2';
-  const hdrColor=who==='pat'?'#003594':'#722F37';
-  const div=document.createElement('div');
-  div.className='vcard';div.id=`pl-${who}-${count}`;
-  div.innerHTML=`<div class="vcard-hdr" style="background:${hdrBg};color:${hdrColor}">${who==='pat'?'Patrick':'Diana'} – Vehicle ${count}<button class="rm-btn" onclick="this.closest('.vcard').remove()">&#10005;</button></div>
+  const existingCards=document.querySelectorAll('#'+key+' .vcard');
+  const displayNum=existingCards.length+1;
+  let firstYmm='';
+  if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="pl-ymm-'+who+'"]');firstYmm=yEl?yEl.value:'';}
+  const vinId=`pl-vin-${who}-${count}`,ymmId=`pl-ymm-${who}-${count}`,stkId=`pl-stk-${who}-${count}`,dlId=`pl-dl-${who}-${count}`;
+  const hdrBg=who==='pat'?'#E8EDF5':'#FDF0F2';const hdrColor=who==='pat'?'#003594':'#722F37';
+  const label=who==='pat'?'Patrick':'Diana';
+  const div=document.createElement('div');div.className='vcard';div.id=`pl-${who}-${count}`;
+  div.innerHTML=`<div class="vcard-hdr" style="background:${hdrBg};color:${hdrColor}">${label} \u2013 Vehicle ${displayNum}<button class="rm-btn" onclick="this.closest('.vcard').remove();renumberPLVehicles('${who}')">&#10005;</button></div>
     <div class="vr"><span class="vl">VIN out (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div>
     <div class="vr"><span class="vl">&nbsp;Year / Make / Model / Color</span><input class="vi" id="${ymmId}" placeholder="Year Make Model Color" value="${firstYmm}" style="padding-left:6px"></div>
     <div class="vr"><span class="vl">Stock #</span><input class="vi" id="${stkId}" placeholder="Stock number" list="${dlId}" onkeydown="stkKeydown(event,this,'${dlId}')"><datalist id="${dlId}"></datalist></div>`;
@@ -680,14 +648,13 @@ function addPLVehicle(who){
 
 let selectedCustomerId=null;
 function newStandardInvoice(){S.editId=null;selectedCustomerId=null;clearStdForm();document.getElementById('selectedCustName').textContent='Select Customer ›';goScreen('form');updateInvNum();}
-function clearStdForm(){['fromDealer','fromContact','fromPhone','fromCity','toName','toPhone','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;addVehicle();setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;font-size:22px;color:#bbb;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center">&#128247;<input type="file" class="ph-input" accept="image/*" capture="environment" onchange="addPhoto(this)" multiple></label>`;const b=document.getElementById('distBadge');if(b)b.style.display='none';}
+function clearStdForm(){['fromDealer','fromContact','fromContact2','fromPhone','fromPhone2','fromCity','toName','toName2','toPhone','toPhone2','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;addVehicle();setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb">&#128247;<input type="file" class="ph-input" accept="image/*" capture="environment" onchange="addPhoto(this)" multiple></label>`;const b=document.getElementById('distBadge');if(b)b.style.display='none';}
 function openCustModal(){const el=document.getElementById('custOptions');el.innerHTML=S.customers.filter(c=>c.id!=='phillong').map(c=>`<div class="co ${selectedCustomerId===c.id?'sel':''}" onclick="selectCustomer('${c.id}')"><div class="co-dot" style="background:${c.color}"></div><div><div class="co-name">${c.name}</div><div class="co-rate">${c.billing==='mileage'?'$'+c.ratePerMile+'/mile':c.billing==='hourly'?'$'+c.hourlyRate+'/hour':c.billing==='flat'?'Rate':'Manual billing'}</div></div></div>`).join('')+`<div class="co" onclick="selectCustomer('custom')"><div class="co-dot" style="background:#888"></div><div><div class="co-name">Other / New Customer</div><div class="co-rate">Enter manually</div></div></div>`;document.getElementById('custModal').classList.add('open');}
 function closeCustModal(){document.getElementById('custModal').classList.remove('open');}
 function selectCustomer(id){selectedCustomerId=id;const cust=S.customers.find(c=>c.id===id);if(cust){document.getElementById('selectedCustName').textContent=cust.name+' ›';const isChalmers=id==='chalmers';const isMarco=id==='marco';document.getElementById('timeRow').style.display=isChalmers?'flex':'none';document.getElementById('returnRow').style.display=isChalmers?'flex':'none';document.getElementById('hoursRow').style.display=isChalmers?'flex':'none';document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display='flex';document.getElementById('feeNote').textContent=isChalmers?'hrs × $25':isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='ABQ Auto Deals';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='none';document.getElementById('returnRow').style.display='none';document.getElementById('hoursRow').style.display='none';}closeCustModal();calcTotal();}
 function setDrivers(n){S.stdDrivers=n;document.getElementById('dt1').className='dt '+(n===1?'p-on':'');document.getElementById('dt2').className='dt '+(n===2?'d-on':'');calcTotal();}
 function calcChalmersHours(){const dep=document.getElementById('departTime').value;const ret=document.getElementById('returnTime').value;if(!dep||!ret)return;const [dh,dm]=dep.split(':').map(Number);const [rh,rm]=ret.split(':').map(Number);let mins=(rh*60+rm)-(dh*60+dm);if(mins<0)mins+=1440;document.getElementById('hoursWorked').value=(Math.round(mins/15)*0.25).toFixed(2);calcTotal();}
 function calcTotal(){const cust=S.customers.find(c=>c.id===selectedCustomerId);let fee=0;if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.round(miles*(cust.ratePerMile||0.50)/5)*5;if(auto>0&&!document.getElementById('driveFee').value)document.getElementById('driveFee').value=auto.toFixed(2);fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}else if(cust&&cust.billing==='hourly'){const hrs=parseFloat(document.getElementById('hoursWorked').value)||0;const auto=((hrs*(cust.hourlyRate||25)).toFixed(2));document.getElementById('driveFee').value=auto;fee=parseFloat(auto)||0;if(S.stdDrivers===2)fee*=2;}else{fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;document.getElementById('totalDisplay').textContent=fmtMoney(fee+fuel+meals+wash+other);}
-function updatePhoneLink(inputId,linkId){const val=document.getElementById(inputId).value.replace(/\D/g,'');document.getElementById(linkId).href=val.length>=10?'tel:'+val:'#';}
 
 function addPhoto(input){Array.from(input.files).forEach(file=>{const reader=new FileReader();reader.onload=e=>{const original=new Image();original.onload=()=>{const MAX=800;let w=original.width,h=original.height;if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(original,0,0,w,h);const compressed=canvas.toDataURL('image/jpeg',0.70);const img=document.createElement('img');img.src=compressed;img.className='ph-thumb';img.onclick=()=>{if(confirm('Remove this receipt?'))img.remove();};document.getElementById('photoList').insertBefore(img,document.querySelector('label.ph-add'));};original.src=e.target.result;};reader.readAsDataURL(file);});}
 
@@ -705,153 +672,132 @@ function collectVehicles(){
 function collectPLVehicles(who){const vehs=[];document.querySelectorAll(`[id^="pl-${who}-"]`).forEach(card=>{const n=card.id.split('-')[2];const vin=(document.getElementById(`pl-vin-${who}-${n}`)||{}).value||'';const ymm=(document.getElementById(`pl-ymm-${who}-${n}`)||{}).value||'';const stk=(document.getElementById(`pl-stk-${who}-${n}`)||{}).value||'';if(vin||ymm||stk)vehs.push({vin,ymm,stk});});return vehs;}
 function getPhotos(){const imgs=[];document.querySelectorAll('#photoList img.ph-thumb').forEach(img=>imgs.push(img.src));return imgs;}
 
-function saveInvoice(status){const cust=S.customers.find(c=>c.id===selectedCustomerId)||{id:'other',name:document.getElementById('fromDealer').value||'Other',color:'#888',short:'Other'};const dateVal=document.getElementById('tripDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('invSuffix').value.trim();const invNum=base+(suf||'');const driveFee=parseFloat(document.getElementById('driveFee').value)||0;const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;const drivers=S.isOwner?S.stdDrivers:1;const driverField=S.isOwner?S.user:(S.driverName||S.user);const total=(driveFee*drivers)+fuel+meals+wash+other;const inv={id:S.editId||('inv-'+Date.now()),invNum,date:dateVal,custId:cust.id,custName:cust.name,custColor:cust.color,custShort:cust.short||cust.name,type:'standard',driver:driverField,fromDealer:document.getElementById('fromDealer').value,fromContact:document.getElementById('fromContact').value,fromPhone:document.getElementById('fromPhone').value,fromCity:document.getElementById('fromCity').value,toName:document.getElementById('toName').value,toPhone:document.getElementById('toPhone').value,toAddress:document.getElementById('toAddress').value,toCity:document.getElementById('toCity').value,dealNum:document.getElementById('dealNum').value,vehicles:collectVehicles(),drivers,totalMiles:parseFloat(document.getElementById('totalMiles').value)||0,driveFee,fuel,meals,wash,other,otherDesc:document.getElementById('otherDesc').value,notes:document.getElementById('invoiceNotes').value,photos:getPhotos(),total:parseFloat(total.toFixed(2)),status:status==='draft'?'draft':'sent',createdAt:Date.now(),updatedAt:Date.now()};if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0){inv.createdAt=S.invoices[idx].createdAt||inv.createdAt;S.invoices[idx]=inv;}}else{S.invoices.unshift(inv);}updateAutocomplete(inv);save();syncInvoice(inv);showToast(status==='draft'?'Draft saved':'Invoice saved');if(status==='ready')setTimeout(()=>generateStdPDF(inv),400);goScreen('list');}
+function saveInvoice(status){
+  const cust=S.customers.find(c=>c.id===selectedCustomerId)||{id:'other',name:document.getElementById('fromDealer').value||'Other',color:'#888',short:'Other'};
+  const dateVal=document.getElementById('tripDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('invSuffix').value.trim();const invNum=base+(suf||'');
+  const driveFee=parseFloat(document.getElementById('driveFee').value)||0;const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;
+  const drivers=S.isOwner?S.stdDrivers:1;const driverField=S.isOwner?S.user:(S.driverName||S.user);
+  const total=(driveFee*drivers)+fuel+meals+wash+other;
+  const inv={id:S.editId||('inv-'+Date.now()),invNum,date:dateVal,custId:cust.id,custName:cust.name,custColor:cust.color,custShort:cust.short||cust.name,type:'standard',driver:driverField,fromDealer:document.getElementById('fromDealer').value,fromContact:document.getElementById('fromContact').value,fromContact2:document.getElementById('fromContact2').value,fromPhone:document.getElementById('fromPhone').value,fromPhone2:document.getElementById('fromPhone2').value,fromCity:document.getElementById('fromCity').value,toName:document.getElementById('toName').value,toName2:document.getElementById('toName2').value,toPhone:document.getElementById('toPhone').value,toPhone2:document.getElementById('toPhone2').value,toAddress:document.getElementById('toAddress').value,toCity:document.getElementById('toCity').value,dealNum:document.getElementById('dealNum').value,vehicles:collectVehicles(),drivers,totalMiles:parseFloat(document.getElementById('totalMiles').value)||0,driveFee,fuel,meals,wash,other,otherDesc:document.getElementById('otherDesc').value,notes:document.getElementById('invoiceNotes').value,photos:getPhotos(),total:parseFloat(total.toFixed(2)),status:status==='draft'?'draft':'sent',createdAt:Date.now(),updatedAt:Date.now()};
+  if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0){inv.createdAt=S.invoices[idx].createdAt||inv.createdAt;S.invoices[idx]=inv;}}else{S.invoices.unshift(inv);}
+  updateAutocomplete(inv);save();syncInvoice(inv);showToast(status==='draft'?'Draft saved':'Invoice saved');
+  if(status==='ready')setTimeout(()=>generateStdPDF(inv),400);
+  goScreen('list');
+}
 
 function calcPLTotal(){const patFee=parseFloat(document.getElementById('plPatFee').value)||0;const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;let wash=0;if(S.plWash==='patrick'||S.plWash==='both')wash+=10;if(S.plWash==='diana'||S.plWash==='both')wash+=10;document.getElementById('plTotalDisplay').textContent=fmtMoney(patFee+diaFee+wash);}
 function setWash(who){S.plWash=who;['None','Pat','Dia','Both'].forEach((w,i)=>{document.getElementById(['wNone','wPat','wDia','wBoth'][i]).classList.toggle('on',['none','patrick','diana','both'][i]===who);});calcPLTotal();}
 
 function savePLInvoice(status){
-  const dateVal=document.getElementById('plDate').value;
-  const base=dateToInvNum(dateVal);const suf=document.getElementById('plSuffix').value.trim();const invNum=base+(suf||'');
-  const patFee=parseFloat(document.getElementById('plPatFee').value)||0;
-  const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;
-  const patMiles=parseFloat(document.getElementById('plPatMiles').value)||0;
-  const diaMiles=parseFloat(document.getElementById('plDiaMiles').value)||0;
-  let washPat=0,washDia=0;
-  if(S.plWash==='patrick'||S.plWash==='both')washPat=10;
-  if(S.plWash==='diana'||S.plWash==='both')washDia=10;
+  const dateVal=document.getElementById('plDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('plSuffix').value.trim();const invNum=base+(suf||'');
+  const patFee=parseFloat(document.getElementById('plPatFee').value)||0;const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;const patMiles=parseFloat(document.getElementById('plPatMiles').value)||0;const diaMiles=parseFloat(document.getElementById('plDiaMiles').value)||0;
+  let washPat=0,washDia=0;if(S.plWash==='patrick'||S.plWash==='both')washPat=10;if(S.plWash==='diana'||S.plWash==='both')washDia=10;
   const inv={id:S.editId||('pl-'+Date.now()),invNum,date:dateVal,custId:'phillong',custName:'Phil Long Ford',custColor:'#1c6ea4',custShort:'PhilLong',type:'phillong',driver:S.user,fromCity:document.getElementById('plFromCity').value,fromLoc:document.getElementById('plFromLoc').value,toName:document.getElementById('plToName').value,patVehicles:collectPLVehicles('pat'),diaVehicles:collectPLVehicles('dia'),patChase:S.plPatChase||false,diaChase:S.plDiaChase||false,patMiles,patFee,diaMiles,diaFee,wash:S.plWash,washPat,washDia,total:parseFloat((patFee+diaFee+washPat+washDia).toFixed(2)),status:status==='draft'?'draft':'ready',billed:false,createdAt:S.editId?((S.invoices.find(i=>i.id===S.editId)||{}).createdAt||Date.now()):Date.now(),updatedAt:Date.now()};
-  if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0)S.invoices[idx]=inv;S.editId=null;}
-  else{S.invoices.unshift(inv);}
-  save();syncInvoice(inv);updatePLBanner();
-  showToast(status==='draft'?'Draft saved':'Trip added to billing period');
-  if(status==='ready')clearPLForm();
-  goScreen('list');
+  if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0)S.invoices[idx]=inv;S.editId=null;}else{S.invoices.unshift(inv);}
+  save();syncInvoice(inv);updatePLBanner();showToast(status==='draft'?'Draft saved':'Trip added to billing period');if(status==='ready')clearPLForm();goScreen('list');
 }
 
 function clearPLForm(){
   ['plFromCity','plFromLoc','plToName'].forEach(id=>{document.getElementById(id).value='';});
-  document.getElementById('plPatMiles').value=getPLDefault('pat').toFixed(2);
-  document.getElementById('plDiaMiles').value=getPLDefault('dia').toFixed(2);
-  document.getElementById('plPatFee').value='160.00';
-  document.getElementById('plDiaFee').value='160.00';
-  document.getElementById('plPatVehicles').innerHTML='';
-  document.getElementById('plDiaVehicles').innerHTML='';
-  S.plPatVehicleCount=0;S.plDiaVehicleCount=0;
-  // Reset chase state
-  if(S.plPatChase){togglePLChase('pat');}
-  if(S.plDiaChase){togglePLChase('dia');}
-  addPLVehicle('pat');
-  setWash('none');
-  document.getElementById('plSuffix').value='';
-  setPLDate();
-  document.getElementById('plTotalDisplay').textContent='$0.00';
+  document.getElementById('plPatMiles').value=getPLDefault('pat').toFixed(2);document.getElementById('plDiaMiles').value=getPLDefault('dia').toFixed(2);document.getElementById('plPatFee').value='160.00';document.getElementById('plDiaFee').value='160.00';
+  document.getElementById('plPatVehicles').innerHTML='';document.getElementById('plDiaVehicles').innerHTML='';S.plPatVehicleCount=0;S.plDiaVehicleCount=0;
+  if(S.plPatChase)togglePLChase('pat');if(S.plDiaChase)togglePLChase('dia');
+  addPLVehicle('pat');setWash('none');document.getElementById('plSuffix').value='';setPLDate();document.getElementById('plTotalDisplay').textContent='$0.00';
 }
 
 function updatePLBanner(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');const diaCount=unbilled.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase).length;document.getElementById('plUnbilledCount').textContent=`${unbilled.length} trip${unbilled.length!==1?'s':''} · ${diaCount} with Diana`;}
 
-// ── PHIL LONG IN-PERIOD SUMMARY ───────────────────────────────────────
-// Only shows when filter = 'inperiod'
-// Counts: invoices + vehicles/trips separately for Patrick and Diana
 function renderPLPeriodSummary(){
-  const el=document.getElementById('plPeriodSummary');
-  if(!el)return;
+  const el=document.getElementById('plPeriodSummary');if(!el)return;
   if(S.filter!=='inperiod'){el.innerHTML='';return;}
   const inPeriod=S.invoices.filter(i=>i.type==='phillong'&&i.status==='ready'&&!i.billed);
   if(inPeriod.length===0){el.innerHTML='<div class="pl-period-summary" style="text-align:center;color:#3B6D11;font-size:13px">No In Period trips</div>';return;}
-  // Patrick: on all in-period invoices
-  const patInvCount=inPeriod.length;
-  const patTripCount=inPeriod.reduce((s,i)=>s+(i.patChase?1:(i.patVehicles||[]).length),0);
-  const patTotal=inPeriod.reduce((s,i)=>(i.patFee||0)+(i.washPat||0)+s,0);
-  // Diana: invoices where she has vehicles or is chase
-  const diaInvs=inPeriod.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);
-  const diaInvCount=diaInvs.length;
-  const diaTripCount=diaInvs.reduce((s,i)=>s+(i.diaChase?1:(i.diaVehicles||[]).length),0);
-  const diaTotal=diaInvs.reduce((s,i)=>(i.diaFee||0)+(i.washDia||0)+s,0);
+  const patInvCount=inPeriod.length;const patTripCount=inPeriod.reduce((s,i)=>s+(i.patChase?1:(i.patVehicles||[]).length),0);const patTotal=inPeriod.reduce((s,i)=>(i.patFee||0)+(i.washPat||0)+s,0);
+  const diaInvs=inPeriod.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);const diaInvCount=diaInvs.length;const diaTripCount=diaInvs.reduce((s,i)=>s+(i.diaChase?1:(i.diaVehicles||[]).length),0);const diaTotal=diaInvs.reduce((s,i)=>(i.diaFee||0)+(i.washDia||0)+s,0);
   const grandTotal=patTotal+diaTotal;
-  let html=`<div class="pl-period-summary">
-    <div class="pl-ps-title">&#9670; Phil Long — In Period</div>
-    <div class="pl-ps-row">
-      <span class="pl-ps-lbl">Patrick <span class="pl-ps-sub">${patInvCount} inv · ${patTripCount} trip${patTripCount!==1?'s':''}</span></span>
-      <span class="pl-ps-amt">${fmtMoney(patTotal)}</span>
-    </div>`;
-  if(diaInvCount>0){
-    html+=`<div class="pl-ps-row">
-      <span class="pl-ps-lbl">Diana <span class="pl-ps-sub">${diaInvCount} inv · ${diaTripCount} trip${diaTripCount!==1?'s':''}</span></span>
-      <span class="pl-ps-amt">${fmtMoney(diaTotal)}</span>
-    </div>`;
-  }
+  let html=`<div class="pl-period-summary"><div class="pl-ps-title">&#9670; Phil Long — In Period</div>
+    <div class="pl-ps-row"><span class="pl-ps-lbl">Patrick <span class="pl-ps-sub">${patInvCount} inv · ${patTripCount} trip${patTripCount!==1?'s':''}</span></span><span class="pl-ps-amt">${fmtMoney(patTotal)}</span></div>`;
+  if(diaInvCount>0)html+=`<div class="pl-ps-row"><span class="pl-ps-lbl">Diana <span class="pl-ps-sub">${diaInvCount} inv · ${diaTripCount} trip${diaTripCount!==1?'s':''}</span></span><span class="pl-ps-amt">${fmtMoney(diaTotal)}</span></div>`;
   html+=`<hr class="pl-ps-divider"><div class="pl-ps-row"><span class="pl-ps-lbl" style="font-weight:800">Total to bill</span><span class="pl-ps-amt" style="font-size:17px">${fmtMoney(grandTotal)}</span></div></div>`;
   el.innerHTML=html;
 }
 
-function fmtPDFAmt(doc,amt,x,y){const str=Number(amt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});doc.text('$'+str,x,y,{align:'right'});}
-
-function generateStdPDF(inv){const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60,lh=18;let y=60;const dateObj=new Date(inv.date+'T12:00:00');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`${months[dateObj.getMonth()]} ${dateObj.getDate()}, ${inv.fromCity||inv.toCity||''}`,L,y);y+=lh;doc.text('Invoice #: '+inv.invNum,L,y);y+=lh*1.8;const driverName=inv.driver==='diana'?'Diana Massengale':inv.driver==='patrick'?'Patrick Massengale':(inv.driver||'Driver');doc.setFontSize(12);doc.setFont('helvetica','normal');doc.text(driverName,L,y);y+=lh;doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);y+=lh;doc.text('505-203-1872',L,y);y+=lh*1.8;doc.text('From:  '+(inv.fromDealer||'')+(inv.fromContact?' - '+inv.fromContact:''),L,y);y+=lh*1.8;doc.text('To: '+(inv.toName||''),L,y);y+=lh;if(inv.toPhone){doc.text(inv.toPhone,L,y);y+=lh;}if(inv.toAddress){doc.text(inv.toAddress,L,y);y+=lh;}if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(inv.toCity,L,y);y+=lh;}y+=lh*0.5;if(inv.dealNum){doc.text('Deal #: '+inv.dealNum,L,y);y+=lh;}(inv.vehicles||[]).forEach(v=>{if(v.chase){doc.text('Chase Driver',L,y);y+=lh;}else{if(v.vin){doc.text('VIN#:  '+v.vin+(v.ymm?' '+v.ymm:''),L,y);y+=lh;}if(v.stk){doc.text('Stock # : '+v.stk,L,y);y+=lh;}}});y+=lh*0.5;if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh;}const feeAmt=Number(inv.driveFee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});let feeText='Driving Fee: $'+feeAmt;if(inv.drivers===2){const total2=(inv.driveFee*2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});feeText+=' × 2 Drivers = $'+total2;}doc.text(feeText,L,y);y+=lh;if(inv.meals>0){doc.text('Meals: $'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.wash>0){doc.text('Wash: $'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.fuel>0){doc.text('Fuel: $'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.other>0){doc.text((inv.otherDesc||'Other')+': $'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.drivers===2){y+=lh*0.5;doc.setFont('helvetica','italic');doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');y+=lh;}y+=lh;doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Total Due This Invoice: '+fmtMoney(inv.total),L,y);if(inv.photos&&inv.photos.length>0){y+=lh*2;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Receipts attached:',L,y);y+=lh;let px=L;inv.photos.forEach(src=>{try{doc.addImage(src,'JPEG',px,y,120,80);px+=130;if(px>450){px=L;y+=90;}}catch(e){}});}const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;doc.save(fname);showToast('PDF saved: '+fname);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].status='sent';save();syncInvoice(S.invoices[idx]);renderList();}}
+function generateStdPDF(inv){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60,lh=18;let y=60;
+  const dateObj=new Date(inv.date+'T12:00:00');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`${months[dateObj.getMonth()]} ${dateObj.getDate()}, ${inv.fromCity||inv.toCity||''}`,L,y);y+=lh;doc.text('Invoice #: '+inv.invNum,L,y);y+=lh*1.8;
+  const driverName=inv.driver==='diana'?'Diana Massengale':inv.driver==='patrick'?'Patrick Massengale':(inv.driver||'Driver');
+  doc.setFontSize(12);doc.setFont('helvetica','normal');doc.text(driverName,L,y);y+=lh;doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);y+=lh;doc.text('505-203-1872',L,y);y+=lh*1.8;
+  // FROM
+  doc.text('From:  '+(inv.fromDealer||'')+(inv.fromCity?' · '+inv.fromCity:''),L,y);y+=lh;
+  const c1=inv.fromContact||'';const c2=inv.fromContact2||'';
+  if(c1||c2){doc.text((c1+(c2?' / '+c2:'')),L,y);y+=lh;}
+  const p1=inv.fromPhone||'';const p2=inv.fromPhone2||'';
+  if(p1||p2){doc.text(p1+(p2?' / '+p2:''),L,y);y+=lh;}
+  y+=lh*0.8;
+  // TO
+  const toLine='To:  '+(inv.toName||'')+(inv.toName2?' / '+inv.toName2:'');
+  doc.text(toLine,L,y);y+=lh;
+  const tp1=inv.toPhone||'';const tp2=inv.toPhone2||'';
+  if(tp1||tp2){doc.text(tp1+(tp2?' / '+tp2:''),L,y);y+=lh;}
+  if(inv.toAddress){doc.text(inv.toAddress,L,y);y+=lh;}
+  if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(inv.toCity,L,y);y+=lh;}
+  y+=lh*0.5;
+  if(inv.dealNum){doc.text('Deal #: '+inv.dealNum,L,y);y+=lh;}
+  (inv.vehicles||[]).forEach(v=>{if(v.chase){doc.text('Chase Driver',L,y);y+=lh;}else{if(v.vin){doc.text('VIN#:  '+v.vin+(v.ymm?' '+v.ymm:''),L,y);y+=lh;}if(v.stk){doc.text('Stock # : '+v.stk,L,y);y+=lh;}}});
+  y+=lh*0.5;
+  if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh;}
+  const feeAmt=Number(inv.driveFee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});let feeText='Driving Fee: $'+feeAmt;if(inv.drivers===2){const t2=(inv.driveFee*2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});feeText+=' × 2 Drivers = $'+t2;}doc.text(feeText,L,y);y+=lh;
+  if(inv.meals>0){doc.text('Meals: $'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}
+  if(inv.wash>0){doc.text('Wash: $'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}
+  if(inv.fuel>0){doc.text('Fuel: $'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}
+  if(inv.other>0){doc.text((inv.otherDesc||'Other')+': $'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}
+  if(inv.drivers===2){y+=lh*0.5;doc.setFont('helvetica','italic');doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');y+=lh;}
+  y+=lh;doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Total Due This Invoice: '+fmtMoney(inv.total),L,y);
+  if(inv.photos&&inv.photos.length>0){y+=lh*2;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Receipts attached:',L,y);y+=lh;let px=L;inv.photos.forEach(src=>{try{doc.addImage(src,'JPEG',px,y,120,80);px+=130;if(px>450){px=L;y+=90;}}catch(e){}});}
+  const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;
+  doc.save(fname);showToast('PDF saved: '+fname);
+  const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].status='sent';save();syncInvoice(S.invoices[idx]);renderList();}
+}
 
 function generatePLCheckRequests(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');if(unbilled.length===0){showToast('No unbilled Phil Long trips');return;}if(confirm(`Generate Check Requests for ${unbilled.length} trip(s)?\nThis will mark them as billed.`)){generatePLPDF(unbilled,'Patrick Massengale','patrick');const withDiana=unbilled.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);if(withDiana.length>0)setTimeout(()=>generatePLPDF(withDiana,'Diana Massengale','diana'),800);unbilled.forEach(inv=>{const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].billed=true;S.invoices[idx].status='billed';S.invoices[idx].billedAt=Date.now();syncInvoice(S.invoices[idx]);}});save();updatePLBanner();renderList();showToast('Check Requests generated!');}}
 
 function generatePLPDF(trips,name,who){
   const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60;let y=50;
-  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('CHECK REQUEST FORM',200,y,{align:'center'});
-  doc.setFontSize(22);doc.text(name,L,y+20);
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('CHECK REQUEST FORM',200,y,{align:'center'});doc.setFontSize(22);doc.text(name,L,y+20);
   const today=new Date();const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
   doc.setFontSize(18);doc.text(ds,500,y+20,{align:'right'});y+=55;
-  doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text('TO',L,y);doc.line(L+20,y,500,y);doc.text('DATE',360,y);y+=20;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('TO',L,y);doc.line(L+20,y,500,y);doc.text('DATE',360,y);y+=20;
   doc.text('ADDRESS',L,y);doc.text('2125 S Ensenada Cir SE',L+60,y);
   const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)),0);
-  doc.text('$',395,y);doc.setFontSize(14);doc.setFont('helvetica','bold');
-  doc.text(Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),420,y);
-  doc.line(415,y,500,y);y+=18;
-  doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text('CITY & STATE',L,y);doc.text('Rio Rancho NM  87124',L+70,y);y+=20;
+  doc.text('$',395,y);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),420,y);doc.line(415,y,500,y);y+=18;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('CITY & STATE',L,y);doc.text('Rio Rancho NM  87124',L+70,y);y+=20;
   doc.text('FOR',L,y);doc.line(L+25,y,500,y);y+=16;doc.line(L,y,500,y);y+=16;doc.line(L,y,500,y);y+=20;
   doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+130,y,500,y);y+=20;
   doc.text('REQUESTED BY:',L,y);doc.line(L+90,y,280,y);doc.text('AUTHORITY',295,y);doc.line(355,y,500,y);y+=14;
   doc.setFontSize(8);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',500,y,{align:'right'});y+=24;
-  doc.setFontSize(12);doc.setFont('helvetica','bold');
-  doc.text('Date',L,y);doc.text('Stock #',L+80,y);doc.text('Trip Info',L+170,y);doc.text('Amount',460,y,{align:'right'});
-  doc.line(L,y+4,500,y+4);y+=22;
+  doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Date',L,y);doc.text('Stock #',L+80,y);doc.text('Trip Info',L+170,y);doc.text('Amount',460,y,{align:'right'});doc.line(L,y+4,500,y+4);y+=22;
   doc.setFont('helvetica','normal');doc.setFontSize(11);
   trips.forEach(trip=>{
-    const dateObj=new Date(trip.date+'T12:00:00');
-    const ds2=`${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getFullYear()).slice(2)}`;
-    const isChase=who==='diana'?trip.diaChase:trip.patChase;
-    const vehicles=isChase?null:(who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]));
-    const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);
-    const feeStr='$'+Number(fee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const dateObj=new Date(trip.date+'T12:00:00');const ds2=`${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getFullYear()).slice(2)}`;
+    const isChase=who==='diana'?trip.diaChase:trip.patChase;const vehicles=isChase?null:(who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]));
+    const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);const feeStr='$'+Number(fee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     const tripInfo=`${trip.fromCity||''}${trip.fromLoc?' - '+trip.fromLoc:''} \u2192 ${trip.toName||''}`;
-    if(isChase||!vehicles||vehicles.length===0){
-      doc.text(ds2,L,y);
-      doc.text(isChase?'Chase Driver':'',L+80,y);
-      const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);doc.text(feeStr,460,y,{align:'right'});
-      y+=lhFromLines(ti)*14+4;
-    } else {
-      vehicles.forEach((v,i)=>{
-        doc.text(ds2,L,y);doc.text((v.stk||'').substring(0,12),L+80,y);
-        const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);
-        if(i===vehicles.length-1)doc.text(feeStr,460,y,{align:'right'});
-        y+=Math.max(lhFromLines(ti)*14,14)+4;
-      });
-    }
+    if(isChase||!vehicles||vehicles.length===0){doc.text(ds2,L,y);doc.text(isChase?'Chase Driver':'',L+80,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);doc.text(feeStr,460,y,{align:'right'});y+=lhFromLines(ti)*14+4;}
+    else{vehicles.forEach((v,i)=>{doc.text(ds2,L,y);doc.text((v.stk||'').substring(0,12),L+80,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);if(i===vehicles.length-1)doc.text(feeStr,460,y,{align:'right'});y+=Math.max(lhFromLines(ti)*14,14)+4;});}
     if(y>680){doc.addPage();y=60;}
   });
-  doc.line(L,y,500,y);y+=16;doc.setFont('helvetica','bold');
-  doc.text('Total: $'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),460,y,{align:'right'});
-  const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;
-  doc.save(fname);
+  doc.line(L,y,500,y);y+=16;doc.setFont('helvetica','bold');doc.text('Total: $'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),460,y,{align:'right'});
+  const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;doc.save(fname);
 }
 function lhFromLines(arr){return Array.isArray(arr)?arr.length:1;}
 
 const CITY_ABBREV={'albuquerque':'Abq','santa fe':'S.Fe','farmington':'Frmgtn','el paso':'EP','rio rancho':'Rio Rancho','corrales':'Corrales','bernalillo':'Bernlllo','los lunas':'Los Lunas','belen':'Belen','gallup':'Gallup','raton':'Raton','las cruces':'Las Cruces','las vegas':'Las Vegas NM','alamogordo':'Almgrdo','roswell':'Roswell','carlsbad':'Carlsbad','hobbs':'Hobbs','clovis':'Clovis','artesia':'Artesia','deming':'Deming','silver city':'Slvr Cty','socorro':'Socorro','truth or consequences':'T or C','taos':'Taos'};
 const CITY_MAX=10;
 function abbrevCity(city){if(!city)return '';const lc=city.toLowerCase().trim();if(CITY_ABBREV[lc])return CITY_ABBREV[lc];if(city.length>CITY_MAX)return city.substring(0,CITY_MAX)+'\u2026';return city;}
-
 const CUST_CARD_STYLES={phillong:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',sub:'#3B6D11',div:'#C0DD97'},chalmers:{bg:'#E6F1FB',border:'#185FA5',text:'#042C53',sub:'#185FA5',div:'#85B7EB'},reliable:{bg:'#B5D4F4',border:'#0C447C',text:'#042C53',sub:'#0C447C',div:'#378ADD'},marco:{bg:'#EDE4F5',border:'#7048A0',text:'#2E1157',sub:'#7048A0',div:'#C4A8E6'}};
 function custStyle(custId){return CUST_CARD_STYLES[custId]||{bg:'#fff',border:'#888',text:'#333',sub:'#555',div:'#eee'};}
 
-// ── STATUS BADGE ──────────────────────────────────────────────────────
 function billedBadge(inv){
   if(inv.status==='paid')return {bg:'#CECBF6',color:'#26215C',label:'Paid'};
   if(inv.status==='draft')return {bg:'#D3D1C7',color:'#444441',label:'Draft'};
@@ -868,7 +814,7 @@ function sortInvoices(invs){const dir=S.sortDir==='desc'?1:-1;const SO={sent:1,r
 function renderList(){
   let invs=sortInvoices([...S.invoices]);
   if(!S.isOwner&&S.driverName){const dn=S.driverName.toLowerCase();invs=invs.filter(i=>(i.driver||'').toLowerCase()===dn||(i.driver||'').toLowerCase()===S.user);}
-  if(S.search)invs=invs.filter(i=>((i.invNum||'')+(i.custName||'')+(i.fromDealer||'')+(i.toName||'')+(i.toCity||'')+(i.fromCity||'')).toLowerCase().includes(S.search.toLowerCase())||(i.vehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase()))||(i.patVehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())));
+  if(S.search)invs=invs.filter(i=>((i.invNum||'')+(i.custName||'')+(i.fromDealer||'')+(i.toName||'')+(i.toCity||'')+(i.fromCity||'')+(i.fromContact||'')+(i.fromContact2||'')).toLowerCase().includes(S.search.toLowerCase())||(i.vehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase()))||(i.patVehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())));
   if(S.filter==='inperiod')invs=invs.filter(i=>i.type==='phillong'&&i.status==='ready'&&!i.billed);
   else if(S.filter!=='all')invs=invs.filter(i=>S.filter==='billed'?(i.status==='billed'||i.billed):i.status===S.filter);
   renderPLPeriodSummary();
@@ -877,19 +823,16 @@ function renderList(){
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   el.innerHTML=invs.map(inv=>{
     const cs=custStyle(inv.custId);const badge=billedBadge(inv);const isPL=inv.type==='phillong';
-    const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;const mon=dObj?MONTHS[dObj.getMonth()]:'';
-    const fmtDate=dObj?mon+' '+dObj.getDate()+', '+dObj.getFullYear():'';
+    const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;const mon=dObj?MONTHS[dObj.getMonth()]:'';const fmtDate=dObj?mon+' '+dObj.getDate()+', '+dObj.getFullYear():'';
     const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':(inv.driver?inv.driver.split(' ')[0]:'');
     const routeLine=isPL?(abbrevCity(inv.fromCity||'')+'&nbsp;&#x279C;&nbsp;'+(inv.toName||'')):(abbrevCity(inv.fromCity||inv.fromDealer||'')+'&nbsp;&#x279C;&nbsp;'+(inv.toName||''));
     return `<div class="inv-card2" style="background:${cs.bg};border-left-color:${cs.border}" onclick="openDetail('${inv.id}')">
-      <div class="ic2-top">
-        <span class="ic2-cust" style="color:${cs.text}">${inv.custName}</span>
+      <div class="ic2-top"><span class="ic2-cust" style="color:${cs.text}">${inv.custName}</span>
         <div class="ic2-meta" style="color:${cs.text}">
           <div class="ic2-metarow"><span class="ic2-lbl">Inv&nbsp;#:&nbsp;&nbsp;</span><span>${inv.invNum}</span></div>
           ${fmtDate?`<div class="ic2-metarow"><span class="ic2-lbl">Date:&nbsp;&nbsp;</span><span>${fmtDate}</span></div>`:''}
           ${inv.dealNum?`<div class="ic2-metarow"><span class="ic2-lbl">Deal:&nbsp;&nbsp;</span><span>${inv.dealNum}</span></div>`:''}
-        </div>
-      </div>
+        </div></div>
       <div class="ic2-div" style="border-color:${cs.div}"></div>
       <div class="ic2-route" style="color:${cs.text}">${routeLine}</div>
       <div class="ic2-bottom">
@@ -910,8 +853,7 @@ function openDetail(id){
   S.editId=id;const el=document.getElementById('detailContent');
   const isPL=inv.type==='phillong';const cs=custStyle(inv.custId);const badge=billedBadge(inv);
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;
-  const fmtDate=dObj?MONTHS[dObj.getMonth()]+' '+dObj.getDate()+', '+dObj.getFullYear():'';
+  const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;const fmtDate=dObj?MONTHS[dObj.getMonth()]+' '+dObj.getDate()+', '+dObj.getFullYear():'';
   const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':(inv.driver?inv.driver.split(' ')[0]:'');
   if(!S._filteredForDetail){S._filteredForDetail=sortInvoices([...S.invoices]);}
   const detList=S._filteredForDetail;const detIdx=detList.findIndex(i=>i.id===id);
@@ -924,28 +866,24 @@ function openDetail(id){
   if(!isPL){
     body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
     if(inv.fromDealer||inv.fromCity)body+=pRow('From',inv.fromDealer+(inv.fromCity?' · '+inv.fromCity:''));
-    if(inv.toName)body+=pRow('To',inv.toName+(inv.toAddress?', '+inv.toAddress:'')+(inv.toCity?' · '+inv.toCity:''));
+    const contactLine=(inv.fromContact||'')+(inv.fromContact2?' / '+inv.fromContact2:'');if(contactLine)body+=pRow('',contactLine);
+    const phoneLine=(inv.fromPhone||'')+(inv.fromPhone2?' / '+inv.fromPhone2:'');if(phoneLine)body+=pRow('',phoneLine);
+    body+=`</div>`;
+    const toLine=(inv.toName||'')+(inv.toName2?' / '+inv.toName2:'');
+    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;
+    if(toLine)body+=pRow('To',toLine);
+    const tpLine=(inv.toPhone||'')+(inv.toPhone2?' / '+inv.toPhone2:'');if(tpLine)body+=pRow('',tpLine);
+    if(inv.toAddress)body+=pRow('',inv.toAddress);if(inv.toCity)body+=pRow('',inv.toCity);
     body+=`</div>`;
     const vehs=inv.vehicles||[];
     if(vehs.length>0){vehs.forEach((v,i)=>{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(vehs.length>1)body+=`<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Vehicle ${i+1}</div>`;if(v.chase){body+=pRow('','Chase Driver');}else{body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);}body+=`</div>`;})}
     else{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`+pRow('VIN #:','',true)+pRow('Stock #:','',true)+`</div>`;}
     body+=`<div style="padding:8px 0">`;if(inv.totalMiles)body+=pRow('Miles:',inv.totalMiles);if(inv.driveFee)body+=pRow('Drive fee:',fmtMoney(inv.driveFee)+(inv.drivers===2?' × 2 drivers':''));if(inv.fuel)body+=pRow('Fuel:',fmtMoney(inv.fuel));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;
   } else {
-    const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');
-    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">${pRow('From',from||'')}${pRow('To',inv.toName||'')}</div>`;
-    const patVehs=inv.patVehicles||[];
-    body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick — ${inv.patChase?'Chase Driver':`Vehicle${patVehs.length>1?'s':''}`}</div>`;
-    if(inv.patChase){body+=pRow('','Chase Driver');}
-    else if(patVehs.length>0){patVehs.forEach((v,i)=>{if(patVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}
-    else{body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);}
-    body+=`</div>`;
-    const diaVehs=inv.diaVehicles||[];
-    if(diaVehs.length>0||inv.diaChase){
-      body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana — ${inv.diaChase?'Chase Driver':`Vehicle${diaVehs.length>1?'s':''}`}</div>`;
-      if(inv.diaChase){body+=pRow('','Chase Driver');}
-      else{diaVehs.forEach((v,i)=>{if(diaVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}
-      body+=`</div>`;
-    }
+    const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">${pRow('From',from||'')}${pRow('To',inv.toName||'')}</div>`;
+    const patVehs=inv.patVehicles||[];body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick — ${inv.patChase?'Chase Driver':`Vehicle${patVehs.length>1?'s':''}`}</div>`;
+    if(inv.patChase){body+=pRow('','Chase Driver');}else if(patVehs.length>0){patVehs.forEach((v,i)=>{if(patVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}else{body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);}body+=`</div>`;
+    const diaVehs=inv.diaVehicles||[];if(diaVehs.length>0||inv.diaChase){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana — ${inv.diaChase?'Chase Driver':`Vehicle${diaVehs.length>1?'s':''}`}</div>`;if(inv.diaChase){body+=pRow('','Chase Driver');}else{diaVehs.forEach((v,i)=>{if(diaVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}body+=`</div>`;}
     body+=`<div style="padding:8px 0">`;if(inv.patFee)body+=pRow('Patrick fee:',fmtMoney(inv.patFee+(inv.washPat||0)));if(inv.diaFee)body+=pRow('Diana fee:',fmtMoney(inv.diaFee+(inv.washDia||0)));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;
   }
   const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:56px;height:56px">`).join('');
@@ -958,29 +896,24 @@ function openDetail(id){
   const paidStyle=inv.status==='paid'?'flex:1;padding:8px 4px;border-radius:8px;border:0.5px solid #CECBF6;background:#CECBF6;font-size:12px;font-family:inherit;color:#26215C;text-align:center;cursor:pointer':btnStyle;
   actions+=`<button style="${paidStyle}" onclick="markPaid('${inv.id}')">${inv.status==='paid'?'✓ Paid':'Mark Paid'}</button>`;
   if(inv.status!=='paid'&&!inv.billed)actions+=`<button style="${btnStyle};color:#791F1F" onclick="deleteInvoice('${inv.id}')">🗑 Delete</button>`;
-  el.innerHTML=`
-    <div style="background:var(--primary-dark);display:flex;justify-content:space-between;align-items:center;padding:8px 12px">
-      <button onclick="navDetail(-1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">&#8592; Prev</button>
-      <span style="color:rgba(255,255,255,.7);font-size:12px">${S._detPos}</span>
-      <button onclick="navDetail(1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">Next &#8594;</button>
+  el.innerHTML=`<div style="background:var(--primary-dark);display:flex;justify-content:space-between;align-items:center;padding:8px 12px">
+    <button onclick="navDetail(-1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">&#8592; Prev</button>
+    <span style="color:rgba(255,255,255,.7);font-size:12px">${S._detPos}</span>
+    <button onclick="navDetail(1)" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:13px;font-family:inherit">Next &#8594;</button>
+  </div>
+  <div style="background:${cs.bg};border-left:4px solid ${cs.border};padding:10px 12px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <span style="font-size:13px;font-weight:700;color:${cs.text};flex:1;padding-right:8px">${inv.custName}</span>
+      <div style="text-align:right">${metaRows}</div>
     </div>
-    <div style="background:${cs.bg};border-left:4px solid ${cs.border};padding:10px 12px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <span style="font-size:13px;font-weight:700;color:${cs.text};flex:1;padding-right:8px">${inv.custName}</span>
-        <div style="text-align:right">${metaRows}</div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
-        <span style="font-size:13px;color:${cs.sub}">${driverFirst?'Driver:&nbsp;&nbsp;'+driverFirst:''}</span>
-        <span style="font-size:13px;color:#555">Status:&nbsp;&nbsp;<span style="background:${badge.bg};color:${badge.color};padding:2px 9px;border-radius:10px;font-size:13px">${badge.label}</span></span>
-      </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+      <span style="font-size:13px;color:${cs.sub}">${driverFirst?'Driver:&nbsp;&nbsp;'+driverFirst:''}</span>
+      <span style="font-size:13px;color:#555">Status:&nbsp;&nbsp;<span style="background:${badge.bg};color:${badge.color};padding:2px 9px;border-radius:10px;font-size:13px">${badge.label}</span></span>
     </div>
-    <div style="background:#fff;padding:0 14px">
-      ${body}
-      ${photos?`<div style="padding:8px 0;border-top:0.5px solid #eee"><div style="font-size:12px;color:#555;margin-bottom:5px">Receipts</div><div style="display:flex;gap:6px;flex-wrap:wrap">${photos}</div></div>`:''}
-      ${inv.notes?`<div style="padding:8px 0;border-top:0.5px solid #eee">${pRow('Notes:',inv.notes)}</div>`:''}
-    </div>
-    <div style="display:flex;gap:6px;padding:10px 12px;border-top:0.5px solid #eee;flex-wrap:wrap;background:#fff">${actions}</div>
-    <div style="height:20px"></div>`;
+  </div>
+  <div style="background:#fff;padding:0 14px">${body}${photos?`<div style="padding:8px 0;border-top:0.5px solid #eee"><div style="font-size:12px;color:#555;margin-bottom:5px">Receipts</div><div style="display:flex;gap:6px;flex-wrap:wrap">${photos}</div></div>`:''}${inv.notes?`<div style="padding:8px 0;border-top:0.5px solid #eee">${pRow('Notes:',inv.notes)}</div>`:''}</div>
+  <div style="display:flex;gap:6px;padding:10px 12px;border-top:0.5px solid #eee;flex-wrap:wrap;background:#fff">${actions}</div>
+  <div style="height:20px"></div>`;
   goScreen('detail');
 }
 
@@ -989,50 +922,32 @@ function deleteInvoice(id){if(confirm('Delete this invoice? This cannot be undon
 function navDetail(dir){const id=dir<0?S._prevDetId:S._nextDetId;if(id)openDetail(id);}
 
 function editInvoice(id){
-  const inv=S.invoices.find(i=>i.id===id);if(!inv)return;
-  S.editId=id;const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};
+  const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;
+  const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};
   selectedCustomerId=c.id;document.getElementById('selectedCustName').textContent=(c.name||'Other')+' ›';
   const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
   sv('tripDate',inv.date);document.getElementById('invNumDisplay').textContent=inv.invNum;document.getElementById('invSuffix').style.display='inline-block';
-  sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromPhone',inv.fromPhone);
-  updatePhoneLink('fromPhone','fromPhoneLink');sv('fromCity',inv.fromCity);
-  sv('toName',inv.toName);sv('toPhone',inv.toPhone);updatePhoneLink('toPhone','toPhoneLink');
-  sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);
+  sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromContact2',inv.fromContact2);sv('fromPhone',inv.fromPhone);sv('fromPhone2',inv.fromPhone2);sv('fromCity',inv.fromCity);
+  sv('toName',inv.toName);sv('toName2',inv.toName2);sv('toPhone',inv.toPhone);sv('toPhone2',inv.toPhone2);sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);
   sv('totalMiles',inv.totalMiles);sv('driveFee',inv.driveFee);sv('fuel',inv.fuel);sv('meals',inv.meals);sv('wash',inv.wash);sv('otherAmt',inv.other);sv('otherDesc',inv.otherDesc);sv('invoiceNotes',inv.notes);
   setDrivers(inv.drivers||1);
   document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;
-  (inv.vehicles||[]).forEach(v=>{
-    addVehicle();const n=S.stdVehicleCount;
-    if(v.chase){toggleStdChase(n);}
-    else{sv('vin-'+n,v.vin);sv('ymm-'+n,v.ymm);sv('stk-'+n,v.stk);}
-  });
+  (inv.vehicles||[]).forEach(v=>{addVehicle();const n=S.stdVehicleCount;if(v.chase){toggleStdChase(n);}else{sv('vin-'+n,v.vin);sv('ymm-'+n,v.ymm);sv('stk-'+n,v.stk);}});
   if((inv.vehicles||[]).length===0)addVehicle();
-  document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);
-  S._filteredForDetail=null;goScreen('form');
+  document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');
 }
 
 function editPLInvoice(id){
-  const inv=S.invoices.find(i=>i.id===id);if(!inv)return;
-  S.editId=id;
-  document.getElementById('plDate').value=inv.date||'';
-  const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';
-  document.getElementById('plSuffix').value=suf;updatePLInvNum();
-  document.getElementById('plFromCity').value=inv.fromCity||'';
-  document.getElementById('plFromLoc').value=inv.fromLoc||'';
-  document.getElementById('plToName').value=inv.toName||'';
-  document.getElementById('plPatMiles').value=inv.patMiles?(Number(inv.patMiles).toFixed(2)):'';
-  document.getElementById('plPatFee').value=inv.patFee?(Number(inv.patFee).toFixed(2)):'';
-  document.getElementById('plDiaMiles').value=inv.diaMiles?(Number(inv.diaMiles).toFixed(2)):'';
-  document.getElementById('plDiaFee').value=inv.diaFee?(Number(inv.diaFee).toFixed(2)):'';
+  const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;
+  document.getElementById('plDate').value=inv.date||'';const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';document.getElementById('plSuffix').value=suf;updatePLInvNum();
+  document.getElementById('plFromCity').value=inv.fromCity||'';document.getElementById('plFromLoc').value=inv.fromLoc||'';document.getElementById('plToName').value=inv.toName||'';
+  document.getElementById('plPatMiles').value=inv.patMiles?(Number(inv.patMiles).toFixed(2)):'';document.getElementById('plPatFee').value=inv.patFee?(Number(inv.patFee).toFixed(2)):'';
+  document.getElementById('plDiaMiles').value=inv.diaMiles?(Number(inv.diaMiles).toFixed(2)):'';document.getElementById('plDiaFee').value=inv.diaFee?(Number(inv.diaFee).toFixed(2)):'';
   setWash(inv.wash||'none');
-  // Reset chase state first
-  if(S.plPatChase)togglePLChase('pat');
-  if(S.plDiaChase)togglePLChase('dia');
-  // Restore vehicles
+  if(S.plPatChase)togglePLChase('pat');if(S.plDiaChase)togglePLChase('dia');
   document.getElementById('plPatVehicles').innerHTML='';S.plPatVehicleCount=0;
   (inv.patVehicles||[]).forEach(v=>{addPLVehicle('pat');const n=S.plPatVehicleCount;const ve=document.getElementById(`pl-vin-pat-${n}`);const ye=document.getElementById(`pl-ymm-pat-${n}`);const se=document.getElementById(`pl-stk-pat-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});
   if((inv.patVehicles||[]).length===0&&!inv.patChase)addPLVehicle('pat');
-  // Restore chase
   if(inv.patChase)togglePLChase('pat');
   document.getElementById('plDiaVehicles').innerHTML='';S.plDiaVehicleCount=0;
   (inv.diaVehicles||[]).forEach(v=>{addPLVehicle('dia');const n=S.plDiaVehicleCount;const ve=document.getElementById(`pl-vin-dia-${n}`);const ye=document.getElementById(`pl-ymm-dia-${n}`);const se=document.getElementById(`pl-stk-dia-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});
@@ -1042,11 +957,20 @@ function editPLInvoice(id){
 
 function copyInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;editInvoice(id);S.editId=null;const today=new Date();const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d=String(today.getDate()).padStart(2,'0');document.getElementById('invNumDisplay').textContent=`${y}${m}${d}`;document.getElementById('invSuffix').value='';document.getElementById('tripDate').value=`${y}-${m}-${d}`;showToast('Copied - update as needed');}
 
-function updateAutocomplete(inv){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('recips',inv.toName);localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();}
-function populateAutocomplete(){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const fill=(id,key)=>{const dl=document.getElementById(id);if(!dl||!hist[key])return;dl.innerHTML=(hist[key]||[]).map(v=>`<option value="${v}">`).join('');};fill('dealerHist','dealers');fill('contactHist','contacts');fill('recipHist','recips');}
+function updateAutocomplete(inv){
+  const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');
+  const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};
+  add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('contacts2',inv.fromContact2);add('recips',inv.toName);add('recips2',inv.toName2);
+  localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();
+}
+function populateAutocomplete(){
+  const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');
+  const fill=(id,key)=>{const dl=document.getElementById(id);if(!dl||!hist[key])return;dl.innerHTML=(hist[key]||[]).map(v=>`<option value="${v}">`).join('');};
+  fill('dealerHist','dealers');fill('contactHist','contacts');fill('contactHist2','contacts2');fill('recipHist','recips');fill('recipHist2','recips2');
+}
 function openNewTripMenu(){document.getElementById('newTripModal').classList.add('open');}
 function closeNewTripModal(){document.getElementById('newTripModal').classList.remove('open');}
-function exportCSV(){const headers=['Invoice #','Date','Customer','Type','Driver','From','To City','Vehicles','Miles','Drive Fee','Drivers','Fuel','Meals','Wash','Other','Total','Status'];const rows=S.invoices.map(i=>[i.invNum,i.date,i.custName,i.type,i.driver,i.fromDealer||i.fromCity||'',i.toCity||i.toName||'',(i.vehicles||i.patVehicles||[]).length,i.totalMiles||i.patMiles||'',i.driveFee||i.patFee||'',i.drivers||1,i.fuel||'',i.meals||'',i.wash||'',i.other||'',i.total,i.status].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));const csv=[headers.join(','),...rows].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TripLog_Export_'+todayInvNum()+'.csv';a.click();showToast('CSV exported');}
+function exportCSV(){const headers=['Invoice #','Date','Customer','Type','Driver','From','To','Miles','Drive Fee','Drivers','Fuel','Meals','Wash','Other','Total','Status'];const rows=S.invoices.map(i=>[i.invNum,i.date,i.custName,i.type,i.driver,i.fromDealer||i.fromCity||'',i.toName||i.toCity||'',(i.vehicles||i.patVehicles||[]).length?'':0,i.totalMiles||i.patMiles||'',i.driveFee||i.patFee||'',i.drivers||1,i.fuel||'',i.meals||'',i.wash||'',i.other||'',i.total,i.status].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));const csv=[headers.join(','),...rows].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TripLog_Export_'+todayInvNum()+'.csv';a.click();showToast('CSV exported');}
 function editProfile(){showToast('Profile editing – coming soon');}
 function toggleAccessibility(){const pill=document.getElementById('accessPill');const on=pill.textContent==='On';pill.textContent=on?'Off':'On';pill.className='spill '+(on?'sp-off':'sp-on');document.body.style.fontSize=on?'':'18px';showToast(on?'Accessibility off':'Larger text on');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
