@@ -71,7 +71,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:#fff;border-bottom:1px solid var(--border)}
 .ftab{white-space:nowrap;padding:5px 13px;border-radius:16px;font-size:12px;
   font-weight:700;border:1.5px solid var(--border);background:#fff;color:#777;
-  cursor:pointer;font-family:inherit;transition:all .15s}
+  cursor:pointer;font-family:inherit;transition:all .15px}
 .ftab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .sort-bar{display:flex;align-items:center;padding:5px 12px;gap:5px;overflow-x:auto;background:#f8f9fb;border-bottom:1px solid var(--border);scrollbar-width:none}
 .sort-bar::-webkit-scrollbar{display:none}
@@ -634,7 +634,18 @@ function abbrevCity(city){if(!city)return '';const lc=city.toLowerCase().trim();
 
 const CUST_CARD_STYLES={phillong:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',sub:'#3B6D11',div:'#C0DD97'},chalmers:{bg:'#E6F1FB',border:'#185FA5',text:'#042C53',sub:'#185FA5',div:'#85B7EB'},reliable:{bg:'#B5D4F4',border:'#0C447C',text:'#042C53',sub:'#0C447C',div:'#378ADD'},marco:{bg:'#EDE4F5',border:'#7048A0',text:'#2E1157',sub:'#7048A0',div:'#C4A8E6'}};
 function custStyle(custId){return CUST_CARD_STYLES[custId]||{bg:'#fff',border:'#888',text:'#333',sub:'#666',div:'#eee'};}
-function billedBadge(inv){if(inv.status==='paid')return {bg:'#CECBF6',color:'#26215C',label:'Paid'};if(inv.status==='draft')return {bg:'#D3D1C7',color:'#444441',label:'Draft'};if(inv.status==='sent'||inv.status==='ready')return {bg:'#B5D4F4',color:'#0C447C',label:'Sent'};if(inv.status==='billed'||inv.billed){const billedAt=inv.billedAt||inv.updatedAt||inv.createdAt||Date.now();const days=Math.floor((Date.now()-billedAt)/(1000*60*60*24));if(days>=30)return {bg:'#F7C1C1',color:'#791F1F',label:'Billed 30d+'};if(days>=14)return {bg:'#FAC775',color:'#633806',label:'Billed 2wk+'};return {bg:'#C0DD97',color:'#27500A',label:'Billed'};}return {bg:'#D3D1C7',color:'#444441',label:'Draft'};}
+
+// ── STATUS BADGE ──────────────────────────────────────────────────────
+// 'ready' on Phil Long = "In Period" (queued for billing, not sent)
+// 'ready' on standard = "Sent" (PDF was generated)
+function billedBadge(inv){
+  if(inv.status==='paid')return {bg:'#CECBF6',color:'#26215C',label:'Paid'};
+  if(inv.status==='draft')return {bg:'#D3D1C7',color:'#444441',label:'Draft'};
+  if(inv.status==='sent')return {bg:'#B5D4F4',color:'#0C447C',label:'Sent'};
+  if(inv.status==='ready')return inv.type==='phillong'?{bg:'#EAF3DE',color:'#27500A',label:'In Period'}:{bg:'#B5D4F4',color:'#0C447C',label:'Sent'};
+  if(inv.status==='billed'||inv.billed){const billedAt=inv.billedAt||inv.updatedAt||inv.createdAt||Date.now();const days=Math.floor((Date.now()-billedAt)/(1000*60*60*24));if(days>=30)return {bg:'#F7C1C1',color:'#791F1F',label:'Billed 30d+'};if(days>=14)return {bg:'#FAC775',color:'#633806',label:'Billed 2wk+'};return {bg:'#C0DD97',color:'#27500A',label:'Billed'};}
+  return {bg:'#D3D1C7',color:'#444441',label:'Draft'};
+}
 
 function setSort(key){if(S.sortBy===key){S.sortDir=S.sortDir==='desc'?'asc':'desc';}else{S.sortBy=key;S.sortDir='desc';}updateSortBar();renderList();}
 function updateSortBar(){const keys=['invnum','cust','amt','status','driver'];const labels={invnum:'Date',cust:'Customer',amt:'Amount',status:'Status',driver:'Driver'};keys.forEach(k=>{const btn=document.getElementById('st-'+k);if(!btn)return;const on=S.sortBy===k;btn.classList.toggle('on',on);btn.textContent=labels[k]+(on?(S.sortDir==='desc'?' ↓':' ↑'):'');});}
