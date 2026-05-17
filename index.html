@@ -390,7 +390,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">Customers</div>
   <div class="ar" onclick="goScreen('customers')">
     <div class="ai" style="background:#E8EDF5;font-size:20px">&#127981;</div>
-    <div class="at"><div class="at-ttl">Manage customers</div><div class="at-sub">Phil Long · Reliable · Chalmers · ABQ Auto Deals · billing contacts</div></div>
+    <div class="at"><div class="at-ttl">Manage customers</div><div class="at-sub">Phil Long · Reliable · Chalmers · ABQ Auto Deals</div></div>
     <span class="a-arr">&#8250;</span>
   </div>
   <div class="a-sh">Theme &amp; Display</div>
@@ -408,11 +408,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="ar">
     <div class="ai" style="background:#E8F5E9;font-size:20px">&#128506;</div>
     <div class="at"><div class="at-ttl">Google Maps <span class="spill sp-off" id="mapsStatus">Loading…</span></div><div class="at-sub">Distance calc · Places autocomplete · GPS location</div></div>
-  </div>
-  <div class="ar" onclick="showToast('Receipt scanning disabled')">
-    <div class="ai" style="background:#f5f5f5;font-size:20px">&#128247;</div>
-    <div class="at"><div class="at-ttl">Receipt Scanning API <span class="spill sp-off">Disabled</span></div><div class="at-sub">AI reads receipt totals · enable later</div></div>
-    <span class="a-arr">&#8250;</span>
   </div>
   <div class="a-sh">Data &amp; Backup</div>
   <div class="ar" onclick="exportCSV()">
@@ -434,7 +429,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v2.1 (Cloud)</div><div class="at-sub">Business-size PDF · 9pt font · proper columns · city abbreviations</div></div>
+    <div class="at"><div class="at-ttl">TripLog v2.2 (Cloud)</div><div class="at-sub">PDF form layout fixed · name on TO line · no floating header text</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -511,13 +506,24 @@ function setPLDefault(who){const fieldId=who==='pat'?'plPatMiles':'plDiaMiles';c
 // ── FORMATTING ────────────────────────────────────────────────────────
 function fmtMoney(n){return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtField(el){const v=parseFloat(el.value);if(!isNaN(v))el.value=v.toFixed(2);}
-// ── CITY ABBREVIATIONS (for PDF) ──────────────────────────────────────
+// ── CITY ABBREVIATIONS ────────────────────────────────────────────────
 const CITY_ABBREV={'albuquerque':'Abq','santa fe':'S.Fe','farmington':'Frmgtn','el paso':'El Paso','rio rancho':'Rio Rancho','corrales':'Corrales','bernalillo':'Bernlllo','los lunas':'Los Lunas','belen':'Belen','gallup':'Gallup','raton':'Raton','las cruces':'Las Cruces','las vegas':'Las Vegas NM','alamogordo':'Almgrdo','roswell':'Roswell','carlsbad':'Carlsbad','hobbs':'Hobbs','clovis':'Clovis','artesia':'Artesia','deming':'Deming','silver city':'Slvr Cty','socorro':'Socorro','truth or consequences':'T or C','taos':'Taos'};
-const CITY_MAX=10;
-function abbrevCity(city){if(!city)return '';const lc=city.toLowerCase().trim();if(CITY_ABBREV[lc])return CITY_ABBREV[lc];if(city.length>CITY_MAX)return city.substring(0,CITY_MAX)+'\u2026';return city;}
-// pdfCity: strip USA + abbreviate for PDF use
+const CITY_MAX=12;
+// abbrevCity: handles "City, ST, USA" format — strips to just city first
+function abbrevCity(city){
+  if(!city)return '';
+  const stripped=stripUSA(city.trim());
+  // Try full string first
+  const full=stripped.toLowerCase();
+  if(CITY_ABBREV[full])return CITY_ABBREV[full];
+  // Try just the city portion (before first comma)
+  const cityPart=stripped.split(',')[0].trim();
+  const cityLc=cityPart.toLowerCase();
+  if(CITY_ABBREV[cityLc])return CITY_ABBREV[cityLc];
+  // Truncate if needed, use just city part
+  return cityPart.length>CITY_MAX?cityPart.substring(0,CITY_MAX-1)+'.':cityPart;
+}
 function pdfCity(city){return abbrevCity(stripUSA(city||''));}
-// pdfTrunc: truncate long names for PDF columns
 function pdfTrunc(s,max){if(!s)return '';return s.length>max?s.substring(0,max-1)+'.':s;}
 // ── STOCK # AUTOFILL ──────────────────────────────────────────────────
 function checkStkAutofill(stkEl,vinEl,dlId){const dl=document.getElementById(dlId);if(!dl||!stkEl||!vinEl)return;dl.innerHTML='';const vin=vinEl.value.trim().toUpperCase();if(vin.length<8)return;const stk=stkEl.value;if(!stk)return;const m=stk.match(/^([A-Za-z]*)(\d[\dA-Za-z]*)$/);if(!m)return;const prefix=m[1];const digitPart=m[2].toUpperCase();const vinLast5=vin.slice(3);if(!vinLast5.startsWith(digitPart))return;if(digitPart===vinLast5)return;const suggestion=prefix+vinLast5;if(suggestion.toUpperCase()===stk.toUpperCase())return;const opt=document.createElement('option');opt.value=suggestion;dl.appendChild(opt);}
@@ -579,42 +585,85 @@ function generateStdPDF(inv){const {jsPDF}=window.jspdf;const doc=new jsPDF({uni
 function generatePLCheckRequests(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');if(unbilled.length===0){showToast('No unbilled Phil Long trips');return;}if(confirm(`Generate Check Requests for ${unbilled.length} trip(s)?\nThis will mark them as billed.`)){generatePLPDF(unbilled,'Patrick Massengale','patrick');const withDiana=unbilled.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);if(withDiana.length>0)setTimeout(()=>generatePLPDF(withDiana,'Diana Massengale','diana'),800);unbilled.forEach(inv=>{const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].billed=true;S.invoices[idx].status='billed';S.invoices[idx].billedAt=Date.now();syncInvoice(S.invoices[idx]);}});save();updatePLBanner();renderList();showToast('Check Requests generated!');}}
 
 // ── PHIL LONG CHECK REQUEST PDF ───────────────────────────────────────
-// Business document sizing: 9-10pt fonts, tight columns, abbreviated city/names
-// Columns: Date=50, Stock=55, TripInfo=355, Amount right-aligned @560
+// Layout: 8.5x11, name/date ON the form lines (not floating above), 9pt body
+// Columns: L=50 | Stock=106 | TripInfo=163 | Amount right@558
+// No "Total:" line at bottom — total amount is in the header $ field only
 function generatePLPDF(trips,name,who){
-  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});
-  const L=50,C_STK=100,C_TRIP=155,C_AMT=560,T_W=C_AMT-C_TRIP-4;
-  let y=46;
-  // ── Header ──
-  doc.setFontSize(11);doc.setFont('helvetica','bold');
-  doc.text('CHECK REQUEST FORM',L+(C_AMT-L)/2,y,{align:'center'});
-  doc.setFontSize(18);doc.text(name,L,y+20);
-  const today=new Date();
-  const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
-  doc.setFontSize(13);doc.text(ds,C_AMT,y+20,{align:'right'});
-  y+=50;
-  // ── Address block ──
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'pt',format:'letter'});
+  const L=50,C_STK=106,C_TRIP=163,C_AMT=558,T_W=C_AMT-C_TRIP-4;
+  // Pre-compute total and date string before drawing anything
   const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)),0);
   const totalStr=Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('TO',L,y);doc.line(L+13,y,370,y);doc.text('DATE',380,y);y+=14;
-  doc.text('ADDRESS',L,y);doc.text('2125 S Ensenada Cir SE',L+48,y);
-  doc.text('$',C_AMT-50,y);doc.setFontSize(10);doc.setFont('helvetica','bold');
-  doc.text(totalStr,C_AMT,y,{align:'right'});doc.line(C_AMT-48,y,C_AMT,y);y+=13;
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('CITY & STATE',L,y);doc.text('Rio Rancho NM  87124',L+58,y);y+=13;
-  doc.text('FOR',L,y);doc.line(L+17,y,C_AMT,y);y+=11;
-  doc.line(L,y,C_AMT,y);y+=11;doc.line(L,y,C_AMT,y);y+=14;
-  doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+108,y,C_AMT,y);y+=14;
-  doc.text('REQUESTED BY:',L,y);doc.line(L+75,y,265,y);
-  doc.text('AUTHORITY',274,y);doc.line(316,y,C_AMT,y);y+=11;
-  doc.setFontSize(6.5);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',C_AMT,y,{align:'right'});
+  const today=new Date();
+  const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
+  let y=44;
+  // ── Title: centered at top ──
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text('CHECK REQUEST FORM',(L+C_AMT)/2,y,{align:'center'});
+  y+=18;
+  // ── TO / DATE line ──
+  // "TO" label, then name written ON the underline, then "DATE" label (not underlined), then date ON underline
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('TO',L,y);
+  // Name sits on the TO underline (same y = baseline on line)
+  doc.setFontSize(9);
+  doc.text(name,L+16,y);
+  // Underline: from just after "TO" label to just before "DATE" label
+  doc.line(L+13,y+1,318,y+1);
+  // DATE label — not underlined
+  doc.setFontSize(8);
+  doc.text('DATE',322,y);
+  // Date value sits on the DATE underline
+  doc.setFontSize(9);
+  doc.text(ds,346,y);
+  // Underline: from just after "DATE" label to right edge
+  doc.line(342,y+1,C_AMT,y+1);
+  y+=15;
+  // ── ADDRESS line ──
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('ADDRESS',L,y);
+  // Address filled in on the line
+  doc.setFontSize(9);
+  doc.text('2125 S Ensenada Cir SE',L+46,y);
+  // $ and total amount on the right, on an underline
+  doc.setFontSize(8);
+  doc.text('$',C_AMT-58,y);
+  doc.setFontSize(9);
+  doc.text(totalStr,C_AMT,y,{align:'right'});
+  doc.line(C_AMT-56,y+1,C_AMT,y+1);
+  y+=13;
+  // ── CITY & STATE line ──
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('CITY & STATE',L,y);
+  doc.setFontSize(9);
+  doc.text('Rio Rancho NM  87124',L+58,y);
+  y+=13;
+  // ── FOR lines (3 blank underlines) ──
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('FOR',L,y);doc.line(L+18,y+1,C_AMT,y+1);y+=11;
+  doc.line(L,y+1,C_AMT,y+1);y+=11;
+  doc.line(L,y+1,C_AMT,y+1);y+=14;
+  // ── CHARGE TO ACCOUNT # ──
+  doc.text('CHARGE TO ACCOUNT #',L,y);
+  doc.line(L+107,y+1,C_AMT,y+1);y+=14;
+  // ── REQUESTED BY / AUTHORITY ──
+  doc.text('REQUESTED BY:',L,y);
+  doc.line(L+74,y+1,264,y+1);
+  doc.text('AUTHORITY',272,y);
+  doc.line(310,y+1,C_AMT,y+1);y+=11;
+  // ── Reynolds & Reynolds footer ──
+  doc.setFontSize(6.5);
+  doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',C_AMT,y,{align:'right'});
   y+=18;
   // ── Table header ──
   doc.setFontSize(9);doc.setFont('helvetica','bold');
-  doc.text('Date',L,y);doc.text('Stock #',C_STK,y);doc.text('Trip Info',C_TRIP,y);doc.text('Amount',C_AMT,y,{align:'right'});
-  doc.line(L,y+3,C_AMT,y+3);y+=14;
-  // ── Table rows ──
+  doc.text('Date',L,y);
+  doc.text('Stock #',C_STK,y);
+  doc.text('Trip Info',C_TRIP,y);
+  doc.text('Amount',C_AMT,y,{align:'right'});
+  doc.line(L,y+3,C_AMT,y+3);y+=15;
+  // ── Table rows: 9pt, city abbreviated, names truncated ──
   doc.setFont('helvetica','normal');doc.setFontSize(9);
   trips.forEach(trip=>{
     const dateObj=new Date(trip.date+'T12:00:00');
@@ -623,10 +672,10 @@ function generatePLPDF(trips,name,who){
     const vehicles=isChase?null:(who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]));
     const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);
     const feeStr='$'+Number(fee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    // Build trip info with city abbrevation + truncated location names
+    // Build trip info: abbreviated city + truncated location name + arrow + truncated destination
     const fromCity=pdfCity(trip.fromCity);
     const fromLoc=trip.fromLoc?pdfTrunc(trip.fromLoc,22):'';
-    const toName=trip.toName?pdfTrunc(trip.toName,26):'';
+    const toName=trip.toName?pdfTrunc(trip.toName,28):'';
     const tripInfo=(fromCity+(fromLoc?' - '+fromLoc:''))+' -> '+toName;
     const ti=doc.splitTextToSize(tripInfo,T_W);
     const rowH=Math.max(ti.length*11,11);
@@ -645,12 +694,9 @@ function generatePLPDF(trips,name,who){
         y+=rowH+3;
       });
     }
-    if(y>700){doc.addPage();y=46;}
+    if(y>710){doc.addPage();y=46;}
   });
-  // ── Total line ──
-  doc.line(L,y,C_AMT,y);y+=13;
-  doc.setFont('helvetica','bold');doc.setFontSize(10);
-  doc.text('Total: $'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),C_AMT,y,{align:'right'});
+  // NO total line at bottom — total appears at top in the $ field
   const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;
   doc.save(fname);
 }
