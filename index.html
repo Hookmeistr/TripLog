@@ -193,6 +193,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .icon-btn{background:none;border:none;padding:0 4px;font-size:16px;cursor:pointer;color:var(--muted);flex-shrink:0;line-height:1}
 .icon-btn:active{color:var(--primary)}
 .dist-badge{font-size:11px;color:var(--primary);background:var(--primary-light);border-radius:10px;padding:2px 8px;margin-left:6px;display:none}
+.dflt-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;margin-left:4px}
+.dflt-btn:active{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
+.dollar-pre{font-size:15px;font-weight:700;color:var(--text);margin-right:2px;flex-shrink:0}
 .cust-billing-card{background:#fff;margin:0 0 1px;padding:14px 16px;border-bottom:1px solid var(--faint)}
 .cust-billing-title{font-size:13px;font-weight:700;margin-bottom:10px}
 .cust-billing-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -293,7 +296,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <div class="fr" id="returnRow" style="display:none"><span class="fl">Return time</span><input class="ti" id="returnTime" type="time" oninput="calcChalmersHours()"></div>
       <div class="fr" id="hoursRow" style="display:none"><span class="fl">Hours</span><input class="fi" id="hoursWorked" type="number" step="0.25" placeholder="0.00" oninput="calcTotal()" style="font-weight:700"><span class="fn">× $25/hr</span></div>
       <div class="fr" id="milesRow"><span class="fl">Total miles</span><input class="fi" id="totalMiles" type="number" placeholder="Enter miles" oninput="calcTotal()" style="font-weight:700"><span class="fn" id="milesNote">÷ trip + return</span></div>
-      <div class="fr" id="rateRow"><span class="fl">Drive fee</span><input class="fi" id="driveFee" type="number" step="5" placeholder="0.00" oninput="calcTotal()" style="font-weight:700"><span class="fn" id="feeNote"></span></div>
+      <div class="fr" id="rateRow"><span class="fl">Drive fee</span><span class="dollar-pre">$</span><input class="fi" id="driveFee" type="number" step="5" placeholder="0.00" oninput="calcTotal()" style="font-weight:700"><span class="fn" id="feeNote"></span></div>
       <div class="fr"><span class="fl">Fuel</span><input class="fi" id="fuel" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()"><span class="fn">receipt</span></div>
       <div class="fr opt" id="mealsRow"><span class="fl">Meals</span><input class="fi" id="meals" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()"></div>
       <div class="fr opt" id="washRow"><span class="fl">Wash</span><input class="fi" id="wash" type="number" step=".01" placeholder="0.00 (optional)" oninput="calcTotal()"></div>
@@ -341,10 +344,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <button class="add-btn" onclick="addPLVehicle('dia')" id="addDiaBtnPL">&#43; Add Diana vehicle</button>
     <div class="sh">Fees</div>
     <div class="fg">
-      <div class="fr"><span class="fl">Patrick miles</span><input class="fi" id="plPatMiles" type="number" placeholder="454" oninput="calcPLTotal()" style="font-weight:700"></div>
-      <div class="fr"><span class="fl">Patrick fee</span><input class="fi" id="plPatFee" type="number" step="5" placeholder="160.00" value="160" oninput="calcPLTotal()" style="font-weight:700"><span class="fn">editable</span></div>
-      <div class="fr" id="plDiaMilesRow"><span class="fl">Diana miles</span><input class="fi" id="plDiaMiles" type="number" placeholder="454" oninput="calcPLTotal()" style="font-weight:700"></div>
-      <div class="fr" id="plDiaFeeRow"><span class="fl">Diana fee</span><input class="fi" id="plDiaFee" type="number" step="5" placeholder="160.00" value="160" oninput="calcPLTotal()" style="font-weight:700"><span class="fn">editable</span></div>
+      <div class="fr"><span class="fl">Patrick miles</span>
+        <input class="fi" id="plPatMiles" type="number" step="0.01" placeholder="454.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700">
+        <button class="dflt-btn" onclick="setPLDefault('pat')" title="Save as default miles for Patrick">★ Default</button>
+      </div>
+      <div class="fr"><span class="fl">Patrick fee</span>
+        <span class="dollar-pre">$</span>
+        <input class="fi" id="plPatFee" type="number" step="5" placeholder="160.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700">
+        <span class="fn">editable</span>
+      </div>
+      <div class="fr" id="plDiaMilesRow"><span class="fl">Diana miles</span>
+        <input class="fi" id="plDiaMiles" type="number" step="0.01" placeholder="454.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700">
+        <button class="dflt-btn" onclick="setPLDefault('dia')" title="Save as default miles for Diana">★ Default</button>
+      </div>
+      <div class="fr" id="plDiaFeeRow"><span class="fl">Diana fee</span>
+        <span class="dollar-pre">$</span>
+        <input class="fi" id="plDiaFee" type="number" step="5" placeholder="160.00" oninput="calcPLTotal()" onblur="fmtField(this)" style="font-weight:700">
+        <span class="fn">editable</span>
+      </div>
       <div class="fr"><span class="fl">Wash (+$10 ea)</span>
         <div class="wtog">
           <button class="wt on" id="wNone" onclick="setWash('none')">None</button>
@@ -397,7 +414,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <div class="ai" style="background:#E8F5E9;font-size:20px">&#128506;</div>
       <div class="at"><div class="at-ttl">Google Maps <span class="spill sp-off" id="mapsStatus">Loading…</span></div><div class="at-sub">Distance calc · Places autocomplete · GPS location</div></div>
     </div>
-    <div class="ar" onclick="showApiHelp('anthropic')">
+    <div class="ar" onclick="showToast('Receipt scanning disabled')">
       <div class="ai" style="background:#f5f5f5;font-size:20px">&#128247;</div>
       <div class="at"><div class="at-ttl">Receipt Scanning API <span class="spill sp-off">Disabled</span></div><div class="at-sub">AI reads receipt totals · enable later</div></div>
       <span class="a-arr">&#8250;</span>
@@ -422,7 +439,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <div class="a-sh">App Info</div>
     <div class="ar">
       <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-      <div class="at"><div class="at-ttl">TripLog v1.9 (Cloud)</div><div class="at-sub">Maps · Contact picker · Driver lock · Billing contacts</div></div>
+      <div class="at"><div class="at-ttl">TripLog v1.9 (Cloud)</div><div class="at-sub">PL defaults · $ formatting · Maps · Driver lock · Billing contacts</div></div>
     </div>
     <div style="height:20px"></div>
   </div>
@@ -484,254 +501,49 @@ function updateSyncUI(status){var badge=document.getElementById('syncBadge');var
 
 // ── GOOGLE MAPS ───────────────────────────────────────────────────────
 let mapsReady=false;let distService=null;let geocoder=null;let distTimer=null;
-
-function initMaps(){
-  mapsReady=true;
-  distService=new google.maps.DistanceMatrixService();
-  geocoder=new google.maps.Geocoder();
-  const cityOpts={types:['(cities)'],componentRestrictions:{country:'us'}};
-  const addrOpts={types:['address'],componentRestrictions:{country:'us'}};
-  setupAC('fromCity',cityOpts,()=>scheduleDistCalc());
-  setupAC('toCity',cityOpts,()=>scheduleDistCalc());
-  setupAC('toAddress',addrOpts,()=>scheduleDistCalc());
-  setupAC('plFromCity',cityOpts,null);
-  const ms=document.getElementById('mapsStatus');
-  if(ms){ms.textContent='Active';ms.className='spill sp-on';}
-}
-
-function setupAC(id,opts,cb){
-  const el=document.getElementById(id);if(!el)return;
-  try{
-    const ac=new google.maps.places.Autocomplete(el,opts);
-    ac.addListener('place_changed',()=>{if(cb)cb();});
-  }catch(e){console.warn('AC error',id,e);}
-}
-
-function scheduleDistCalc(){
-  clearTimeout(distTimer);
-  distTimer=setTimeout(calcDistanceIfReady,1200);
-}
-
-function calcDistanceIfReady(){
-  if(!mapsReady||!distService)return;
-  const fromCity=document.getElementById('fromCity').value.trim();
-  const fromDealer=document.getElementById('fromDealer').value.trim();
-  const toAddr=document.getElementById('toAddress').value.trim();
-  const toCity=document.getElementById('toCity').value.trim();
-  const origin=fromCity||(fromDealer?fromDealer+', NM':'');
-  const dest=toAddr||toCity;
-  if(!origin||!dest)return;
-  distService.getDistanceMatrix({
-    origins:[origin],destinations:[dest],
-    travelMode:google.maps.TravelMode.DRIVING,
-    unitSystem:google.maps.UnitSystem.IMPERIAL
-  },(resp,status)=>{
-    if(status!=='OK')return;
-    const el=resp.rows[0]?.elements[0];
-    if(el?.status==='OK'){
-      const miles=Math.round(el.distance.value/1609.34);
-      const milesEl=document.getElementById('totalMiles');
-      if(milesEl&&!milesEl.value){milesEl.value=miles;calcTotal();}
-      const badge=document.getElementById('distBadge');
-      if(badge){badge.textContent='~'+miles+' mi';badge.style.display='inline-block';}
-      showToast('Distance: ~'+miles+' miles');
-    }
-  });
-}
-
-function useMyLocation(){
-  if(!navigator.geolocation){showToast('Location not available');return;}
-  showToast('Getting location…');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    if(!mapsReady||!geocoder){showToast('Maps not ready');return;}
-    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{
-      if(status==='OK'&&results[0]){
-        const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';
-        if(city){document.getElementById('fromCity').value=city;scheduleDistCalc();}
-        showToast('Location: '+(city||'found'));
-      }
-    });
-  },()=>showToast('Could not get location'));
-}
-
-function usePLLocation(){
-  if(!navigator.geolocation){showToast('Location not available');return;}
-  showToast('Getting location…');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    if(!mapsReady||!geocoder){showToast('Maps not ready');return;}
-    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{
-      if(status==='OK'&&results[0]){
-        const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';
-        if(city){document.getElementById('plFromCity').value=city;}
-        showToast('Location: '+(city||'found'));
-      }
-    });
-  },()=>showToast('Could not get location'));
-}
+function initMaps(){mapsReady=true;distService=new google.maps.DistanceMatrixService();geocoder=new google.maps.Geocoder();setupAC('fromCity',{types:['(cities)'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('toCity',{types:['(cities)'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('toAddress',{types:['address'],componentRestrictions:{country:'us'}},()=>scheduleDistCalc());setupAC('plFromCity',{types:['(cities)'],componentRestrictions:{country:'us'}},null);const ms=document.getElementById('mapsStatus');if(ms){ms.textContent='Active';ms.className='spill sp-on';}}
+function setupAC(id,opts,cb){const el=document.getElementById(id);if(!el)return;try{const ac=new google.maps.places.Autocomplete(el,opts);ac.addListener('place_changed',()=>{if(cb)cb();});}catch(e){}}
+function scheduleDistCalc(){clearTimeout(distTimer);distTimer=setTimeout(calcDistanceIfReady,1200);}
+function calcDistanceIfReady(){if(!mapsReady||!distService)return;const fromCity=document.getElementById('fromCity').value.trim();const fromDealer=document.getElementById('fromDealer').value.trim();const toAddr=document.getElementById('toAddress').value.trim();const toCity=document.getElementById('toCity').value.trim();const origin=fromCity||(fromDealer?fromDealer+', NM':'');const dest=toAddr||toCity;if(!origin||!dest)return;distService.getDistanceMatrix({origins:[origin],destinations:[dest],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.IMPERIAL},(resp,status)=>{if(status!=='OK')return;const el=resp.rows[0]?.elements[0];if(el?.status==='OK'){const miles=Math.round(el.distance.value/1609.34);const mEl=document.getElementById('totalMiles');if(mEl&&!mEl.value){mEl.value=miles;calcTotal();}const badge=document.getElementById('distBadge');if(badge){badge.textContent='~'+miles+' mi';badge.style.display='inline-block';}showToast('Distance: ~'+miles+' miles');}});}
+function useMyLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city){document.getElementById('fromCity').value=city;scheduleDistCalc();}showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
+function usePLLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city)document.getElementById('plFromCity').value=city;showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
 
 // ── CONTACT PICKER ────────────────────────────────────────────────────
-async function pickContact(nameId,phoneId){
-  if(!('contacts' in navigator&&'ContactsManager' in window)){
-    showToast('Contact picker: Android Chrome only');return;
-  }
-  try{
-    const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});
-    if(contacts.length>0){
-      const c=contacts[0];
-      if(nameId&&c.name?.[0])document.getElementById(nameId).value=c.name[0];
-      if(phoneId&&c.tel?.[0]){
-        const ph=c.tel[0].replace(/\D/g,'');
-        document.getElementById(phoneId).value=ph;
-        const linkId=phoneId+'Link';
-        if(document.getElementById(linkId))updatePhoneLink(phoneId,linkId);
-      }
-    }
-  }catch(e){showToast('Could not open contacts');}
-}
+async function pickContact(nameId,phoneId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];if(nameId&&c.name?.[0])document.getElementById(nameId).value=c.name[0];if(phoneId&&c.tel?.[0]){const ph=c.tel[0].replace(/\D/g,'');document.getElementById(phoneId).value=ph;const linkId=phoneId+'Link';if(document.getElementById(linkId))updatePhoneLink(phoneId,linkId);}}}catch(e){showToast('Could not open contacts');}}
 
 // ── DRIVER REGISTRATION ───────────────────────────────────────────────
 const RESERVED_NAMES=['patrick','patrick massengale','diana','diana massengale'];
+function checkDriverReg(){const stored=localStorage.getItem('tl_driver_name');if(!stored){setTimeout(()=>document.getElementById('driverRegModal').classList.add('open'),900);return;}applyDriverMode(stored);}
+function submitDriverReg(){const name=document.getElementById('driverRegInput').value.trim();const msg=document.getElementById('driverRegMsg');if(!name){msg.textContent='Please enter your name.';return;}if(RESERVED_NAMES.includes(name.toLowerCase())){msg.textContent='That name is reserved. Contact Patrick for access.';return;}if(!document.getElementById('driverRegCheck').checked){msg.textContent='Please confirm that your name cannot be changed.';return;}localStorage.setItem('tl_driver_name',name);document.getElementById('driverRegModal').classList.remove('open');applyDriverMode(name);}
+function applyDriverMode(name){const n=name.toLowerCase().trim();const isPatrick=n==='patrick'||n==='patrick massengale';const isDianaUser=n==='diana'||n==='diana massengale';S.driverName=name;S.isOwner=isPatrick||isDianaUser;if(isPatrick||isDianaUser){if(isDianaUser)switchUser('diana');}else{S.user=name.split(' ')[0].toLowerCase();document.getElementById('nt-pl').style.display='none';const plOpt=document.getElementById('plNewTripOption');if(plOpt)plOpt.style.display='none';document.getElementById('driverBar').style.display='none';const sub=document.getElementById('appSub');if(sub)sub.textContent=name;document.getElementById('profileName').textContent=name;}}
 
-function checkDriverReg(){
-  const stored=localStorage.getItem('tl_driver_name');
-  if(!stored){
-    setTimeout(()=>document.getElementById('driverRegModal').classList.add('open'),900);
-    return;
-  }
-  applyDriverMode(stored);
-}
+// ── PL DEFAULTS ───────────────────────────────────────────────────────
+function getPLDefault(who){return parseFloat(localStorage.getItem('tl_pl_default_'+who)||'454')||454;}
+function setPLDefault(who){const fieldId=who==='pat'?'plPatMiles':'plDiaMiles';const val=parseFloat(document.getElementById(fieldId).value);if(isNaN(val)||val<=0){showToast('Enter a miles value first');return;}localStorage.setItem('tl_pl_default_'+who,val.toFixed(2));showToast((who==='pat'?'Patrick':'Diana')+' default: '+val.toFixed(2)+' mi');}
 
-function submitDriverReg(){
-  const name=document.getElementById('driverRegInput').value.trim();
-  const msg=document.getElementById('driverRegMsg');
-  if(!name){msg.textContent='Please enter your name.';return;}
-  if(RESERVED_NAMES.includes(name.toLowerCase())){
-    msg.textContent='That name is reserved. Contact Patrick for access.';return;
-  }
-  if(!document.getElementById('driverRegCheck').checked){
-    msg.textContent='Please confirm that your name cannot be changed.';return;
-  }
-  localStorage.setItem('tl_driver_name',name);
-  document.getElementById('driverRegModal').classList.remove('open');
-  applyDriverMode(name);
-}
-
-function applyDriverMode(name){
-  const n=name.toLowerCase().trim();
-  const isPatrick=n==='patrick'||n==='patrick massengale';
-  const isDianaUser=n==='diana'||n==='diana massengale';
-  S.driverName=name;
-  S.isOwner=isPatrick||isDianaUser;
-  if(isPatrick||isDianaUser){
-    if(isDianaUser)switchUser('diana');
-  }else{
-    S.user=name.split(' ')[0].toLowerCase();
-    document.getElementById('nt-pl').style.display='none';
-    const plOpt=document.getElementById('plNewTripOption');
-    if(plOpt)plOpt.style.display='none';
-    document.getElementById('driverBar').style.display='none';
-    document.getElementById('appSub').textContent=name;
-    document.getElementById('profileName').textContent=name;
-  }
-}
+// ── FORMATTING ────────────────────────────────────────────────────────
+function fmtMoney(n){return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtField(el){const v=parseFloat(el.value);if(!isNaN(v))el.value=v.toFixed(2);}
 
 // ── CUSTOMER BILLING CONTACTS ─────────────────────────────────────────
-function renderCustMgmt(){
-  const el=document.getElementById('custMgmtList');if(!el)return;
-  el.innerHTML=S.customers.map(c=>`
-    <div class="cust-billing-card">
-      <div class="cust-billing-title" style="color:${c.color}">${c.name}</div>
-      <div class="cust-billing-row">
-        <span class="cust-billing-lbl">Billing name</span>
-        <input class="cust-billing-input" value="${c.billingContact?.name||''}" placeholder="Contact name" onchange="updateCustBilling('${c.id}','name',this.value)">
-      </div>
-      <div class="cust-billing-row">
-        <span class="cust-billing-lbl">Phone</span>
-        <input class="cust-billing-input" type="tel" value="${c.billingContact?.phone||''}" placeholder="Phone number" onchange="updateCustBilling('${c.id}','phone',this.value)">
-        <button class="icon-btn" onclick="pickContactForBilling('${c.id}')" title="Pick from contacts">&#128101;</button>
-      </div>
-      <div class="cust-billing-row">
-        <span class="cust-billing-lbl">Address</span>
-        <input class="cust-billing-input" value="${c.billingContact?.address||''}" placeholder="Billing address" onchange="updateCustBilling('${c.id}','address',this.value)">
-      </div>
-    </div>`).join('');
-}
-
-function updateCustBilling(custId,field,value){
-  const idx=S.customers.findIndex(c=>c.id===custId);if(idx<0)return;
-  if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};
-  S.customers[idx].billingContact[field]=value;
-  save();showToast('Saved');
-}
-
-async function pickContactForBilling(custId){
-  if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}
-  try{
-    const contacts=await navigator.contacts.select(['name','tel','address'],{multiple:false});
-    if(contacts.length>0){
-      const c=contacts[0];
-      const idx=S.customers.findIndex(cu=>cu.id===custId);if(idx<0)return;
-      if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};
-      if(c.name?.[0])S.customers[idx].billingContact.name=c.name[0];
-      if(c.tel?.[0])S.customers[idx].billingContact.phone=c.tel[0];
-      save();renderCustMgmt();showToast('Contact saved');
-    }
-  }catch(e){showToast('Could not open contacts');}
-}
+function renderCustMgmt(){const el=document.getElementById('custMgmtList');if(!el)return;el.innerHTML=S.customers.map(c=>`<div class="cust-billing-card"><div class="cust-billing-title" style="color:${c.color}">${c.name}</div><div class="cust-billing-row"><span class="cust-billing-lbl">Billing name</span><input class="cust-billing-input" value="${c.billingContact?.name||''}" placeholder="Contact name" onchange="updateCustBilling('${c.id}','name',this.value)"></div><div class="cust-billing-row"><span class="cust-billing-lbl">Phone</span><input class="cust-billing-input" type="tel" value="${c.billingContact?.phone||''}" placeholder="Phone number" onchange="updateCustBilling('${c.id}','phone',this.value)"><button class="icon-btn" onclick="pickContactForBilling('${c.id}')" title="Pick from contacts">&#128101;</button></div><div class="cust-billing-row"><span class="cust-billing-lbl">Address</span><input class="cust-billing-input" value="${c.billingContact?.address||''}" placeholder="Billing address" onchange="updateCustBilling('${c.id}','address',this.value)"></div></div>`).join('');}
+function updateCustBilling(custId,field,value){const idx=S.customers.findIndex(c=>c.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};S.customers[idx].billingContact[field]=value;save();showToast('Saved');}
+async function pickContactForBilling(custId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];const idx=S.customers.findIndex(cu=>cu.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};if(c.name?.[0])S.customers[idx].billingContact.name=c.name[0];if(c.tel?.[0])S.customers[idx].billingContact.phone=c.tel[0];save();renderCustMgmt();showToast('Contact saved');}}catch(e){showToast('Could not open contacts');}}
 
 // ── STATE ─────────────────────────────────────────────────────────────
 const S={user:'patrick',screen:'list',prevScreen:null,filter:'all',search:'',editId:null,invoices:[],customers:[],plWash:'none',plPatVehicleCount:1,plDiaVehicleCount:0,stdVehicleCount:1,stdDrivers:1,sortBy:'invnum',sortDir:'desc',isOwner:true,driverName:'Patrick Massengale'};
 
-function init(){
-  history.pushState({page:'list'},'','');
-  loadData();seedCustomers();migrateCustomers();
-  checkDriverReg();
-  setDate();setPLDate();addVehicle();addPLVehicle('pat');
-  renderList();updateSortBar();updatePLBanner();renderDiaDashboard();
-  populateAutocomplete();
-  document.getElementById('driverBar').style.display='flex';
-  initFirebase();
-}
+function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();migrateCustomers();checkDriverReg();setDate();setPLDate();addVehicle();addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();document.getElementById('driverBar').style.display='flex';initFirebase();}
 function setDate(){const d=new Date();document.getElementById('tripDate').value=d.toISOString().split('T')[0];updateInvNum();}
 function setPLDate(){const d=new Date();document.getElementById('plDate').value=d.toISOString().split('T')[0];updatePLInvNum();}
 function loadData(){S.invoices=JSON.parse(localStorage.getItem('tl_inv')||'[]');S.customers=JSON.parse(localStorage.getItem('tl_cust')||'[]');}
 function save(){localStorage.setItem('tl_inv',JSON.stringify(S.invoices));localStorage.setItem('tl_cust',JSON.stringify(S.customers));}
-
 function seedCustomers(){if(S.customers.length>0)return;S.customers=[{id:'phillong',name:'Phil Long Ford',short:'PhilLong',color:'#1c6ea4',type:'phillong',billing:'manual',defaultFee:160,contacts:[],billingContact:{}},{id:'reliable',name:'Reliable Chevrolet',short:'Reliable',color:'#2e7d32',type:'standard',billing:'mileage',ratePerMile:0.50,contacts:[],billingContact:{}},{id:'chalmers',name:'Chalmers Ford',short:'Chalmers',color:'#b05c00',type:'chalmers',billing:'hourly',hourlyRate:25,contacts:[],billingContact:{}},{id:'marco',name:'ABQ Auto Deals',short:'Marco',color:'#7048A0',type:'standard',billing:'flat',contacts:[{email:'marcoarreola0226@gmail.com'}],addresses:[{label:'Business',full:'6917 Lomas Blvd NE, Albuquerque NM 87110',phone:'505-274-0090'},{label:'Home',full:'9932 Cardinal St NW, Albuquerque NM 87114'}],billingContact:{}}];save();}
+function migrateCustomers(){let changed=false;if(!S.customers.find(c=>c.id==='marco')){S.customers.push({id:'marco',name:'ABQ Auto Deals',short:'Marco',color:'#7048A0',type:'standard',billing:'flat',contacts:[{email:'marcoarreola0226@gmail.com'}],addresses:[{label:'Business',full:'6917 Lomas Blvd NE, Albuquerque NM 87110',phone:'505-274-0090'},{label:'Home',full:'9932 Cardinal St NW, Albuquerque NM 87114'}],billingContact:{}});changed=true;}S.customers.forEach(c=>{if(!c.billingContact){c.billingContact={};changed=true;}});if(changed)save();}
 
-function migrateCustomers(){
-  let changed=false;
-  if(!S.customers.find(c=>c.id==='marco')){S.customers.push({id:'marco',name:'ABQ Auto Deals',short:'Marco',color:'#7048A0',type:'standard',billing:'flat',contacts:[{email:'marcoarreola0226@gmail.com'}],addresses:[{label:'Business',full:'6917 Lomas Blvd NE, Albuquerque NM 87110',phone:'505-274-0090'},{label:'Home',full:'9932 Cardinal St NW, Albuquerque NM 87114'}],billingContact:{}});changed=true;}
-  S.customers.forEach(c=>{if(!c.billingContact){c.billingContact={};changed=true;}});
-  if(changed)save();
-}
-
-function goScreen(name){
-  document.querySelectorAll('.sc').forEach(e=>e.classList.remove('on'));
-  document.querySelectorAll('.nt').forEach(e=>e.classList.remove('on'));
-  document.getElementById('sc-'+name).classList.add('on');
-  const ntEl=document.getElementById('nt-'+name);if(ntEl)ntEl.classList.add('on');
-  S.prevScreen=S.screen;S.screen=name;
-  const fab=document.getElementById('fab');const bb=document.getElementById('backBtn');
-  if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}
-  else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings',customers:'Customer Billing Contacts'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}
-  document.getElementById('mainScroll').scrollTop=0;
-  if(name==='list'){S._filteredForDetail=null;renderList();renderDiaDashboard();}
-  if(name==='pl')updatePLBanner();
-  if(name==='admin')renderFeedback();
-  if(name==='customers')renderCustMgmt();
-  // Clear distance badge when leaving form
-  if(name!=='form'){const b=document.getElementById('distBadge');if(b)b.style.display='none';}
-}
+function goScreen(name){document.querySelectorAll('.sc').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.nt').forEach(e=>e.classList.remove('on'));document.getElementById('sc-'+name).classList.add('on');const ntEl=document.getElementById('nt-'+name);if(ntEl)ntEl.classList.add('on');S.prevScreen=S.screen;S.screen=name;const fab=document.getElementById('fab');const bb=document.getElementById('backBtn');if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings',customers:'Customer Billing Contacts'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}document.getElementById('mainScroll').scrollTop=0;if(name==='list'){S._filteredForDetail=null;renderList();renderDiaDashboard();}if(name==='pl')updatePLBanner();if(name==='admin')renderFeedback();if(name==='customers')renderCustMgmt();if(name!=='form'){const b=document.getElementById('distBadge');if(b)b.style.display='none';}}
 function goBack(){goScreen(S.prevScreen==='customers'?'admin':'list');}
-function switchUser(u){
-  S.user=u;const app=document.getElementById('app');
-  if(u==='diana'){app.classList.add('diana-active');document.getElementById('dcP').classList.remove('pat-on');document.getElementById('dcD').classList.add('dia-on');}
-  else{app.classList.remove('diana-active');document.getElementById('dcP').classList.add('pat-on');document.getElementById('dcD').classList.remove('dia-on');}
-  const sub=document.getElementById('appSub');if(sub)sub.textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';
-  document.getElementById('profileName').textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';
-  renderList();renderDiaDashboard();
-}
+function switchUser(u){S.user=u;const app=document.getElementById('app');if(u==='diana'){app.classList.add('diana-active');document.getElementById('dcP').classList.remove('pat-on');document.getElementById('dcD').classList.add('dia-on');}else{app.classList.remove('diana-active');document.getElementById('dcP').classList.add('pat-on');document.getElementById('dcD').classList.remove('dia-on');}const sub=document.getElementById('appSub');if(sub)sub.textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';document.getElementById('profileName').textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';renderList();renderDiaDashboard();}
 
 function todayInvNum(){const d=new Date();return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;}
 function dateToInvNum(dateStr){return dateStr?dateStr.replace(/-/g,''):todayInvNum();}
@@ -750,7 +562,7 @@ function closeCustModal(){document.getElementById('custModal').classList.remove(
 function selectCustomer(id){selectedCustomerId=id;const cust=S.customers.find(c=>c.id===id);if(cust){document.getElementById('selectedCustName').textContent=cust.name+' ›';const isChalmers=id==='chalmers';const isMarco=id==='marco';document.getElementById('timeRow').style.display=isChalmers?'flex':'none';document.getElementById('returnRow').style.display=isChalmers?'flex':'none';document.getElementById('hoursRow').style.display=isChalmers?'flex':'none';document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display='flex';document.getElementById('feeNote').textContent=isChalmers?'hrs × $25':isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='ABQ Auto Deals';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='none';document.getElementById('returnRow').style.display='none';document.getElementById('hoursRow').style.display='none';}closeCustModal();calcTotal();}
 function setDrivers(n){S.stdDrivers=n;document.getElementById('dt1').className='dt '+(n===1?'p-on':'');document.getElementById('dt2').className='dt '+(n===2?'d-on':'');calcTotal();}
 function calcChalmersHours(){const dep=document.getElementById('departTime').value;const ret=document.getElementById('returnTime').value;if(!dep||!ret)return;const [dh,dm]=dep.split(':').map(Number);const [rh,rm]=ret.split(':').map(Number);let mins=(rh*60+rm)-(dh*60+dm);if(mins<0)mins+=1440;document.getElementById('hoursWorked').value=(Math.round(mins/15)*0.25).toFixed(2);calcTotal();}
-function calcTotal(){const cust=S.customers.find(c=>c.id===selectedCustomerId);let fee=0;if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.round(miles*(cust.ratePerMile||0.50)/5)*5;if(auto>0&&!document.getElementById('driveFee').value)document.getElementById('driveFee').value=auto.toFixed(2);fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}else if(cust&&cust.billing==='hourly'){const hrs=parseFloat(document.getElementById('hoursWorked').value)||0;const auto=((hrs*(cust.hourlyRate||25)).toFixed(2));document.getElementById('driveFee').value=auto;fee=parseFloat(auto)||0;if(S.stdDrivers===2)fee*=2;}else{fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;document.getElementById('totalDisplay').textContent='$'+(fee+fuel+meals+wash+other).toFixed(2);}
+function calcTotal(){const cust=S.customers.find(c=>c.id===selectedCustomerId);let fee=0;if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.round(miles*(cust.ratePerMile||0.50)/5)*5;if(auto>0&&!document.getElementById('driveFee').value)document.getElementById('driveFee').value=auto.toFixed(2);fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}else if(cust&&cust.billing==='hourly'){const hrs=parseFloat(document.getElementById('hoursWorked').value)||0;const auto=((hrs*(cust.hourlyRate||25)).toFixed(2));document.getElementById('driveFee').value=auto;fee=parseFloat(auto)||0;if(S.stdDrivers===2)fee*=2;}else{fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;document.getElementById('totalDisplay').textContent=fmtMoney(fee+fuel+meals+wash+other);}
 function updatePhoneLink(inputId,linkId){const val=document.getElementById(inputId).value.replace(/\D/g,'');document.getElementById(linkId).href=val.length>=10?'tel:'+val:'#';}
 
 function addPhoto(input){Array.from(input.files).forEach(file=>{const reader=new FileReader();reader.onload=e=>{const original=new Image();original.onload=()=>{const MAX=800;let w=original.width,h=original.height;if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(original,0,0,w,h);const compressed=canvas.toDataURL('image/jpeg',0.70);const img=document.createElement('img');img.src=compressed;img.className='ph-thumb';img.onclick=()=>{if(confirm('Remove this receipt?'))img.remove();};document.getElementById('photoList').insertBefore(img,document.querySelector('label.ph-add'));};original.src=e.target.result;};reader.readAsDataURL(file);});}
@@ -758,28 +570,62 @@ function collectVehicles(){const vehs=[];document.querySelectorAll('[id^="veh-"]
 function collectPLVehicles(who){const vehs=[];document.querySelectorAll(`[id^="pl-${who}-"]`).forEach(card=>{const n=card.id.split('-')[2];const vin=(document.getElementById(`pl-vin-${who}-${n}`)||{}).value||'';const ymm=(document.getElementById(`pl-ymm-${who}-${n}`)||{}).value||'';const stk=(document.getElementById(`pl-stk-${who}-${n}`)||{}).value||'';if(vin||ymm||stk)vehs.push({vin,ymm,stk});});return vehs;}
 function getPhotos(){const imgs=[];document.querySelectorAll('#photoList img.ph-thumb').forEach(img=>imgs.push(img.src));return imgs;}
 
-function saveInvoice(status){
-  const cust=S.customers.find(c=>c.id===selectedCustomerId)||{id:'other',name:document.getElementById('fromDealer').value||'Other',color:'#888',short:'Other'};
-  const dateVal=document.getElementById('tripDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('invSuffix').value.trim();const invNum=base+(suf||'');
-  const driveFee=parseFloat(document.getElementById('driveFee').value)||0;const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;
-  const drivers=S.isOwner?S.stdDrivers:1;
-  const driverField=S.isOwner?S.user:(S.driverName||S.user);
-  const total=(driveFee*drivers)+fuel+meals+wash+other;
-  const inv={id:S.editId||('inv-'+Date.now()),invNum,date:dateVal,custId:cust.id,custName:cust.name,custColor:cust.color,custShort:cust.short||cust.name,type:'standard',driver:driverField,fromDealer:document.getElementById('fromDealer').value,fromContact:document.getElementById('fromContact').value,fromPhone:document.getElementById('fromPhone').value,fromCity:document.getElementById('fromCity').value,toName:document.getElementById('toName').value,toPhone:document.getElementById('toPhone').value,toAddress:document.getElementById('toAddress').value,toCity:document.getElementById('toCity').value,dealNum:document.getElementById('dealNum').value,vehicles:collectVehicles(),drivers,totalMiles:parseFloat(document.getElementById('totalMiles').value)||0,driveFee,fuel,meals,wash,other,otherDesc:document.getElementById('otherDesc').value,notes:document.getElementById('invoiceNotes').value,photos:getPhotos(),total:parseFloat(total.toFixed(2)),status:status==='draft'?'draft':'sent',createdAt:Date.now(),updatedAt:Date.now()};
-  if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0){inv.createdAt=S.invoices[idx].createdAt||inv.createdAt;S.invoices[idx]=inv;}}else{S.invoices.unshift(inv);}
-  updateAutocomplete(inv);save();syncInvoice(inv);showToast(status==='draft'?'Draft saved':'Invoice saved');if(status==='ready')setTimeout(()=>generateStdPDF(inv),400);goScreen('list');
-}
+function saveInvoice(status){const cust=S.customers.find(c=>c.id===selectedCustomerId)||{id:'other',name:document.getElementById('fromDealer').value||'Other',color:'#888',short:'Other'};const dateVal=document.getElementById('tripDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('invSuffix').value.trim();const invNum=base+(suf||'');const driveFee=parseFloat(document.getElementById('driveFee').value)||0;const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;const drivers=S.isOwner?S.stdDrivers:1;const driverField=S.isOwner?S.user:(S.driverName||S.user);const total=(driveFee*drivers)+fuel+meals+wash+other;const inv={id:S.editId||('inv-'+Date.now()),invNum,date:dateVal,custId:cust.id,custName:cust.name,custColor:cust.color,custShort:cust.short||cust.name,type:'standard',driver:driverField,fromDealer:document.getElementById('fromDealer').value,fromContact:document.getElementById('fromContact').value,fromPhone:document.getElementById('fromPhone').value,fromCity:document.getElementById('fromCity').value,toName:document.getElementById('toName').value,toPhone:document.getElementById('toPhone').value,toAddress:document.getElementById('toAddress').value,toCity:document.getElementById('toCity').value,dealNum:document.getElementById('dealNum').value,vehicles:collectVehicles(),drivers,totalMiles:parseFloat(document.getElementById('totalMiles').value)||0,driveFee,fuel,meals,wash,other,otherDesc:document.getElementById('otherDesc').value,notes:document.getElementById('invoiceNotes').value,photos:getPhotos(),total:parseFloat(total.toFixed(2)),status:status==='draft'?'draft':'sent',createdAt:Date.now(),updatedAt:Date.now()};if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0){inv.createdAt=S.invoices[idx].createdAt||inv.createdAt;S.invoices[idx]=inv;}}else{S.invoices.unshift(inv);}updateAutocomplete(inv);save();syncInvoice(inv);showToast(status==='draft'?'Draft saved':'Invoice saved');if(status==='ready')setTimeout(()=>generateStdPDF(inv),400);goScreen('list');}
 
-function calcPLTotal(){const patFee=parseFloat(document.getElementById('plPatFee').value)||0;const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;let wash=0;if(S.plWash==='patrick'||S.plWash==='both')wash+=10;if(S.plWash==='diana'||S.plWash==='both')wash+=10;document.getElementById('plTotalDisplay').textContent='$'+(patFee+diaFee+wash).toFixed(2);}
+function calcPLTotal(){const patFee=parseFloat(document.getElementById('plPatFee').value)||0;const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;let wash=0;if(S.plWash==='patrick'||S.plWash==='both')wash+=10;if(S.plWash==='diana'||S.plWash==='both')wash+=10;document.getElementById('plTotalDisplay').textContent=fmtMoney(patFee+diaFee+wash);}
 function setWash(who){S.plWash=who;['None','Pat','Dia','Both'].forEach((w,i)=>{document.getElementById(['wNone','wPat','wDia','wBoth'][i]).classList.toggle('on',['none','patrick','diana','both'][i]===who);});calcPLTotal();}
+
 function savePLInvoice(status){const dateVal=document.getElementById('plDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('plSuffix').value.trim();const invNum=base+(suf||'');const patFee=parseFloat(document.getElementById('plPatFee').value)||0;const diaFee=parseFloat(document.getElementById('plDiaFee').value)||0;const patMiles=parseFloat(document.getElementById('plPatMiles').value)||0;const diaMiles=parseFloat(document.getElementById('plDiaMiles').value)||0;let washPat=0,washDia=0;if(S.plWash==='patrick'||S.plWash==='both')washPat=10;if(S.plWash==='diana'||S.plWash==='both')washDia=10;const inv={id:S.editId||('pl-'+Date.now()),invNum,date:dateVal,custId:'phillong',custName:'Phil Long Ford',custColor:'#1c6ea4',custShort:'PhilLong',type:'phillong',driver:S.user,fromCity:document.getElementById('plFromCity').value,fromLoc:document.getElementById('plFromLoc').value,toName:document.getElementById('plToName').value,patVehicles:collectPLVehicles('pat'),diaVehicles:collectPLVehicles('dia'),patMiles,patFee,diaMiles,diaFee,wash:S.plWash,washPat,washDia,total:parseFloat((patFee+diaFee+washPat+washDia).toFixed(2)),status:status==='draft'?'draft':'ready',billed:false,createdAt:S.editId?((S.invoices.find(i=>i.id===S.editId)||{}).createdAt||Date.now()):Date.now(),updatedAt:Date.now()};if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0)S.invoices[idx]=inv;S.editId=null;}else{S.invoices.unshift(inv);}save();syncInvoice(inv);updatePLBanner();showToast(status==='draft'?'Draft saved':'Trip added to billing period');if(status==='ready')clearPLForm();goScreen('list');}
-function clearPLForm(){['plFromCity','plFromLoc','plToName','plPatMiles','plPatFee','plDiaMiles','plDiaFee'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('plPatVehicles').innerHTML='';document.getElementById('plDiaVehicles').innerHTML='';S.plPatVehicleCount=0;S.plDiaVehicleCount=0;addPLVehicle('pat');setWash('none');document.getElementById('plSuffix').value='';setPLDate();document.getElementById('plTotalDisplay').textContent='$0.00';}
+
+function clearPLForm(){['plFromCity','plFromLoc','plToName'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('plPatMiles').value=getPLDefault('pat').toFixed(2);document.getElementById('plDiaMiles').value=getPLDefault('dia').toFixed(2);document.getElementById('plPatFee').value='160.00';document.getElementById('plDiaFee').value='160.00';document.getElementById('plPatVehicles').innerHTML='';document.getElementById('plDiaVehicles').innerHTML='';S.plPatVehicleCount=0;S.plDiaVehicleCount=0;addPLVehicle('pat');setWash('none');document.getElementById('plSuffix').value='';setPLDate();document.getElementById('plTotalDisplay').textContent='$0.00';}
+
 function updatePLBanner(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');const diaCount=unbilled.filter(i=>i.diaVehicles&&i.diaVehicles.length>0).length;document.getElementById('plUnbilledCount').textContent=`${unbilled.length} trip${unbilled.length!==1?'s':''} · ${diaCount} with Diana`;}
 
-function generateStdPDF(inv){const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60,lh=18;let y=60;const dateObj=new Date(inv.date+'T12:00:00');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`${months[dateObj.getMonth()]} ${dateObj.getDate()}, ${inv.fromCity||inv.toCity||''}`,L,y);y+=lh;doc.text('Invoice #: '+inv.invNum,L,y);y+=lh*1.8;const driverName=inv.driver==='diana'?'Diana Massengale':inv.driver==='patrick'?'Patrick Massengale':(inv.driver||'Driver');doc.setFontSize(12);doc.setFont('helvetica','normal');doc.text(driverName,L,y);y+=lh;doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);y+=lh;doc.text('505-203-1872',L,y);y+=lh*1.8;doc.text('From:  '+(inv.fromDealer||'')+(inv.fromContact?' - '+inv.fromContact:''),L,y);y+=lh*1.8;doc.text('To: '+(inv.toName||''),L,y);y+=lh;if(inv.toPhone){doc.text(inv.toPhone,L,y);y+=lh;}if(inv.toAddress){doc.text(inv.toAddress,L,y);y+=lh;}if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(inv.toCity,L,y);y+=lh;}y+=lh*0.5;if(inv.dealNum){doc.text('Deal #: '+inv.dealNum,L,y);y+=lh;}(inv.vehicles||[]).forEach(v=>{if(v.vin){doc.text('VIN#:  '+v.vin+(v.ymm?' '+v.ymm:''),L,y);y+=lh;}if(v.stk){doc.text('Stock # : '+v.stk,L,y);y+=lh;}});y+=lh*0.5;if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh;}let feeText='Driving Fee: $'+inv.driveFee.toFixed(2);if(inv.drivers===2)feeText+=' * 2 Drivers = $'+(inv.driveFee*2).toFixed(2);doc.text(feeText,L,y);y+=lh;if(inv.meals>0){doc.text('Meals: $'+inv.meals.toFixed(2),L,y);y+=lh;}if(inv.wash>0){doc.text('Wash: $'+inv.wash.toFixed(2),L,y);y+=lh;}if(inv.fuel>0){doc.text('Fuel: $'+inv.fuel.toFixed(2),L,y);y+=lh;}if(inv.other>0){doc.text((inv.otherDesc||'Other')+': $'+inv.other.toFixed(2),L,y);y+=lh;}if(inv.drivers===2){y+=lh*0.5;doc.setFont('helvetica','italic');doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');y+=lh;}y+=lh;doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Total Due This Invoice: $'+inv.total.toFixed(2),L,y);if(inv.photos&&inv.photos.length>0){y+=lh*2;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Receipts attached:',L,y);y+=lh;let px=L;inv.photos.forEach(src=>{try{doc.addImage(src,'JPEG',px,y,120,80);px+=130;if(px>450){px=L;y+=90;}}catch(e){}});}const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;doc.save(fname);showToast('PDF saved: '+fname);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].status='sent';save();syncInvoice(S.invoices[idx]);renderList();}}
+function fmtPDFAmt(doc,amt,x,y){const str=Number(amt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});doc.text('$'+str,x,y,{align:'right'});}
+
+function generateStdPDF(inv){const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60,lh=18;let y=60;const dateObj=new Date(inv.date+'T12:00:00');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`${months[dateObj.getMonth()]} ${dateObj.getDate()}, ${inv.fromCity||inv.toCity||''}`,L,y);y+=lh;doc.text('Invoice #: '+inv.invNum,L,y);y+=lh*1.8;const driverName=inv.driver==='diana'?'Diana Massengale':inv.driver==='patrick'?'Patrick Massengale':(inv.driver||'Driver');doc.setFontSize(12);doc.setFont('helvetica','normal');doc.text(driverName,L,y);y+=lh;doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);y+=lh;doc.text('505-203-1872',L,y);y+=lh*1.8;doc.text('From:  '+(inv.fromDealer||'')+(inv.fromContact?' - '+inv.fromContact:''),L,y);y+=lh*1.8;doc.text('To: '+(inv.toName||''),L,y);y+=lh;if(inv.toPhone){doc.text(inv.toPhone,L,y);y+=lh;}if(inv.toAddress){doc.text(inv.toAddress,L,y);y+=lh;}if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(inv.toCity,L,y);y+=lh;}y+=lh*0.5;if(inv.dealNum){doc.text('Deal #: '+inv.dealNum,L,y);y+=lh;}(inv.vehicles||[]).forEach(v=>{if(v.vin){doc.text('VIN#:  '+v.vin+(v.ymm?' '+v.ymm:''),L,y);y+=lh;}if(v.stk){doc.text('Stock # : '+v.stk,L,y);y+=lh;}});y+=lh*0.5;if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh;}const feeAmt=Number(inv.driveFee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});let feeText='Driving Fee: $'+feeAmt;if(inv.drivers===2){const total2=(inv.driveFee*2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});feeText+=' × 2 Drivers = $'+total2;}doc.text(feeText,L,y);y+=lh;if(inv.meals>0){doc.text('Meals: $'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.wash>0){doc.text('Wash: $'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.fuel>0){doc.text('Fuel: $'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.other>0){doc.text((inv.otherDesc||'Other')+': $'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),L,y);y+=lh;}if(inv.drivers===2){y+=lh*0.5;doc.setFont('helvetica','italic');doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');y+=lh;}y+=lh;doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Total Due This Invoice: '+fmtMoney(inv.total),L,y);if(inv.photos&&inv.photos.length>0){y+=lh*2;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Receipts attached:',L,y);y+=lh;let px=L;inv.photos.forEach(src=>{try{doc.addImage(src,'JPEG',px,y,120,80);px+=130;if(px>450){px=L;y+=90;}}catch(e){}});}const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;doc.save(fname);showToast('PDF saved: '+fname);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].status='sent';save();syncInvoice(S.invoices[idx]);renderList();}}
 
 function generatePLCheckRequests(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');if(unbilled.length===0){showToast('No unbilled Phil Long trips');return;}if(confirm(`Generate Check Requests for ${unbilled.length} trip(s)?\nThis will mark them as billed.`)){generatePLPDF(unbilled,'Patrick Massengale','patrick');const withDiana=unbilled.filter(i=>i.diaVehicles&&i.diaVehicles.length>0);if(withDiana.length>0)setTimeout(()=>generatePLPDF(withDiana,'Diana Massengale','diana'),800);unbilled.forEach(inv=>{const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].billed=true;S.invoices[idx].status='billed';S.invoices[idx].billedAt=Date.now();syncInvoice(S.invoices[idx]);}});save();updatePLBanner();renderList();showToast('Check Requests generated!');}}
-function generatePLPDF(trips,name,who){const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60;let y=50;doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('CHECK REQUEST FORM',200,y,{align:'center'});doc.setFontSize(22);doc.text(name,L,y+20);const today=new Date();const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;doc.setFontSize(18);doc.text(ds,500,y+20,{align:'right'});y+=55;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('TO',L,y);doc.line(L+20,y,500,y);doc.text('DATE',360,y);y+=20;doc.text('ADDRESS',L,y);doc.text('2125 S Ensenada Cir SE',L+60,y);doc.text('$',400,y);const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)),0);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(total.toFixed(2),420,y);doc.line(415,y,500,y);y+=18;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('CITY & STATE',L,y);doc.text('Rio Rancho NM  87124',L+70,y);y+=20;doc.text('FOR',L,y);doc.line(L+25,y,500,y);y+=16;doc.line(L,y,500,y);y+=16;doc.line(L,y,500,y);y+=20;doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+130,y,500,y);y+=20;doc.text('REQUESTED BY:',L,y);doc.line(L+90,y,280,y);doc.text('AUTHORITY',295,y);doc.line(355,y,500,y);y+=14;doc.setFontSize(8);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',500,y,{align:'right'});y+=24;doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Date',L,y);doc.text('Stock #',L+80,y);doc.text('Trip Info',L+170,y);doc.text('Amount',460,y,{align:'right'});doc.line(L,y+4,500,y+4);y+=22;doc.setFont('helvetica','normal');doc.setFontSize(11);trips.forEach(trip=>{const dateObj=new Date(trip.date+'T12:00:00');const ds2=`${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getFullYear()).slice(2)}`;const vehicles=who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]);const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);const tripInfo=`${trip.fromCity||''}${trip.fromLoc?' - '+trip.fromLoc:''} → ${trip.toName||''}`;if(vehicles.length===0){doc.text(ds2,L,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);doc.text('$'+fee.toFixed(2),460,y,{align:'right'});y+=lhFromLines(ti)*14+4;}else{vehicles.forEach((v,i)=>{doc.text(ds2,L,y);doc.text((v.stk||'').substring(0,12),L+80,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);if(i===vehicles.length-1)doc.text('$'+fee.toFixed(2),460,y,{align:'right'});y+=Math.max(lhFromLines(ti)*14,14)+4;});}if(y>680){doc.addPage();y=60;}});doc.line(L,y,500,y);y+=16;doc.setFont('helvetica','bold');doc.text('Total: $'+total.toFixed(2),460,y,{align:'right'});const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;doc.save(fname);}
+
+function generatePLPDF(trips,name,who){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=60;let y=50;
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('CHECK REQUEST FORM',200,y,{align:'center'});
+  doc.setFontSize(22);doc.text(name,L,y+20);
+  const today=new Date();const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
+  doc.setFontSize(18);doc.text(ds,500,y+20,{align:'right'});y+=55;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('TO',L,y);doc.line(L+20,y,500,y);doc.text('DATE',360,y);y+=20;
+  doc.text('ADDRESS',L,y);doc.text('2125 S Ensenada Cir SE',L+60,y);
+  const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)),0);
+  doc.text('$',395,y);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text(Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),420,y);
+  doc.line(415,y,500,y);y+=18;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('CITY & STATE',L,y);doc.text('Rio Rancho NM  87124',L+70,y);y+=20;
+  doc.text('FOR',L,y);doc.line(L+25,y,500,y);y+=16;doc.line(L,y,500,y);y+=16;doc.line(L,y,500,y);y+=20;
+  doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+130,y,500,y);y+=20;
+  doc.text('REQUESTED BY:',L,y);doc.line(L+90,y,280,y);doc.text('AUTHORITY',295,y);doc.line(355,y,500,y);y+=14;
+  doc.setFontSize(8);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',500,y,{align:'right'});y+=24;
+  doc.setFontSize(12);doc.setFont('helvetica','bold');
+  doc.text('Date',L,y);doc.text('Stock #',L+80,y);doc.text('Trip Info',L+170,y);doc.text('Amount',460,y,{align:'right'});
+  doc.line(L,y+4,500,y+4);y+=22;
+  doc.setFont('helvetica','normal');doc.setFontSize(11);
+  trips.forEach(trip=>{
+    const dateObj=new Date(trip.date+'T12:00:00');
+    const ds2=`${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getFullYear()).slice(2)}`;
+    const vehicles=who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]);
+    const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);
+    const feeStr='$'+Number(fee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const tripInfo=`${trip.fromCity||''}${trip.fromLoc?' - '+trip.fromLoc:''} \u2192 ${trip.toName||''}`;
+    if(vehicles.length===0){doc.text(ds2,L,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);doc.text(feeStr,460,y,{align:'right'});y+=lhFromLines(ti)*14+4;}
+    else{vehicles.forEach((v,i)=>{doc.text(ds2,L,y);doc.text((v.stk||'').substring(0,12),L+80,y);const ti=doc.splitTextToSize(tripInfo,240);doc.text(ti,L+170,y);if(i===vehicles.length-1)doc.text(feeStr,460,y,{align:'right'});y+=Math.max(lhFromLines(ti)*14,14)+4;});}
+    if(y>680){doc.addPage();y=60;}
+  });
+  doc.line(L,y,500,y);y+=16;doc.setFont('helvetica','bold');
+  doc.text('Total: $'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),460,y,{align:'right'});
+  const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;
+  doc.save(fname);
+}
 function lhFromLines(arr){return Array.isArray(arr)?arr.length:1;}
 
 const CITY_ABBREV={'albuquerque':'Abq','santa fe':'S.Fe','farmington':'Frmgtn','el paso':'EP','rio rancho':'Rio Rancho','corrales':'Corrales','bernalillo':'Bernlllo','los lunas':'Los Lunas','belen':'Belen','gallup':'Gallup','raton':'Raton','las cruces':'Las Cruces','las vegas':'Las Vegas NM','alamogordo':'Almgrdo','roswell':'Roswell','carlsbad':'Carlsbad','hobbs':'Hobbs','clovis':'Clovis','artesia':'Artesia','deming':'Deming','silver city':'Slvr Cty','socorro':'Socorro','truth or consequences':'T or C','taos':'Taos'};
@@ -796,10 +642,7 @@ function sortInvoices(invs){const dir=S.sortDir==='desc'?1:-1;const SO={sent:1,r
 
 function renderList(){
   let invs=sortInvoices([...S.invoices]);
-  // Restrict non-owner drivers to their own invoices only
-  if(!S.isOwner&&S.driverName){
-    const dn=S.driverName.toLowerCase();invs=invs.filter(i=>(i.driver||'').toLowerCase()===dn||(i.driver||'').toLowerCase()===S.user);
-  }
+  if(!S.isOwner&&S.driverName){const dn=S.driverName.toLowerCase();invs=invs.filter(i=>(i.driver||'').toLowerCase()===dn||(i.driver||'').toLowerCase()===S.user);}
   if(S.search)invs=invs.filter(i=>((i.invNum||'')+(i.custName||'')+(i.fromDealer||'')+(i.toName||'')+(i.toCity||'')+(i.fromCity||'')).toLowerCase().includes(S.search.toLowerCase())||(i.vehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase()))||(i.patVehicles||[]).some(v=>((v.vin||'')+(v.stk||'')).toLowerCase().includes(S.search.toLowerCase())));
   if(S.filter!=='all')invs=invs.filter(i=>S.filter==='billed'?(i.status==='billed'||i.billed):i.status===S.filter);
   const el=document.getElementById('invoiceList');
@@ -823,7 +666,7 @@ function renderList(){
       <div class="ic2-div" style="border-color:${cs.div}"></div>
       <div class="ic2-route" style="color:${cs.text}">${routeLine}</div>
       <div class="ic2-bottom">
-        <span class="ic2-amt" style="color:${cs.text}">$${(inv.total||0).toFixed(2)}</span>
+        <span class="ic2-amt" style="color:${cs.text}">${fmtMoney(inv.total||0)}</span>
         <span style="color:${cs.sub};font-size:13px;display:flex;align-items:center;gap:5px">
           ${driverFirst?`<span>${driverFirst}</span>`:''}
           <span style="background:${badge.bg};color:${badge.color}" class="sbadge">${badge.label}</span>
@@ -851,8 +694,8 @@ function openDetail(id){
   if(fmtDate)metaRows+=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Date:&nbsp;&nbsp;</span><span>${fmtDate}</span></div>`;
   function pRow(lbl,val,italic){return `<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:3px 0"><span style="font-size:12px;color:#888;white-space:nowrap">${lbl}</span><span style="font-size:13px;color:${italic?'#bbb':'#1a1a2e'};font-style:${italic?'italic':'normal'}">${val}</span></div>`;}
   let body='';
-  if(!isPL){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(inv.fromDealer||inv.fromCity)body+=pRow('From',inv.fromDealer+(inv.fromCity?' · '+inv.fromCity:''));if(inv.toName)body+=pRow('To',inv.toName+(inv.toAddress?', '+inv.toAddress:'')+(inv.toCity?' · '+inv.toCity:''));body+=`</div>`;const vehs=inv.vehicles||[];if(vehs.length>0){vehs.forEach((v,i)=>{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(vehs.length>1)body+=`<div style="font-size:11px;font-weight:700;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);body+=`</div>`;});}else{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);body+=`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.totalMiles)body+=pRow('Miles:',inv.totalMiles);if(inv.driveFee)body+=pRow('Drive fee:','$'+Number(inv.driveFee).toFixed(2)+(inv.drivers===2?' × 2 drivers':''));if(inv.fuel)body+=pRow('Fuel:','$'+Number(inv.fuel).toFixed(2));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">$${(inv.total||0).toFixed(2)}</span></div></div>`;}
-  else{const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">${pRow('From',from||'')}${pRow('To',inv.toName||'')}</div>`;const patVehs=inv.patVehicles||[];body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick — Vehicle${patVehs.length>1?'s':''}</div>`;if(patVehs.length>0){patVehs.forEach((v,i)=>{if(patVehs.length>1)body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}else{body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);}body+=`</div>`;const diaVehs=inv.diaVehicles||[];if(diaVehs.length>0){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana — Vehicle${diaVehs.length>1?'s':''}</div>`;diaVehs.forEach((v,i)=>{if(diaVehs.length>1)body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});body+=`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.patFee)body+=pRow('Patrick fee:','$'+(inv.patFee+(inv.washPat||0)).toFixed(2));if(inv.diaFee)body+=pRow('Diana fee:','$'+(inv.diaFee+(inv.washDia||0)).toFixed(2));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">$${(inv.total||0).toFixed(2)}</span></div></div>`;}
+  if(!isPL){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(inv.fromDealer||inv.fromCity)body+=pRow('From',inv.fromDealer+(inv.fromCity?' · '+inv.fromCity:''));if(inv.toName)body+=pRow('To',inv.toName+(inv.toAddress?', '+inv.toAddress:'')+(inv.toCity?' · '+inv.toCity:''));body+=`</div>`;const vehs=inv.vehicles||[];if(vehs.length>0){vehs.forEach((v,i)=>{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(vehs.length>1)body+=`<div style="font-size:11px;font-weight:700;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);body+=`</div>`;});}else{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);body+=`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.totalMiles)body+=pRow('Miles:',inv.totalMiles);if(inv.driveFee)body+=pRow('Drive fee:',fmtMoney(inv.driveFee)+(inv.drivers===2?' × 2 drivers':''));if(inv.fuel)body+=pRow('Fuel:',fmtMoney(inv.fuel));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;}
+  else{const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">${pRow('From',from||'')}${pRow('To',inv.toName||'')}</div>`;const patVehs=inv.patVehicles||[];body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick — Vehicle${patVehs.length>1?'s':''}</div>`;if(patVehs.length>0){patVehs.forEach((v,i)=>{if(patVehs.length>1)body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}else{body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);}body+=`</div>`;const diaVehs=inv.diaVehicles||[];if(diaVehs.length>0){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana — Vehicle${diaVehs.length>1?'s':''}</div>`;diaVehs.forEach((v,i)=>{if(diaVehs.length>1)body+=`<div style="font-size:11px;color:#888;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});body+=`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.patFee)body+=pRow('Patrick fee:',fmtMoney(inv.patFee+(inv.washPat||0)));if(inv.diaFee)body+=pRow('Diana fee:',fmtMoney(inv.diaFee+(inv.washDia||0)));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;}
   const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:56px;height:56px">`).join('');
   const btnStyle='flex:1;padding:8px 4px;border-radius:8px;border:0.5px solid #ddd;background:#fff;font-size:12px;font-family:inherit;color:#444;text-align:center;cursor:pointer';
   let actions='';
@@ -893,28 +736,21 @@ function markPaid(id){const idx=S.invoices.findIndex(i=>i.id===id);if(idx>=0){S.
 function deleteInvoice(id){if(confirm('Delete this invoice? This cannot be undone.')){S.invoices=S.invoices.filter(i=>i.id!==id);save();deleteFromFirestore(id);goScreen('list');}}
 function navDetail(dir){const id=dir<0?S._prevDetId:S._nextDetId;if(id)openDetail(id);}
 
-function editInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};selectedCustomerId=c.id;document.getElementById('selectedCustName').textContent=(c.name||'Other')+' ›';const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};sv('tripDate',inv.date);document.getElementById('invNumDisplay').textContent=inv.invNum;document.getElementById('invSuffix').style.display='inline-block';sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromPhone',inv.fromPhone);updatePhoneLink('fromPhone','fromPhoneLink');sv('fromCity',inv.fromCity);sv('toName',inv.toName);sv('toPhone',inv.toPhone);updatePhoneLink('toPhone','toPhoneLink');sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);sv('totalMiles',inv.totalMiles);sv('driveFee',inv.driveFee);sv('fuel',inv.fuel);sv('meals',inv.meals);sv('wash',inv.wash);sv('otherAmt',inv.other);sv('otherDesc',inv.otherDesc);sv('invoiceNotes',inv.notes);setDrivers(inv.drivers||1);document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;(inv.vehicles||[]).forEach(v=>{addVehicle();const n=S.stdVehicleCount;sv('vin-'+n,v.vin);sv('ymm-'+n,v.ymm);sv('stk-'+n,v.stk);});if((inv.vehicles||[]).length===0)addVehicle();document.getElementById('totalDisplay').textContent='$'+inv.total.toFixed(2);S._filteredForDetail=null;goScreen('form');}
-function editPLInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;document.getElementById('plDate').value=inv.date||'';const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';document.getElementById('plSuffix').value=suf;updatePLInvNum();document.getElementById('plFromCity').value=inv.fromCity||'';document.getElementById('plFromLoc').value=inv.fromLoc||'';document.getElementById('plToName').value=inv.toName||'';document.getElementById('plPatMiles').value=inv.patMiles||'';document.getElementById('plPatFee').value=inv.patFee||'';document.getElementById('plDiaMiles').value=inv.diaMiles||'';document.getElementById('plDiaFee').value=inv.diaFee||'';setWash(inv.wash||'none');document.getElementById('plPatVehicles').innerHTML='';S.plPatVehicleCount=0;(inv.patVehicles||[]).forEach(v=>{addPLVehicle('pat');const n=S.plPatVehicleCount;const ve=document.getElementById(`pl-vin-pat-${n}`);const ye=document.getElementById(`pl-ymm-pat-${n}`);const se=document.getElementById(`pl-stk-pat-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});if((inv.patVehicles||[]).length===0)addPLVehicle('pat');document.getElementById('plDiaVehicles').innerHTML='';S.plDiaVehicleCount=0;(inv.diaVehicles||[]).forEach(v=>{addPLVehicle('dia');const n=S.plDiaVehicleCount;const ve=document.getElementById(`pl-vin-dia-${n}`);const ye=document.getElementById(`pl-ymm-dia-${n}`);const se=document.getElementById(`pl-stk-dia-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});calcPLTotal();S._filteredForDetail=null;goScreen('pl');}
+function editInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};selectedCustomerId=c.id;document.getElementById('selectedCustName').textContent=(c.name||'Other')+' ›';const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};sv('tripDate',inv.date);document.getElementById('invNumDisplay').textContent=inv.invNum;document.getElementById('invSuffix').style.display='inline-block';sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromPhone',inv.fromPhone);updatePhoneLink('fromPhone','fromPhoneLink');sv('fromCity',inv.fromCity);sv('toName',inv.toName);sv('toPhone',inv.toPhone);updatePhoneLink('toPhone','toPhoneLink');sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);sv('totalMiles',inv.totalMiles);sv('driveFee',inv.driveFee);sv('fuel',inv.fuel);sv('meals',inv.meals);sv('wash',inv.wash);sv('otherAmt',inv.other);sv('otherDesc',inv.otherDesc);sv('invoiceNotes',inv.notes);setDrivers(inv.drivers||1);document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;(inv.vehicles||[]).forEach(v=>{addVehicle();const n=S.stdVehicleCount;sv('vin-'+n,v.vin);sv('ymm-'+n,v.ymm);sv('stk-'+n,v.stk);});if((inv.vehicles||[]).length===0)addVehicle();document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');}
+function editPLInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;document.getElementById('plDate').value=inv.date||'';const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';document.getElementById('plSuffix').value=suf;updatePLInvNum();document.getElementById('plFromCity').value=inv.fromCity||'';document.getElementById('plFromLoc').value=inv.fromLoc||'';document.getElementById('plToName').value=inv.toName||'';document.getElementById('plPatMiles').value=inv.patMiles?(Number(inv.patMiles).toFixed(2)):'';document.getElementById('plPatFee').value=inv.patFee?(Number(inv.patFee).toFixed(2)):'';document.getElementById('plDiaMiles').value=inv.diaMiles?(Number(inv.diaMiles).toFixed(2)):'';document.getElementById('plDiaFee').value=inv.diaFee?(Number(inv.diaFee).toFixed(2)):'';setWash(inv.wash||'none');document.getElementById('plPatVehicles').innerHTML='';S.plPatVehicleCount=0;(inv.patVehicles||[]).forEach(v=>{addPLVehicle('pat');const n=S.plPatVehicleCount;const ve=document.getElementById(`pl-vin-pat-${n}`);const ye=document.getElementById(`pl-ymm-pat-${n}`);const se=document.getElementById(`pl-stk-pat-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});if((inv.patVehicles||[]).length===0)addPLVehicle('pat');document.getElementById('plDiaVehicles').innerHTML='';S.plDiaVehicleCount=0;(inv.diaVehicles||[]).forEach(v=>{addPLVehicle('dia');const n=S.plDiaVehicleCount;const ve=document.getElementById(`pl-vin-dia-${n}`);const ye=document.getElementById(`pl-ymm-dia-${n}`);const se=document.getElementById(`pl-stk-dia-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});calcPLTotal();S._filteredForDetail=null;goScreen('pl');}
 function copyInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;editInvoice(id);S.editId=null;const today=new Date();const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d=String(today.getDate()).padStart(2,'0');document.getElementById('invNumDisplay').textContent=`${y}${m}${d}`;document.getElementById('invSuffix').value='';document.getElementById('tripDate').value=`${y}-${m}-${d}`;showToast('Copied - update as needed');}
 
-function updateAutocomplete(inv){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('cities',inv.fromCity);add('cities',inv.toCity);add('recips',inv.toName);add('addrs',inv.toAddress);localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();}
+function updateAutocomplete(inv){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('recips',inv.toName);localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();}
 function populateAutocomplete(){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const fill=(id,key)=>{const dl=document.getElementById(id);if(!dl||!hist[key])return;dl.innerHTML=(hist[key]||[]).map(v=>`<option value="${v}">`).join('');};fill('dealerHist','dealers');fill('contactHist','contacts');fill('recipHist','recips');}
 function openNewTripMenu(){document.getElementById('newTripModal').classList.add('open');}
 function closeNewTripModal(){document.getElementById('newTripModal').classList.remove('open');}
 function exportCSV(){const headers=['Invoice #','Date','Customer','Type','Driver','From','To City','Vehicles','Miles','Drive Fee','Drivers','Fuel','Meals','Wash','Other','Total','Status'];const rows=S.invoices.map(i=>[i.invNum,i.date,i.custName,i.type,i.driver,i.fromDealer||i.fromCity||'',i.toCity||i.toName||'',(i.vehicles||i.patVehicles||[]).length,i.totalMiles||i.patMiles||'',i.driveFee||i.patFee||'',i.drivers||1,i.fuel||'',i.meals||'',i.wash||'',i.other||'',i.total,i.status].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));const csv=[headers.join(','),...rows].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TripLog_Export_'+todayInvNum()+'.csv';a.click();showToast('CSV exported');}
 function editProfile(){showToast('Profile editing – coming soon');}
 function toggleAccessibility(){const pill=document.getElementById('accessPill');const on=pill.textContent==='On';pill.textContent=on?'Off':'On';pill.className='spill '+(on?'sp-off':'sp-on');document.body.style.fontSize=on?'':'18px';showToast(on?'Accessibility off':'Larger text on');}
-function showApiHelp(type){showToast('Receipt scanning disabled');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 function saveFeedback(){const input=document.getElementById('feedbackInput');const text=input.value.trim();if(!text){showToast('Enter feedback first');return;}const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');fb.unshift({text,ts:new Date().toLocaleString()});localStorage.setItem('tl_feedback',JSON.stringify(fb.slice(0,50)));input.value='';renderFeedback();showToast('Feedback saved');}
 function renderFeedback(){const el=document.getElementById('feedbackList');if(!el)return;const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');if(fb.length===0){el.innerHTML='';return;}el.innerHTML=fb.slice(0,5).map(f=>`<div style="border-top:0.5px solid var(--faint);padding:6px 0"><div style="font-size:11px;color:var(--muted)">${f.ts}</div><div style="font-size:13px;color:var(--text);margin-top:2px">${f.text}</div></div>`).join('');}
-function renderDiaDashboard(){
-  const el=document.getElementById('diaDashboard');if(!el)return;
-  if(!S.isOwner||S.user==='diana'){el.innerHTML='';return;}
-  const diaInvs=S.invoices.filter(i=>i.driver==='diana');if(diaInvs.length===0){el.innerHTML='';return;}
-  const drafts=diaInvs.filter(i=>i.status==='draft').length;const sent=diaInvs.filter(i=>i.status==='sent'||i.status==='ready').length;const billed=diaInvs.filter(i=>i.status==='billed'||i.billed).length;const unpaidAmt=diaInvs.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.total||0),0);
-  el.innerHTML=`<div class="dia-dash" style="margin-top:4px"><div class="dia-dash-hdr"><span>&#9670; Diana's Status</span><span style="font-size:11px;opacity:.7">${diaInvs.length} total trips</span></div><div class="dia-dash-row"><div class="dia-stat"><div class="dia-stat-num" style="color:#444441">${drafts}</div><div class="dia-stat-lbl">Drafts</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#0C447C">${sent}</div><div class="dia-stat-lbl">Sent</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#27500A">${billed}</div><div class="dia-stat-lbl">Billed</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#c62828">$${unpaidAmt.toFixed(0)}</div><div class="dia-stat-lbl">Unpaid</div></div></div></div>`;
-}
+function renderDiaDashboard(){const el=document.getElementById('diaDashboard');if(!el)return;if(!S.isOwner||S.user==='diana'){el.innerHTML='';return;}const diaInvs=S.invoices.filter(i=>i.driver==='diana');if(diaInvs.length===0){el.innerHTML='';return;}const drafts=diaInvs.filter(i=>i.status==='draft').length;const sent=diaInvs.filter(i=>i.status==='sent'||i.status==='ready').length;const billed=diaInvs.filter(i=>i.status==='billed'||i.billed).length;const unpaidAmt=diaInvs.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.total||0),0);el.innerHTML=`<div class="dia-dash" style="margin-top:4px"><div class="dia-dash-hdr"><span>&#9670; Diana's Status</span><span style="font-size:11px;opacity:.7">${diaInvs.length} total trips</span></div><div class="dia-dash-row"><div class="dia-stat"><div class="dia-stat-num" style="color:#444441">${drafts}</div><div class="dia-stat-lbl">Drafts</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#0C447C">${sent}</div><div class="dia-stat-lbl">Sent</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#27500A">${billed}</div><div class="dia-stat-lbl">Billed</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#c62828">${fmtMoney(unpaidAmt)}</div><div class="dia-stat-lbl">Unpaid</div></div></div></div>`;}
 
 document.getElementById('tripDate').addEventListener('change',updateInvNum);
 document.getElementById('plDate').addEventListener('change',updatePLInvNum);
