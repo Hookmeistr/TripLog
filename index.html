@@ -429,7 +429,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v2.3 (Cloud)</div><div class="at-sub">Stock # autofill fix · Share invoice (Web Share API)</div></div>
+    <div class="at"><div class="at-ttl">TripLog v2.4 (Cloud)</div><div class="at-sub">Owner URL bypass · placeholder fix</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -463,7 +463,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="mh"></div>
     <div class="mt">&#128663; Welcome to TripLog</div>
     <p style="font-size:13px;color:#555;text-align:center;margin-bottom:16px">Enter your full name to get started.</p>
-    <input id="driverRegInput" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:15px;font-family:inherit;margin-bottom:12px;color:var(--text)" placeholder="Your full name (e.g. Steve Goodhue)">
+    <input id="driverRegInput" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:15px;font-family:inherit;margin-bottom:12px;color:var(--text)" placeholder="Your full name (e.g. John Doe)">
     <div class="reg-warning">
       <input type="checkbox" id="driverRegCheck" style="margin-top:2px;flex-shrink:0;width:16px;height:16px">
       <label for="driverRegCheck" style="font-size:12px;color:#444;line-height:1.5">I understand my name <strong>cannot be changed</strong> after registration.</label>
@@ -497,7 +497,7 @@ function dialPhone(inputId){const val=(document.getElementById(inputId)||{}).val
 async function pickContact(nameId,phoneId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];if(nameId&&c.name?.[0])document.getElementById(nameId).value=c.name[0];if(phoneId&&c.tel?.[0]){const ph=c.tel[0].replace(/\D/g,'');document.getElementById(phoneId).value=ph;}}}catch(e){showToast('Could not open contacts');}}
 // ── DRIVER REGISTRATION ───────────────────────────────────────────────
 const RESERVED_NAMES=['patrick','patrick massengale','diana','diana massengale'];
-function checkDriverReg(){const stored=localStorage.getItem('tl_driver_name');if(!stored){setTimeout(()=>document.getElementById('driverRegModal').classList.add('open'),900);return;}applyDriverMode(stored);}
+function checkDriverReg(){const params=new URLSearchParams(window.location.search);const ownerParam=params.get('owner');if(ownerParam){const nameMap={patrick:'Patrick Massengale',diana:'Diana Massengale'};const resolvedName=nameMap[ownerParam.toLowerCase()];if(resolvedName){localStorage.setItem('tl_driver_name',resolvedName);history.replaceState({},'',window.location.pathname);applyDriverMode(resolvedName);return;}}const stored=localStorage.getItem('tl_driver_name');if(!stored){setTimeout(()=>document.getElementById('driverRegModal').classList.add('open'),900);return;}applyDriverMode(stored);}
 function submitDriverReg(){const name=document.getElementById('driverRegInput').value.trim();const msg=document.getElementById('driverRegMsg');if(!name){msg.textContent='Please enter your name.';return;}if(RESERVED_NAMES.includes(name.toLowerCase())){msg.textContent='That name is reserved. Contact Patrick for access.';return;}if(!document.getElementById('driverRegCheck').checked){msg.textContent='Please confirm that your name cannot be changed.';return;}localStorage.setItem('tl_driver_name',name);document.getElementById('driverRegModal').classList.remove('open');applyDriverMode(name);}
 function applyDriverMode(name){const n=name.toLowerCase().trim();const isPatrick=n==='patrick'||n==='patrick massengale';const isDianaUser=n==='diana'||n==='diana massengale';S.driverName=name;S.isOwner=isPatrick||isDianaUser;if(isPatrick||isDianaUser){if(isDianaUser)switchUser('diana');}else{S.user=name.split(' ')[0].toLowerCase();document.getElementById('nt-pl').style.display='none';const plOpt=document.getElementById('plNewTripOption');if(plOpt)plOpt.style.display='none';document.getElementById('driverBar').style.display='none';const sub=document.getElementById('appSub');if(sub)sub.textContent=name;document.getElementById('profileName').textContent=name;}}
 // ── PL DEFAULTS ───────────────────────────────────────────────────────
