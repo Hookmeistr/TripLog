@@ -20,15 +20,11 @@ html{height:100%;height:-webkit-fill-available}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--surface);color:var(--text);max-width:480px;margin:0 auto;min-height:100vh;min-height:-webkit-fill-available;min-height:100dvh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
 #app{display:flex;flex-direction:column;height:100vh;height:-webkit-fill-available;height:100dvh;overflow:hidden}
 .app-bar{background:var(--primary-dark);flex-shrink:0;z-index:50;transition:background .3s}
-.ab-top{display:flex;align-items:center;padding:12px 14px 0;gap:10px}
+.ab-top{display:flex;align-items:center;padding:12px 14px 12px;gap:10px}
 .ab-title{color:#fff;font-size:17px;font-weight:700;flex:1;letter-spacing:.2px}
 .ab-sub{font-size:11px;opacity:.65;font-weight:400;display:block;margin-top:1px}
 .ib{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0}
 .ib:active{background:rgba(255,255,255,.25)}
-.driver-bar{display:flex;padding:10px 14px 12px;gap:8px}
-.dc{flex:1;padding:7px 10px;border-radius:20px;font-size:13px;font-weight:700;text-align:center;border:2px solid transparent;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:inherit;transition:all .2s;letter-spacing:.3px}
-.dc.pat-on{background:#003594;color:#fff;border-color:#5b8de8}
-.dc.dia-on{background:#722F37;color:#fff;border-color:#C4687A}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(env(safe-area-inset-bottom,0px),24px)}
 .bnav{display:flex;background:#fff;border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(env(safe-area-inset-bottom,0px),16px)}
 .nt{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 10px;border:none;background:transparent;cursor:pointer;font-size:10px;font-weight:700;color:#aaa;gap:3px;letter-spacing:.3px;border-top:2.5px solid transparent;font-family:inherit;transition:all .15s}
@@ -101,6 +97,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .dt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:#fafafa;font-size:13px;font-weight:700;color:#555;cursor:pointer;font-family:inherit;transition:all .15s}
 .dt.p-on{background:#003594;color:#fff;border-color:#003594}
 .dt.d-on{background:#722F37;color:#fff;border-color:#722F37}
+.std-veh-tabbar{display:flex;padding:8px 14px 6px;gap:8px;background:#fff;border-bottom:1px solid var(--faint)}
+.std-vt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:#fafafa;font-size:13px;font-weight:700;color:#555;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
+.std-vt.pat-on{background:#003594;color:#fff;border-color:#003594}
+.std-vt.dia-on{background:#722F37;color:#fff;border-color:#722F37}
 .wtog{display:flex;flex:1;gap:5px}
 .wt{flex:1;padding:6px 2px;border-radius:7px;border:1px solid var(--border);background:#fafafa;font-size:11px;font-weight:700;color:#555;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
 .wt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
@@ -181,10 +181,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="ib" id="backBtn" onclick="goBack()" style="display:none">&#8592;</button>
     <div class="ab-title" id="appTitle">&#128663; TripLog<span class="ab-sub" id="appSub">Patrick Massengale</span></div>
     <button class="ib" id="helpBtn" onclick="showToast('Help coming soon')" style="font-size:13px">?</button>
-  </div>
-  <div class="driver-bar" id="driverBar">
-    <button class="dc pat-on" id="dcP" onclick="switchUser('patrick')">&#9670; Patrick</button>
-    <button class="dc" id="dcD" onclick="switchUser('diana')">&#9670; Diana</button>
   </div>
 </div>
 <div class="scroll" id="mainScroll">
@@ -272,8 +268,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="fr"><span class="fl">City, State</span><input class="fi" id="toCity" placeholder="City, State ZIP" autocomplete="off" oninput="scheduleDistCalc()"></div>
   </div>
   <div class="sh">Vehicles</div>
-  <div id="vehicleList"></div>
-  <button class="add-btn" onclick="addVehicle()">&#43; Add vehicle</button>
+  <div class="std-veh-tabbar">
+    <button class="std-vt pat-on" id="svt-pat" onclick="setStdVehTab('pat')">&#9670; Patrick</button>
+    <button class="std-vt" id="svt-dia" onclick="setStdVehTab('dia')">&#9670; Diana</button>
+  </div>
+  <div id="stdPatSection">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 14px 2px;background:#fff">
+      <button class="chase-btn" id="stdPatChaseBtn" onclick="toggleStdChase('pat')">Chase Driver</button>
+      <span style="font-size:10px;color:#aaa">internal only</span>
+    </div>
+    <div class="chase-indicator" id="stdPatChaseInd">&#9650; Chase Driver (Patrick)</div>
+    <div id="stdPatVehicles"></div>
+    <button class="add-btn" id="addStdPatBtn" onclick="addStdVehicle('pat')">&#43; Add Patrick vehicle</button>
+  </div>
+  <div id="stdDiaSection" style="display:none">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 14px 2px;background:#fff">
+      <button class="chase-btn" id="stdDiaChaseBtn" onclick="toggleStdChase('dia')">Chase Driver</button>
+      <span style="font-size:10px;color:#aaa">internal only</span>
+    </div>
+    <div class="chase-indicator" id="stdDiaChaseInd">&#9650; Chase Driver (Diana)</div>
+    <div id="stdDiaVehicles"></div>
+    <button class="add-btn" id="addStdDiaBtn" onclick="addStdVehicle('dia')">&#43; Add Diana vehicle</button>
+  </div>
   <div class="sh" id="tripDetSH">Trip Details</div>
   <div class="fg" id="tripDetFG">
     <div class="fr"><span class="fl">Drivers</span>
@@ -430,7 +446,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v2.8 (Cloud)</div><div class="at-sub">Vehicle driver tabs in vehicle section · Diana billing independence</div></div>
+    <div class="at"><div class="at-ttl">TripLog v2.9 (Cloud)</div><div class="at-sub">Independent per-driver vehicle sections · no global driver bar</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -500,7 +516,7 @@ async function pickContact(nameId,phoneId){if(!('contacts' in navigator&&'Contac
 const RESERVED_NAMES=['patrick','patrick massengale','diana','diana massengale'];
 function checkDriverReg(){const params=new URLSearchParams(window.location.search);const ownerParam=params.get('owner');if(ownerParam){const nameMap={patrick:'Patrick Massengale',diana:'Diana Massengale'};const resolvedName=nameMap[ownerParam.toLowerCase()];if(resolvedName){localStorage.setItem('tl_driver_name',resolvedName);history.replaceState({},'',window.location.pathname);applyDriverMode(resolvedName);return;}}const stored=localStorage.getItem('tl_driver_name');if(!stored){setTimeout(()=>document.getElementById('driverRegModal').classList.add('open'),900);return;}applyDriverMode(stored);}
 function submitDriverReg(){const name=document.getElementById('driverRegInput').value.trim();const msg=document.getElementById('driverRegMsg');if(!name){msg.textContent='Please enter your name.';return;}if(RESERVED_NAMES.includes(name.toLowerCase())){msg.textContent='That name is reserved. Contact Patrick for access.';return;}if(!document.getElementById('driverRegCheck').checked){msg.textContent='Please confirm that your name cannot be changed.';return;}localStorage.setItem('tl_driver_name',name);document.getElementById('driverRegModal').classList.remove('open');applyDriverMode(name);}
-function applyDriverMode(name){const n=name.toLowerCase().trim();const isPatrick=n==='patrick'||n==='patrick massengale';const isDianaUser=n==='diana'||n==='diana massengale';S.driverName=name;S.isOwner=isPatrick||isDianaUser;if(isPatrick||isDianaUser){if(isDianaUser)switchUser('diana');}else{S.user=name.split(' ')[0].toLowerCase();document.getElementById('nt-pl').style.display='none';const plOpt=document.getElementById('plNewTripOption');if(plOpt)plOpt.style.display='none';document.getElementById('driverBar').style.display='none';const sub=document.getElementById('appSub');if(sub)sub.textContent=name;document.getElementById('profileName').textContent=name;}}
+function applyDriverMode(name){const n=name.toLowerCase().trim();const isPatrick=n==='patrick'||n==='patrick massengale';const isDianaUser=n==='diana'||n==='diana massengale';S.driverName=name;S.isOwner=isPatrick||isDianaUser;if(isPatrick||isDianaUser){if(isDianaUser)switchUser('diana');}else{S.user=name.split(' ')[0].toLowerCase();document.getElementById('nt-pl').style.display='none';const plOpt=document.getElementById('plNewTripOption');if(plOpt)plOpt.style.display='none';const sub=document.getElementById('appSub');if(sub)sub.textContent=name;document.getElementById('profileName').textContent=name;}}
 // ── PL DEFAULTS ───────────────────────────────────────────────────────
 function getPLDefault(who){return parseFloat(localStorage.getItem('tl_pl_default_'+who)||'454')||454;}
 function setPLDefault(who){const fieldId=who==='pat'?'plPatMiles':'plDiaMiles';const val=parseFloat(document.getElementById(fieldId).value);if(isNaN(val)||val<=0){showToast('Enter a miles value first');return;}localStorage.setItem('tl_pl_default_'+who,val.toFixed(2));showToast((who==='pat'?'Patrick':'Diana')+' default: '+val.toFixed(2)+' mi');}
@@ -510,74 +526,47 @@ function fmtField(el){const v=parseFloat(el.value);if(!isNaN(v))el.value=v.toFix
 // ── CITY ABBREVIATIONS ────────────────────────────────────────────────
 const CITY_ABBREV={'albuquerque':'Abq','santa fe':'S.Fe','farmington':'Frmgtn','el paso':'El Paso','rio rancho':'Rio Rancho','corrales':'Corrales','bernalillo':'Bernlllo','los lunas':'Los Lunas','belen':'Belen','gallup':'Gallup','raton':'Raton','las cruces':'Las Cruces','las vegas':'Las Vegas NM','alamogordo':'Almgrdo','roswell':'Roswell','carlsbad':'Carlsbad','hobbs':'Hobbs','clovis':'Clovis','artesia':'Artesia','deming':'Deming','silver city':'Slvr Cty','socorro':'Socorro','truth or consequences':'T or C','taos':'Taos'};
 const CITY_MAX=12;
-function abbrevCity(city){
-  if(!city)return '';
-  const stripped=stripUSA(city.trim());
-  const full=stripped.toLowerCase();
-  if(CITY_ABBREV[full])return CITY_ABBREV[full];
-  const cityPart=stripped.split(',')[0].trim();
-  const cityLc=cityPart.toLowerCase();
-  if(CITY_ABBREV[cityLc])return CITY_ABBREV[cityLc];
-  return cityPart.length>CITY_MAX?cityPart.substring(0,CITY_MAX-1)+'.':cityPart;
-}
+function abbrevCity(city){if(!city)return '';const stripped=stripUSA(city.trim());const full=stripped.toLowerCase();if(CITY_ABBREV[full])return CITY_ABBREV[full];const cityPart=stripped.split(',')[0].trim();const cityLc=cityPart.toLowerCase();if(CITY_ABBREV[cityLc])return CITY_ABBREV[cityLc];return cityPart.length>CITY_MAX?cityPart.substring(0,CITY_MAX-1)+'.':cityPart;}
 function pdfCity(city){return abbrevCity(stripUSA(city||''));}
 function pdfTrunc(s,max){if(!s)return '';return s.length>max?s.substring(0,max-1)+'.':s;}
 // ── STOCK # AUTOFILL ──────────────────────────────────────────────────
-function checkStkAutofill(stkEl,vinEl,dlId){
-  const dl=document.getElementById(dlId);
-  if(!dl||!stkEl||!vinEl)return;
-  dl.innerHTML='';
-  const vin=vinEl.value.trim().toUpperCase();
-  if(vin.length<8)return;
-  const stk=stkEl.value;
-  if(!stk)return;
-  const m=stk.match(/^([A-Za-z]*)(\d[\dA-Za-z]*)$/);
-  if(!m)return;
-  const prefix=m[1];
-  const digitPart=m[2].toUpperCase();
-  const vinLast5=vin.slice(3);
-  if(!vinLast5.startsWith(digitPart))return;
-  if(digitPart===vinLast5)return;
-  const suggestion=prefix+vinLast5;
-  if(suggestion.toUpperCase()===stk.toUpperCase())return;
-  const opt=document.createElement('option');
-  opt.value=suggestion;
-  dl.appendChild(opt);
-}
+function checkStkAutofill(stkEl,vinEl,dlId){const dl=document.getElementById(dlId);if(!dl||!stkEl||!vinEl)return;dl.innerHTML='';const vin=vinEl.value.trim().toUpperCase();if(vin.length<8)return;const stk=stkEl.value;if(!stk)return;const m=stk.match(/^([A-Za-z]*)(\d[\dA-Za-z]*)$/);if(!m)return;const prefix=m[1];const digitPart=m[2].toUpperCase();const vinLast5=vin.slice(3);if(!vinLast5.startsWith(digitPart))return;if(digitPart===vinLast5)return;const suggestion=prefix+vinLast5;if(suggestion.toUpperCase()===stk.toUpperCase())return;const opt=document.createElement('option');opt.value=suggestion;dl.appendChild(opt);}
 function stkKeydown(e,stkEl,dlId){const dl=document.getElementById(dlId);if(!dl||!dl.firstElementChild)return;if(e.key==='Tab'||e.key==='Enter'){const opt=dl.firstElementChild;if(opt&&opt.value&&stkEl.value.toUpperCase()!==opt.value.toUpperCase()){e.preventDefault();stkEl.value=opt.value;dl.innerHTML='';}}}
-// ── VEHICLE RENUMBERING ───────────────────────────────────────────────
-function renumberVehicles(){const cards=[...document.querySelectorAll('#vehicleList .vcard')];cards.forEach((card,i)=>{const hdr=card.querySelector('.vcard-hdr');if(!hdr)return;const rmBtn=hdr.querySelector('.rm-btn');hdr.textContent='Vehicle '+(i+1);if(rmBtn)hdr.appendChild(rmBtn);});}
+// ── STD VEHICLE RENUMBERING ───────────────────────────────────────────
+function renumberStdVehicles(who){const key=who==='pat'?'stdPatVehicles':'stdDiaVehicles';const label=who==='pat'?'Patrick':'Diana';const cards=[...document.querySelectorAll('#'+key+' .vcard')];cards.forEach((card,i)=>{const hdr=card.querySelector('.vcard-hdr');if(!hdr)return;const rmBtn=hdr.querySelector('.rm-btn');hdr.textContent=label+' \u2013 Vehicle '+(i+1);if(rmBtn)hdr.appendChild(rmBtn);});}
 function renumberPLVehicles(who){const cId=who==='pat'?'plPatVehicles':'plDiaVehicles';const label=who==='pat'?'Patrick':'Diana';const cards=[...document.querySelectorAll('#'+cId+' .vcard')];cards.forEach((card,i)=>{const hdr=card.querySelector('.vcard-hdr');if(!hdr)return;const rmBtn=hdr.querySelector('.rm-btn');hdr.textContent=label+' \u2013 Vehicle '+(i+1);if(rmBtn)hdr.appendChild(rmBtn);});}
-// ── CHASE DRIVER ──────────────────────────────────────────────────────
+// ── STD VEHICLE TAB & CHASE ───────────────────────────────────────────
+function setStdVehTab(who){S.stdVehTab=who;document.getElementById('stdPatSection').style.display=who==='pat'?'':'none';document.getElementById('stdDiaSection').style.display=who==='dia'?'':'none';document.getElementById('svt-pat').className='std-vt '+(who==='pat'?'pat-on':'');document.getElementById('svt-dia').className='std-vt '+(who==='dia'?'dia-on':'');}
+function toggleStdChase(who){if(who==='pat'){S.stdPatChase=!S.stdPatChase;document.getElementById('stdPatVehicles').style.display=S.stdPatChase?'none':'';document.getElementById('addStdPatBtn').style.display=S.stdPatChase?'none':'';document.getElementById('stdPatChaseInd').style.display=S.stdPatChase?'block':'none';document.getElementById('stdPatChaseBtn').classList.toggle('chase-on',S.stdPatChase);}else{S.stdDiaChase=!S.stdDiaChase;document.getElementById('stdDiaVehicles').style.display=S.stdDiaChase?'none':'';document.getElementById('addStdDiaBtn').style.display=S.stdDiaChase?'none':'';document.getElementById('stdDiaChaseInd').style.display=S.stdDiaChase?'block':'none';document.getElementById('stdDiaChaseBtn').classList.toggle('chase-on',S.stdDiaChase);}}
+// ── PL CHASE ─────────────────────────────────────────────────────────
 function togglePLChase(who){if(who==='pat'){S.plPatChase=!S.plPatChase;document.getElementById('plPatVehicles').style.display=S.plPatChase?'none':'';document.getElementById('addPatVehBtn').style.display=S.plPatChase?'none':'';document.getElementById('patChaseIndicator').style.display=S.plPatChase?'block':'none';document.getElementById('patChaseBtn')?.classList.toggle('chase-on',S.plPatChase);}else{S.plDiaChase=!S.plDiaChase;document.getElementById('plDiaVehicles').style.display=S.plDiaChase?'none':'';document.getElementById('addDiaBtnPL').style.display=S.plDiaChase?'none':'';document.getElementById('diaChaseIndicator').style.display=S.plDiaChase?'block':'none';document.getElementById('diaChaseBtn')?.classList.toggle('chase-on',S.plDiaChase);}}
-function toggleStdChase(n){const btn=document.getElementById('chase-'+n);if(!btn)return;const isChase=btn.textContent==='No';btn.textContent=isChase?'Yes':'No';btn.classList.toggle('chase-on',isChase);}function setVehDriver(n,who){const pBtn=document.getElementById('vdrv-p-'+n);const dBtn=document.getElementById('vdrv-d-'+n);if(!pBtn||!dBtn)return;pBtn.className='dt '+(who==='patrick'?'p-on':'');dBtn.className='dt '+(who==='diana'?'d-on':'');pBtn.dataset.who=who==='patrick'?'patrick':'';dBtn.dataset.who=who==='diana'?'diana':'';}function getVehDriver(n){const dBtn=document.getElementById('vdrv-d-'+n);return dBtn&&dBtn.dataset.who==='diana'?'diana':'patrick';}
 // ── CUSTOMER BILLING CONTACTS ─────────────────────────────────────────
 function renderCustMgmt(){const el=document.getElementById('custMgmtList');if(!el)return;el.innerHTML=S.customers.map(c=>`<div class="cust-billing-card"><div class="cust-billing-title" style="color:${c.color}">${c.name}</div><div class="cust-billing-row"><span class="cust-billing-lbl">Billing name</span><input class="cust-billing-input" value="${c.billingContact?.name||''}" placeholder="Contact name" onchange="updateCustBilling('${c.id}','name',this.value)"></div><div class="cust-billing-row"><span class="cust-billing-lbl">Phone</span><input class="cust-billing-input" type="tel" value="${c.billingContact?.phone||''}" placeholder="Phone number" onchange="updateCustBilling('${c.id}','phone',this.value)"><button class="icon-btn" onclick="pickContactForBilling('${c.id}')">&#128101;</button></div><div class="cust-billing-row"><span class="cust-billing-lbl">Address</span><input class="cust-billing-input" value="${c.billingContact?.address||''}" placeholder="Billing address" onchange="updateCustBilling('${c.id}','address',this.value)"></div></div>`).join('');}
 function updateCustBilling(custId,field,value){const idx=S.customers.findIndex(c=>c.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};S.customers[idx].billingContact[field]=value;save();showToast('Saved');}
 async function pickContactForBilling(custId){if(!('contacts' in navigator&&'ContactsManager' in window)){showToast('Contact picker: Android Chrome only');return;}try{const contacts=await navigator.contacts.select(['name','tel'],{multiple:false});if(contacts.length>0){const c=contacts[0];const idx=S.customers.findIndex(cu=>cu.id===custId);if(idx<0)return;if(!S.customers[idx].billingContact)S.customers[idx].billingContact={};if(c.name?.[0])S.customers[idx].billingContact.name=c.name[0];if(c.tel?.[0])S.customers[idx].billingContact.phone=c.tel[0];save();renderCustMgmt();showToast('Contact saved');}}catch(e){showToast('Could not open contacts');}}
 // ── STATE ─────────────────────────────────────────────────────────────
-const S={user:'patrick',screen:'list',prevScreen:null,filter:'all',search:'',editId:null,invoices:[],customers:[],plWash:'none',plPatVehicleCount:0,plDiaVehicleCount:0,plPatChase:false,plDiaChase:false,stdVehicleCount:0,stdDrivers:1,sortBy:'invnum',sortDir:'desc',isOwner:true,driverName:'Patrick Massengale'};
-function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();migrateCustomers();checkDriverReg();setDate();setPLDate();addVehicle();addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();document.getElementById('driverBar').style.display='flex';initFirebase();}
+const S={user:'patrick',screen:'list',prevScreen:null,filter:'all',search:'',editId:null,invoices:[],customers:[],plWash:'none',plPatVehicleCount:0,plDiaVehicleCount:0,plPatChase:false,plDiaChase:false,stdPatVehicleCount:0,stdDiaVehicleCount:0,stdPatChase:false,stdDiaChase:false,stdVehTab:'pat',stdDrivers:1,sortBy:'invnum',sortDir:'desc',isOwner:true,driverName:'Patrick Massengale'};
+function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();migrateCustomers();checkDriverReg();setDate();setPLDate();addStdVehicle('pat');addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();initFirebase();}
 function setDate(){const d=new Date();document.getElementById('tripDate').value=d.toISOString().split('T')[0];updateInvNum();}
 function setPLDate(){const d=new Date();document.getElementById('plDate').value=d.toISOString().split('T')[0];updatePLInvNum();}
 function loadData(){S.invoices=JSON.parse(localStorage.getItem('tl_inv')||'[]');S.customers=JSON.parse(localStorage.getItem('tl_cust')||'[]');}
 function save(){localStorage.setItem('tl_inv',JSON.stringify(S.invoices));localStorage.setItem('tl_cust',JSON.stringify(S.customers));}
 function seedCustomers(){if(S.customers.length>0)return;S.customers=[{id:'phillong',name:'Phil Long Ford',short:'PhilLong',color:'#1c6ea4',type:'phillong',billing:'manual',defaultFee:160,contacts:[],billingContact:{}},{id:'reliable',name:'Reliable Chevrolet',short:'Reliable',color:'#2e7d32',type:'standard',billing:'mileage',ratePerMile:0.50,contacts:[],billingContact:{}},{id:'chalmers',name:'Chalmers Ford',short:'Chalmers',color:'#b05c00',type:'chalmers',billing:'hourly',hourlyRate:25,contacts:[],billingContact:{}},{id:'marco',name:'ABQ Auto Deals',short:'Marco',color:'#7048A0',type:'standard',billing:'flat',contacts:[{email:'marcoarreola0226@gmail.com'}],addresses:[{label:'Business',full:'6917 Lomas Blvd NE, Albuquerque NM 87110',phone:'505-274-0090'},{label:'Home',full:'9932 Cardinal St NW, Albuquerque NM 87114'}],billingContact:{}}];save();}
 function migrateCustomers(){let changed=false;if(!S.customers.find(c=>c.id==='marco')){S.customers.push({id:'marco',name:'ABQ Auto Deals',short:'Marco',color:'#7048A0',type:'standard',billing:'flat',contacts:[{email:'marcoarreola0226@gmail.com'}],addresses:[{label:'Business',full:'6917 Lomas Blvd NE, Albuquerque NM 87110',phone:'505-274-0090'},{label:'Home',full:'9932 Cardinal St NW, Albuquerque NM 87114'}],billingContact:{}});changed=true;}S.customers.forEach(c=>{if(!c.billingContact){c.billingContact={};changed=true;}});if(changed)save();}
-function goScreen(name){document.querySelectorAll('.sc').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.nt').forEach(e=>e.classList.remove('on'));document.getElementById('sc-'+name).classList.add('on');const ntEl=document.getElementById('nt-'+name);if(ntEl)ntEl.classList.add('on');S.prevScreen=S.screen;S.screen=name;const fab=document.getElementById('fab');const bb=document.getElementById('backBtn');if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings',customers:'Customer Billing Contacts'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}document.getElementById('mainScroll').scrollTop=0;const drvBar=document.getElementById('driverBar');if(drvBar&&S.isOwner)drvBar.style.display=(name==='form')?'none':'flex';if(name==='list'){S._filteredForDetail=null;renderList();renderDiaDashboard();}if(name==='pl')updatePLBanner();if(name==='admin'){renderFeedback();renderDianaIndependenceRow();}if(name==='customers')renderCustMgmt();if(name!=='form'){const b=document.getElementById('distBadge');if(b)b.style.display='none';}}
+function goScreen(name){document.querySelectorAll('.sc').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.nt').forEach(e=>e.classList.remove('on'));document.getElementById('sc-'+name).classList.add('on');const ntEl=document.getElementById('nt-'+name);if(ntEl)ntEl.classList.add('on');S.prevScreen=S.screen;S.screen=name;const fab=document.getElementById('fab');const bb=document.getElementById('backBtn');if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings',customers:'Customer Billing Contacts'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}document.getElementById('mainScroll').scrollTop=0;if(name==='list'){S._filteredForDetail=null;renderList();renderDiaDashboard();}if(name==='pl')updatePLBanner();if(name==='admin'){renderFeedback();renderDianaIndependenceRow();}if(name==='customers')renderCustMgmt();if(name!=='form'){const b=document.getElementById('distBadge');if(b)b.style.display='none';}}
 function goBack(){goScreen(S.prevScreen==='customers'?'admin':'list');}
-function switchUser(u){S.user=u;const app=document.getElementById('app');if(u==='diana'){app.classList.add('diana-active');document.getElementById('dcP').classList.remove('pat-on');document.getElementById('dcD').classList.add('dia-on');}else{app.classList.remove('diana-active');document.getElementById('dcP').classList.add('pat-on');document.getElementById('dcD').classList.remove('dia-on');}const sub=document.getElementById('appSub');if(sub)sub.textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';document.getElementById('profileName').textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';renderList();renderDiaDashboard();}
+function switchUser(u){S.user=u;const app=document.getElementById('app');if(u==='diana'){app.classList.add('diana-active');}else{app.classList.remove('diana-active');}const sub=document.getElementById('appSub');if(sub)sub.textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';document.getElementById('profileName').textContent=(u==='patrick'?'Patrick':'Diana')+' Massengale';renderList();renderDiaDashboard();}
 function todayInvNum(){const d=new Date();return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;}
 function dateToInvNum(dateStr){return dateStr?dateStr.replace(/-/g,''):todayInvNum();}
 function updateInvNum(){const base=dateToInvNum(document.getElementById('tripDate').value);const suf=document.getElementById('invSuffix').value.trim();document.getElementById('invNumDisplay').textContent=base+(suf||'');document.getElementById('invSuffix').style.display='inline-block';}
 function updatePLInvNum(){const base=dateToInvNum(document.getElementById('plDate').value);const suf=document.getElementById('plSuffix').value.trim();document.getElementById('plInvNum').textContent=base+(suf||'');}
-// ── VEHICLE CARDS ─────────────────────────────────────────────────────
-function addVehicle(){S.stdVehicleCount++;const n=S.stdVehicleCount;const existingCards=document.querySelectorAll('#vehicleList .vcard');const displayNum=existingCards.length+1;let firstYmm='';if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="ymm-"]');firstYmm=yEl?yEl.value:'';}const vinId='vin-'+n,ymmId='ymm-'+n,stkId='stk-'+n,dlId='dl-std-'+n;const div=document.createElement('div');div.className='vcard';div.id='veh-'+n;const isDiana=S.user==='diana';div.innerHTML=`<div class="vcard-hdr">Vehicle ${displayNum}<button class="rm-btn" onclick="removeVehicle(${n})">&#10005;</button></div><div class="vr"><span class="vl">Driver</span><div class="dtog" style="gap:6px"><button class="dt ${isDiana?'':'p-on'}" id="vdrv-p-${n}" onclick="setVehDriver(${n},'patrick')">Patrick</button><button class="dt ${isDiana?'d-on':''}" id="vdrv-d-${n}" onclick="setVehDriver(${n},'diana')">Diana</button></div></div><div class="vr"><span class="vl">Chase</span><button class="chase-btn" id="chase-${n}" onclick="toggleStdChase(${n})">No</button><span style="font-size:10px;color:#aaa;margin-left:6px">internal only</span></div><div class="vr"><span class="vl">VIN # (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div><div class="vr"><span class="vl">&nbsp;Year / Make / Model / Color</span><input class="vi" id="${ymmId}" placeholder="Year Make Model Color" value="${firstYmm}" style="padding-left:6px"></div><div class="vr"><span class="vl">Stock #</span><input class="vi" id="${stkId}" placeholder="Stock number" list="${dlId}" autocomplete="off" oninput="checkStkAutofill(this,document.getElementById('${vinId}'),'${dlId}')" onkeydown="stkKeydown(event,this,'${dlId}')"><datalist id="${dlId}"></datalist></div>`;document.getElementById('vehicleList').appendChild(div);}
-function removeVehicle(n){const el=document.getElementById('veh-'+n);if(el){el.remove();renumberVehicles();}}
+// ── STD VEHICLE CARDS ─────────────────────────────────────────────────
+function addStdVehicle(who){const key=who==='pat'?'stdPatVehicles':'stdDiaVehicles';const count=who==='pat'?++S.stdPatVehicleCount:++S.stdDiaVehicleCount;const existingCards=document.querySelectorAll('#'+key+' .vcard');const displayNum=existingCards.length+1;let firstYmm='';if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="sv-ymm-'+who+'"]');firstYmm=yEl?yEl.value:'';}const vinId='sv-vin-'+who+'-'+count,ymmId='sv-ymm-'+who+'-'+count,stkId='sv-stk-'+who+'-'+count,dlId='sv-dl-'+who+'-'+count;const hdrBg=who==='pat'?'var(--primary-light)':'#FDF0F2';const hdrColor=who==='pat'?'var(--primary)':'#722F37';const label=who==='pat'?'Patrick':'Diana';const div=document.createElement('div');div.className='vcard';div.id='sv-'+who+'-'+count;div.innerHTML=`<div class="vcard-hdr" style="background:${hdrBg};color:${hdrColor}">${label} \u2013 Vehicle ${displayNum}<button class="rm-btn" onclick="this.closest('.vcard').remove();renumberStdVehicles('${who}')">&#10005;</button></div><div class="vr"><span class="vl">VIN # (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div><div class="vr"><span class="vl">&nbsp;Year / Make / Model / Color</span><input class="vi" id="${ymmId}" placeholder="Year Make Model Color" value="${firstYmm}" style="padding-left:6px"></div><div class="vr"><span class="vl">Stock #</span><input class="vi" id="${stkId}" placeholder="Stock number" list="${dlId}" autocomplete="off" oninput="checkStkAutofill(this,document.getElementById('${vinId}'),'${dlId}')" onkeydown="stkKeydown(event,this,'${dlId}')"><datalist id="${dlId}"></datalist></div>`;document.getElementById(key).appendChild(div);}
+// ── PL VEHICLE CARDS ──────────────────────────────────────────────────
 function addPLVehicle(who){const key=who==='pat'?'plPatVehicles':'plDiaVehicles';const count=who==='pat'?++S.plPatVehicleCount:++S.plDiaVehicleCount;const existingCards=document.querySelectorAll('#'+key+' .vcard');const displayNum=existingCards.length+1;let firstYmm='';if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="pl-ymm-'+who+'"]');firstYmm=yEl?yEl.value:'';}const vinId=`pl-vin-${who}-${count}`,ymmId=`pl-ymm-${who}-${count}`,stkId=`pl-stk-${who}-${count}`,dlId=`pl-dl-${who}-${count}`;const hdrBg=who==='pat'?'#E8EDF5':'#FDF0F2';const hdrColor=who==='pat'?'#003594':'#722F37';const label=who==='pat'?'Patrick':'Diana';const div=document.createElement('div');div.className='vcard';div.id=`pl-${who}-${count}`;div.innerHTML=`<div class="vcard-hdr" style="background:${hdrBg};color:${hdrColor}">${label} \u2013 Vehicle ${displayNum}<button class="rm-btn" onclick="this.closest('.vcard').remove();renumberPLVehicles('${who}')">&#10005;</button></div><div class="vr"><span class="vl">VIN out (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div><div class="vr"><span class="vl">&nbsp;Year / Make / Model / Color</span><input class="vi" id="${ymmId}" placeholder="Year Make Model Color" value="${firstYmm}" style="padding-left:6px"></div><div class="vr"><span class="vl">Stock #</span><input class="vi" id="${stkId}" placeholder="Stock number" list="${dlId}" autocomplete="off" oninput="checkStkAutofill(this,document.getElementById('${vinId}'),'${dlId}')" onkeydown="stkKeydown(event,this,'${dlId}')"><datalist id="${dlId}"></datalist></div>`;document.getElementById(key).appendChild(div);}
 let selectedCustomerId=null;
 function newStandardInvoice(){S.editId=null;selectedCustomerId=null;clearStdForm();document.getElementById('selectedCustName').textContent='Select Customer ›';goScreen('form');updateInvNum();}
-function clearStdForm(){['fromDealer','fromContact','fromContact2','fromPhone','fromPhone2','fromCity','toName','toName2','toPhone','toPhone2','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;addVehicle();setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb">&#128247;<input type="file" class="ph-input" accept="image/*" capture="environment" onchange="addPhoto(this)" multiple></label>`;const b=document.getElementById('distBadge');if(b)b.style.display='none';}
+function clearStdForm(){['fromDealer','fromContact','fromContact2','fromPhone','fromPhone2','fromCity','toName','toName2','toPhone','toPhone2','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('stdPatVehicles').innerHTML='';document.getElementById('stdDiaVehicles').innerHTML='';S.stdPatVehicleCount=0;S.stdDiaVehicleCount=0;if(S.stdPatChase)toggleStdChase('pat');if(S.stdDiaChase)toggleStdChase('dia');addStdVehicle('pat');setStdVehTab('pat');setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb">&#128247;<input type="file" class="ph-input" accept="image/*" capture="environment" onchange="addPhoto(this)" multiple></label>`;const b=document.getElementById('distBadge');if(b)b.style.display='none';}
 function openCustModal(){const el=document.getElementById('custOptions');el.innerHTML=S.customers.filter(c=>c.id!=='phillong').map(c=>`<div class="co ${selectedCustomerId===c.id?'sel':''}" onclick="selectCustomer('${c.id}')"><div class="co-dot" style="background:${c.color}"></div><div><div class="co-name">${c.name}</div><div class="co-rate">${c.billing==='mileage'?'$'+c.ratePerMile+'/mile':c.billing==='hourly'?'$'+c.hourlyRate+'/hour':c.billing==='flat'?'Rate':'Manual billing'}</div></div></div>`).join('')+`<div class="co" onclick="selectCustomer('custom')"><div class="co-dot" style="background:#888"></div><div><div class="co-name">Other / New Customer</div><div class="co-rate">Enter manually</div></div></div>`;document.getElementById('custModal').classList.add('open');}
 function closeCustModal(){document.getElementById('custModal').classList.remove('open');}
 function selectCustomer(id){selectedCustomerId=id;const cust=S.customers.find(c=>c.id===id);if(cust){document.getElementById('selectedCustName').textContent=cust.name+' ›';const isChalmers=id==='chalmers';const isMarco=id==='marco';document.getElementById('timeRow').style.display=isChalmers?'flex':'none';document.getElementById('returnRow').style.display=isChalmers?'flex':'none';document.getElementById('hoursRow').style.display=isChalmers?'flex':'none';document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display='flex';document.getElementById('feeNote').textContent=isChalmers?'hrs × $25':isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='ABQ Auto Deals';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='none';document.getElementById('returnRow').style.display='none';document.getElementById('hoursRow').style.display='none';}closeCustModal();calcTotal();}
@@ -585,7 +574,8 @@ function setDrivers(n){S.stdDrivers=n;document.getElementById('dt1').className='
 function calcChalmersHours(){const dep=document.getElementById('departTime').value;const ret=document.getElementById('returnTime').value;if(!dep||!ret)return;const [dh,dm]=dep.split(':').map(Number);const [rh,rm]=ret.split(':').map(Number);let mins=(rh*60+rm)-(dh*60+dm);if(mins<0)mins+=1440;document.getElementById('hoursWorked').value=(Math.round(mins/15)*0.25).toFixed(2);calcTotal();}
 function calcTotal(){const cust=S.customers.find(c=>c.id===selectedCustomerId);let fee=0;if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.round(miles*(cust.ratePerMile||0.50)/5)*5;if(auto>0&&!document.getElementById('driveFee').value)document.getElementById('driveFee').value=auto.toFixed(2);fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}else if(cust&&cust.billing==='hourly'){const hrs=parseFloat(document.getElementById('hoursWorked').value)||0;const auto=((hrs*(cust.hourlyRate||25)).toFixed(2));document.getElementById('driveFee').value=auto;fee=parseFloat(auto)||0;if(S.stdDrivers===2)fee*=2;}else{fee=parseFloat(document.getElementById('driveFee').value)||0;if(S.stdDrivers===2)fee*=2;}const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;document.getElementById('totalDisplay').textContent=fmtMoney(fee+fuel+meals+wash+other);}
 function addPhoto(input){Array.from(input.files).forEach(file=>{const reader=new FileReader();reader.onload=e=>{const original=new Image();original.onload=()=>{const MAX=800;let w=original.width,h=original.height;if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(original,0,0,w,h);const compressed=canvas.toDataURL('image/jpeg',0.70);const img=document.createElement('img');img.src=compressed;img.className='ph-thumb';img.onclick=()=>{if(confirm('Remove this receipt?'))img.remove();};document.getElementById('photoList').insertBefore(img,document.querySelector('label.ph-add'));};original.src=e.target.result;};reader.readAsDataURL(file);});}
-function collectVehicles(){const vehs=[];document.querySelectorAll('[id^="veh-"]').forEach(card=>{const n=card.id.split('-')[1];const chaseBtn=document.getElementById('chase-'+n);const isChase=chaseBtn&&chaseBtn.textContent==='Yes';const drvWho=getVehDriver(n);const vin=(document.getElementById('vin-'+n)||{}).value||'';const ymm=(document.getElementById('ymm-'+n)||{}).value||'';const stk=(document.getElementById('stk-'+n)||{}).value||'';if(vin||ymm||stk||isChase)vehs.push({vin,ymm,stk,chase:isChase,drvWho});});return vehs;}
+// ── COLLECT VEHICLES ──────────────────────────────────────────────────
+function collectVehicles(){const vehs=[];if(S.stdPatChase){vehs.push({vin:'',ymm:'',stk:'',chase:true,drvWho:'patrick'});}else{document.querySelectorAll('#stdPatVehicles .vcard').forEach(card=>{const n=card.id.replace('sv-pat-','');const vin=(document.getElementById('sv-vin-pat-'+n)||{}).value||'';const ymm=(document.getElementById('sv-ymm-pat-'+n)||{}).value||'';const stk=(document.getElementById('sv-stk-pat-'+n)||{}).value||'';if(vin||ymm||stk)vehs.push({vin,ymm,stk,chase:false,drvWho:'patrick'});});}if(S.stdDiaChase){vehs.push({vin:'',ymm:'',stk:'',chase:true,drvWho:'diana'});}else{document.querySelectorAll('#stdDiaVehicles .vcard').forEach(card=>{const n=card.id.replace('sv-dia-','');const vin=(document.getElementById('sv-vin-dia-'+n)||{}).value||'';const ymm=(document.getElementById('sv-ymm-dia-'+n)||{}).value||'';const stk=(document.getElementById('sv-stk-dia-'+n)||{}).value||'';if(vin||ymm||stk)vehs.push({vin,ymm,stk,chase:false,drvWho:'diana'});});}return vehs;}
 function collectPLVehicles(who){const vehs=[];document.querySelectorAll(`[id^="pl-${who}-"]`).forEach(card=>{const n=card.id.split('-')[2];const vin=(document.getElementById(`pl-vin-${who}-${n}`)||{}).value||'';const ymm=(document.getElementById(`pl-ymm-${who}-${n}`)||{}).value||'';const stk=(document.getElementById(`pl-stk-${who}-${n}`)||{}).value||'';if(vin||ymm||stk)vehs.push({vin,ymm,stk});});return vehs;}
 function getPhotos(){const imgs=[];document.querySelectorAll('#photoList img.ph-thumb').forEach(img=>imgs.push(img.src));return imgs;}
 function saveInvoice(status){const cust=S.customers.find(c=>c.id===selectedCustomerId)||{id:'other',name:document.getElementById('fromDealer').value||'Other',color:'#888',short:'Other'};const dateVal=document.getElementById('tripDate').value;const base=dateToInvNum(dateVal);const suf=document.getElementById('invSuffix').value.trim();const invNum=base+(suf||'');const driveFee=parseFloat(document.getElementById('driveFee').value)||0;const fuel=parseFloat(document.getElementById('fuel').value)||parseFloat(document.getElementById('receiptTotal').value)||0;const meals=parseFloat(document.getElementById('meals').value)||0;const wash=parseFloat(document.getElementById('wash').value)||0;const other=parseFloat(document.getElementById('otherAmt').value)||0;const drivers=S.isOwner?S.stdDrivers:1;const driverField=S.isOwner?S.user:(S.driverName||S.user);const total=(driveFee*drivers)+fuel+meals+wash+other;const inv={id:S.editId||('inv-'+Date.now()),invNum,date:dateVal,custId:cust.id,custName:cust.name,custColor:cust.color,custShort:cust.short||cust.name,type:'standard',driver:driverField,fromDealer:document.getElementById('fromDealer').value,fromContact:document.getElementById('fromContact').value,fromContact2:document.getElementById('fromContact2').value,fromPhone:document.getElementById('fromPhone').value,fromPhone2:document.getElementById('fromPhone2').value,fromCity:document.getElementById('fromCity').value,toName:document.getElementById('toName').value,toName2:document.getElementById('toName2').value,toPhone:document.getElementById('toPhone').value,toPhone2:document.getElementById('toPhone2').value,toAddress:document.getElementById('toAddress').value,toCity:document.getElementById('toCity').value,dealNum:document.getElementById('dealNum').value,vehicles:collectVehicles(),drivers,totalMiles:parseFloat(document.getElementById('totalMiles').value)||0,driveFee,fuel,meals,wash,other,otherDesc:document.getElementById('otherDesc').value,notes:document.getElementById('invoiceNotes').value,photos:getPhotos(),total:parseFloat(total.toFixed(2)),status:status==='draft'?'draft':'sent',createdAt:Date.now(),updatedAt:Date.now()};if(S.editId){const idx=S.invoices.findIndex(i=>i.id===S.editId);if(idx>=0){inv.createdAt=S.invoices[idx].createdAt||inv.createdAt;S.invoices[idx]=inv;}}else{S.invoices.unshift(inv);}updateAutocomplete(inv);save();syncInvoice(inv);showToast(status==='draft'?'Draft saved':'Invoice saved');if(status==='ready')setTimeout(()=>generateStdPDF(inv),400);goScreen('list');}
@@ -657,42 +647,25 @@ function buildStdPDF(inv){
   }
   return doc;
 }
-
 function generateStdPDF(inv){
   const doc=buildStdPDF(inv);
   const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;
   doc.save(fname);
   showToast('PDF saved: '+fname);
   const idx=S.invoices.findIndex(i=>i.id===inv.id);
-  if(idx>=0&&S.invoices[idx].status==='draft'){
-    S.invoices[idx].status='sent';
-    save();syncInvoice(S.invoices[idx]);renderList();
-  }
+  if(idx>=0&&S.invoices[idx].status==='draft'){S.invoices[idx].status='sent';save();syncInvoice(S.invoices[idx]);renderList();}
 }
-
 async function shareStdPDF(inv){
   const doc=buildStdPDF(inv);
   const fname=`${inv.custShort}_${inv.invNum}_${(inv.toCity||'').split(',')[0].replace(/\s/g,'')}.pdf`;
-  if(!navigator.share){
-    showToast('Share unavailable – downloading instead');
-    doc.save(fname);
-    return;
-  }
+  if(!navigator.share){showToast('Share unavailable – downloading instead');doc.save(fname);return;}
   try{
     const blob=doc.output('blob');
     const file=new File([blob],fname,{type:'application/pdf'});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'Invoice '+inv.invNum,text:'Invoice from TripLog'});
-      showToast('Shared!');
-    }else{
-      showToast('File sharing unavailable – downloading instead');
-      doc.save(fname);
-    }
-  }catch(e){
-    if(e.name!=='AbortError')showToast('Share cancelled');
-  }
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Invoice '+inv.invNum,text:'Invoice from TripLog'});showToast('Shared!');}
+    else{showToast('File sharing unavailable – downloading instead');doc.save(fname);}
+  }catch(e){if(e.name!=='AbortError')showToast('Share cancelled');}
 }
-
 function generatePLCheckRequests(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');if(unbilled.length===0){showToast('No unbilled Phil Long trips');return;}if(confirm(`Generate Check Requests for ${unbilled.length} trip(s)?\nThis will mark them as billed.`)){generatePLPDF(unbilled,'Patrick Massengale','patrick');const withDiana=unbilled.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);if(withDiana.length>0)setTimeout(()=>generatePLPDF(withDiana,'Diana Massengale','diana'),800);unbilled.forEach(inv=>{const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].billed=true;S.invoices[idx].status='billed';S.invoices[idx].billedAt=Date.now();syncInvoice(S.invoices[idx]);}});save();updatePLBanner();renderList();showToast('Check Requests generated!');}}
 
 // ── PHIL LONG CHECK REQUEST PDF ───────────────────────────────────────
@@ -706,52 +679,20 @@ function generatePLPDF(trips,name,who){
   const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
   let y=44;
   doc.setFontSize(11);doc.setFont('helvetica','bold');
-  doc.text('CHECK REQUEST FORM',(L+C_AMT)/2,y,{align:'center'});
-  y+=18;
-  doc.setFontSize(8);doc.setFont('helvetica','normal');
-  doc.text('TO',L,y);
-  doc.setFontSize(9);
-  doc.text(name,L+16,y);
-  doc.line(L+13,y+1,318,y+1);
-  doc.setFontSize(8);
-  doc.text('DATE',322,y);
-  doc.setFontSize(9);
-  doc.text(ds,346,y);
-  doc.line(342,y+1,C_AMT,y+1);
-  y+=15;
-  doc.setFontSize(8);doc.setFont('helvetica','normal');
-  doc.text('ADDRESS',L,y);
-  doc.setFontSize(9);
-  doc.text('2125 S Ensenada Cir SE',L+46,y);
-  doc.setFontSize(8);
-  doc.text('$',C_AMT-58,y);
-  doc.setFontSize(9);
-  doc.text(totalStr,C_AMT,y,{align:'right'});
-  doc.line(C_AMT-56,y+1,C_AMT,y+1);
-  y+=13;
-  doc.setFontSize(8);doc.setFont('helvetica','normal');
-  doc.text('CITY & STATE',L,y);
-  doc.setFontSize(9);
-  doc.text('Rio Rancho NM  87124',L+58,y);
-  y+=13;
-  doc.setFontSize(8);doc.setFont('helvetica','normal');
-  doc.text('FOR',L,y);doc.line(L+18,y+1,C_AMT,y+1);y+=11;
-  doc.line(L,y+1,C_AMT,y+1);y+=11;
-  doc.line(L,y+1,C_AMT,y+1);y+=14;
-  doc.text('CHARGE TO ACCOUNT #',L,y);
-  doc.line(L+107,y+1,C_AMT,y+1);y+=14;
-  doc.text('REQUESTED BY:',L,y);
-  doc.line(L+74,y+1,264,y+1);
-  doc.text('AUTHORITY',272,y);
-  doc.line(310,y+1,C_AMT,y+1);y+=11;
-  doc.setFontSize(6.5);
-  doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',C_AMT,y,{align:'right'});
-  y+=18;
+  doc.text('CHECK REQUEST FORM',(L+C_AMT)/2,y,{align:'center'});y+=18;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('TO',L,y);
+  doc.setFontSize(9);doc.text(name,L+16,y);doc.line(L+13,y+1,318,y+1);
+  doc.setFontSize(8);doc.text('DATE',322,y);doc.setFontSize(9);doc.text(ds,346,y);doc.line(342,y+1,C_AMT,y+1);y+=15;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('ADDRESS',L,y);doc.setFontSize(9);doc.text('2125 S Ensenada Cir SE',L+46,y);
+  doc.setFontSize(8);doc.text('$',C_AMT-58,y);doc.setFontSize(9);doc.text(totalStr,C_AMT,y,{align:'right'});doc.line(C_AMT-56,y+1,C_AMT,y+1);y+=13;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('CITY & STATE',L,y);doc.setFontSize(9);doc.text('Rio Rancho NM  87124',L+58,y);y+=13;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('FOR',L,y);doc.line(L+18,y+1,C_AMT,y+1);y+=11;
+  doc.line(L,y+1,C_AMT,y+1);y+=11;doc.line(L,y+1,C_AMT,y+1);y+=14;
+  doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+107,y+1,C_AMT,y+1);y+=14;
+  doc.text('REQUESTED BY:',L,y);doc.line(L+74,y+1,264,y+1);doc.text('AUTHORITY',272,y);doc.line(310,y+1,C_AMT,y+1);y+=11;
+  doc.setFontSize(6.5);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',C_AMT,y,{align:'right'});y+=18;
   doc.setFontSize(9);doc.setFont('helvetica','bold');
-  doc.text('Date',L,y);
-  doc.text('Stock #',C_STK,y);
-  doc.text('Trip Info',C_TRIP,y);
-  doc.text('Amount',C_AMT,y,{align:'right'});
+  doc.text('Date',L,y);doc.text('Stock #',C_STK,y);doc.text('Trip Info',C_TRIP,y);doc.text('Amount',C_AMT,y,{align:'right'});
   doc.line(L,y+3,C_AMT,y+3);y+=15;
   doc.setFont('helvetica','normal');doc.setFontSize(9);
   trips.forEach(trip=>{
@@ -761,27 +702,11 @@ function generatePLPDF(trips,name,who){
     const vehicles=isChase?null:(who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]));
     const fee=who==='diana'?(trip.diaFee||0)+(trip.washDia||0):(trip.patFee||0)+(trip.washPat||0);
     const feeStr='$'+Number(fee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const fromCity=pdfCity(trip.fromCity);
-    const fromLoc=trip.fromLoc?pdfTrunc(trip.fromLoc,22):'';
-    const toName=trip.toName?pdfTrunc(trip.toName,28):'';
+    const fromCity=pdfCity(trip.fromCity);const fromLoc=trip.fromLoc?pdfTrunc(trip.fromLoc,22):'';const toName=trip.toName?pdfTrunc(trip.toName,28):'';
     const tripInfo=(fromCity+(fromLoc?' - '+fromLoc:''))+' -> '+toName;
-    const ti=doc.splitTextToSize(tripInfo,T_W);
-    const rowH=Math.max(ti.length*11,11);
-    if(isChase||!vehicles||vehicles.length===0){
-      doc.text(ds2,L,y);
-      if(isChase)doc.text('Chase Driver',C_STK,y);
-      doc.text(ti,C_TRIP,y);
-      doc.text(feeStr,C_AMT,y,{align:'right'});
-      y+=rowH+3;
-    } else {
-      vehicles.forEach((v,i)=>{
-        doc.text(ds2,L,y);
-        doc.text(pdfTrunc(v.stk||'',10),C_STK,y);
-        doc.text(ti,C_TRIP,y);
-        if(i===vehicles.length-1)doc.text(feeStr,C_AMT,y,{align:'right'});
-        y+=rowH+3;
-      });
-    }
+    const ti=doc.splitTextToSize(tripInfo,T_W);const rowH=Math.max(ti.length*11,11);
+    if(isChase||!vehicles||vehicles.length===0){doc.text(ds2,L,y);if(isChase)doc.text('Chase Driver',C_STK,y);doc.text(ti,C_TRIP,y);doc.text(feeStr,C_AMT,y,{align:'right'});y+=rowH+3;}
+    else{vehicles.forEach((v,i)=>{doc.text(ds2,L,y);doc.text(pdfTrunc(v.stk||'',10),C_STK,y);doc.text(ti,C_TRIP,y);if(i===vehicles.length-1)doc.text(feeStr,C_AMT,y,{align:'right'});y+=rowH+3;});}
     if(y>710){doc.addPage();y=46;}
   });
   const fname=`PhilLong_${ds.replace(/\//g,'')}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;
@@ -799,10 +724,7 @@ function filterList(q){S.search=q;renderList();}
 function setFilter(f,btn){S.filter=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();}
 function openDetail(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;const el=document.getElementById('detailContent');const isPL=inv.type==='phillong';const cs=custStyle(inv.custId,inv.custName);const badge=billedBadge(inv);const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const dObj=inv.date?new Date(inv.date+'T12:00:00'):null;const fmtDate=dObj?MONTHS[dObj.getMonth()]+' '+dObj.getDate()+', '+dObj.getFullYear():'';const driverFirst=inv.driver==='diana'?'Diana':inv.driver==='patrick'?'Patrick':(inv.driver?inv.driver.split(' ')[0]:'');if(!S._filteredForDetail){S._filteredForDetail=sortInvoices([...S.invoices]);}const detList=S._filteredForDetail;const detIdx=detList.findIndex(i=>i.id===id);S._prevDetId=detIdx>0?detList[detIdx-1].id:null;S._nextDetId=detIdx<detList.length-1?detList[detIdx+1].id:null;S._detPos=(detIdx+1)+' of '+detList.length;let metaRows=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Inv&nbsp;#:&nbsp;&nbsp;</span><span>${inv.invNum}</span></div>`;if(!isPL&&inv.dealNum)metaRows+=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Deal #:&nbsp;&nbsp;</span><span>${inv.dealNum}</span></div>`;if(fmtDate)metaRows+=`<div class="ic2-metarow" style="color:${cs.text}"><span class="ic2-lbl">Date:&nbsp;&nbsp;</span><span>${fmtDate}</span></div>`;function pRow(lbl,val,italic){return `<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:3px 0"><span style="font-size:12px;color:#555;white-space:nowrap">${lbl}</span><span style="font-size:13px;color:${italic?'#aaa':'#1a1a2e'};font-style:${italic?'italic':'normal'}">${val}</span></div>`;}let body='';if(!isPL){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(inv.fromDealer||inv.fromCity)body+=pRow('From',inv.fromDealer+(inv.fromCity?' · '+inv.fromCity:''));const contactLine=(inv.fromContact||'')+(inv.fromContact2?' / '+inv.fromContact2:'');if(contactLine)body+=pRow('',contactLine);const phoneLine=(inv.fromPhone||'')+(inv.fromPhone2?' / '+inv.fromPhone2:'');if(phoneLine)body+=pRow('',phoneLine);body+=`</div>`;const toLine=(inv.toName||'')+(inv.toName2?' / '+inv.toName2:'');body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(toLine)body+=pRow('To',toLine);const tpLine=(inv.toPhone||'')+(inv.toPhone2?' / '+inv.toPhone2:'');if(tpLine)body+=pRow('',tpLine);if(inv.toAddress)body+=pRow('',inv.toAddress);if(inv.toCity)body+=pRow('',inv.toCity);body+=`</div>`;const vehs=inv.vehicles||[];if(vehs.length>0){vehs.forEach((v,i)=>{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`;if(vehs.length>1)body+=`<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Vehicle ${i+1}</div>`;if(v.chase){body+=pRow('','Chase Driver');}else{body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);}body+=`</div>`;})}else{body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">`+pRow('VIN #:','',true)+pRow('Stock #:','',true)+`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.totalMiles)body+=pRow('Miles:',inv.totalMiles);if(inv.driveFee)body+=pRow('Drive fee:',fmtMoney(inv.driveFee)+(inv.drivers===2?' x 2 drivers':''));if(inv.fuel)body+=pRow('Fuel:',fmtMoney(inv.fuel));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;}else{const from=(inv.fromCity||'')+(inv.fromLoc?' \u2013 '+inv.fromLoc:'');body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee">${pRow('From',from||'')}${pRow('To',inv.toName||'')}</div>`;const patVehs=inv.patVehicles||[];body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#3B6D11;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Patrick \u2014 ${inv.patChase?'Chase Driver':`Vehicle${patVehs.length>1?'s':''}`}</div>`;if(inv.patChase){body+=pRow('','Chase Driver');}else if(patVehs.length>0){patVehs.forEach((v,i)=>{if(patVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}else{body+=pRow('VIN #:','',true)+pRow('Stock #:','',true);}body+=`</div>`;const diaVehs=inv.diaVehicles||[];if(diaVehs.length>0||inv.diaChase){body+=`<div style="padding:8px 0;border-bottom:0.5px solid #eee"><div style="font-size:11px;font-weight:700;color:#722F37;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Diana \u2014 ${inv.diaChase?'Chase Driver':`Vehicle${diaVehs.length>1?'s':''}`}</div>`;if(inv.diaChase){body+=pRow('','Chase Driver');}else{diaVehs.forEach((v,i)=>{if(diaVehs.length>1)body+=`<div style="font-size:11px;color:#555;margin-top:4px">Vehicle ${i+1}</div>`;body+=pRow('VIN #:',v.vin||'',!v.vin)+pRow('Stock #:',v.stk||'',!v.stk);});}body+=`</div>`;}body+=`<div style="padding:8px 0">`;if(inv.patFee)body+=pRow('Patrick fee:',fmtMoney(inv.patFee+(inv.washPat||0)));if(inv.diaFee)body+=pRow('Diana fee:',fmtMoney(inv.diaFee+(inv.washDia||0)));body+=`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:5px 0 2px"><span style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap">Total:</span><span style="font-size:16px;font-weight:700;color:#1a1a2e">${fmtMoney(inv.total||0)}</span></div></div>`;}
 const photos=(inv.photos||[]).map(s=>`<img src="${s}" class="ph-thumb" style="width:56px;height:56px">`).join('');const btnStyle='flex:1;padding:8px 4px;border-radius:8px;border:0.5px solid #ddd;background:#fff;font-size:12px;font-family:inherit;color:#333;text-align:center;cursor:pointer';let actions='';
-if(!isPL){
-  actions+=`<button style="${btnStyle}" onclick="generateStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">&#128196; PDF</button>`;
-  actions+=`<button style="${btnStyle}" onclick="shareStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">&#128228; Share</button>`;
-}
+if(!isPL){actions+=`<button style="${btnStyle}" onclick="generateStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">&#128196; PDF</button>`;actions+=`<button style="${btnStyle}" onclick="shareStdPDF(S.invoices.find(i=>i.id==='${inv.id}'))">&#128228; Share</button>`;}
 actions+=`<button style="${btnStyle}" onclick="${isPL?'editPLInvoice':'editInvoice'}('${inv.id}')">&#9999;&#65039; Edit</button>`;
 actions+=`<button style="${btnStyle}" onclick="copyInvoice('${inv.id}')">&#128203; Copy</button>`;
 if(isPL&&!inv.billed)actions+=`<button style="${btnStyle}" onclick="generatePLCheckRequests()">&#128203; Check Req.</button>`;
@@ -814,7 +736,19 @@ goScreen('detail');}
 function markPaid(id){const idx=S.invoices.findIndex(i=>i.id===id);if(idx>=0){S.invoices[idx].status=S.invoices[idx].status==='paid'?'sent':'paid';save();syncInvoice(S.invoices[idx]);openDetail(id);renderList();}}
 function deleteInvoice(id){if(confirm('Delete this invoice? This cannot be undone.')){S.invoices=S.invoices.filter(i=>i.id!==id);save();deleteFromFirestore(id);goScreen('list');}}
 function navDetail(dir){const id=dir<0?S._prevDetId:S._nextDetId;if(id)openDetail(id);}
-function editInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};selectedCustomerId=c.id;document.getElementById('selectedCustName').textContent=(c.name||'Other')+' ›';const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};sv('tripDate',inv.date);document.getElementById('invNumDisplay').textContent=inv.invNum;document.getElementById('invSuffix').style.display='inline-block';sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromContact2',inv.fromContact2);sv('fromPhone',inv.fromPhone);sv('fromPhone2',inv.fromPhone2);sv('fromCity',inv.fromCity);sv('toName',inv.toName);sv('toName2',inv.toName2);sv('toPhone',inv.toPhone);sv('toPhone2',inv.toPhone2);sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);sv('totalMiles',inv.totalMiles);sv('driveFee',inv.driveFee);sv('fuel',inv.fuel);sv('meals',inv.meals);sv('wash',inv.wash);sv('otherAmt',inv.other);sv('otherDesc',inv.otherDesc);sv('invoiceNotes',inv.notes);setDrivers(inv.drivers||1);document.getElementById('vehicleList').innerHTML='';S.stdVehicleCount=0;(inv.vehicles||[]).forEach(v=>{addVehicle();const n=S.stdVehicleCount;sv('vin-'+n,v.vin);sv('ymm-'+n,v.ymm);sv('stk-'+n,v.stk);if(v.chase){const btn=document.getElementById('chase-'+n);if(btn&&btn.textContent==='No')toggleStdChase(n);}if(v.drvWho==='diana')setVehDriver(n,'diana');});if((inv.vehicles||[]).length===0)addVehicle();document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');}
+function editInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;const c=S.customers.find(c=>c.id===inv.custId)||{id:'other',name:inv.custName||'',short:'Other',color:'#888'};selectedCustomerId=c.id;document.getElementById('selectedCustName').textContent=(c.name||'Other')+' ›';const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};sv('tripDate',inv.date);document.getElementById('invNumDisplay').textContent=inv.invNum;document.getElementById('invSuffix').style.display='inline-block';sv('dealNum',inv.dealNum);sv('fromDealer',inv.fromDealer);sv('fromContact',inv.fromContact);sv('fromContact2',inv.fromContact2);sv('fromPhone',inv.fromPhone);sv('fromPhone2',inv.fromPhone2);sv('fromCity',inv.fromCity);sv('toName',inv.toName);sv('toName2',inv.toName2);sv('toPhone',inv.toPhone);sv('toPhone2',inv.toPhone2);sv('toAddress',inv.toAddress);sv('toCity',inv.toCity);sv('totalMiles',inv.totalMiles);sv('driveFee',inv.driveFee);sv('fuel',inv.fuel);sv('meals',inv.meals);sv('wash',inv.wash);sv('otherAmt',inv.other);sv('otherDesc',inv.otherDesc);sv('invoiceNotes',inv.notes);setDrivers(inv.drivers||1);
+// Clear both vehicle sections
+document.getElementById('stdPatVehicles').innerHTML='';document.getElementById('stdDiaVehicles').innerHTML='';S.stdPatVehicleCount=0;S.stdDiaVehicleCount=0;if(S.stdPatChase)toggleStdChase('pat');if(S.stdDiaChase)toggleStdChase('dia');
+// Split vehicles by driver
+const patVehs=(inv.vehicles||[]).filter(v=>v.drvWho!=='diana');const diaVehs=(inv.vehicles||[]).filter(v=>v.drvWho==='diana');
+// Load Patrick vehicles
+const patChaseV=patVehs.find(v=>v.chase);
+if(patChaseV){toggleStdChase('pat');}else{patVehs.filter(v=>!v.chase).forEach(v=>{addStdVehicle('pat');const n=S.stdPatVehicleCount;sv('sv-vin-pat-'+n,v.vin);sv('sv-ymm-pat-'+n,v.ymm);sv('sv-stk-pat-'+n,v.stk);});}
+if(!patChaseV&&patVehs.filter(v=>!v.chase).length===0)addStdVehicle('pat');
+// Load Diana vehicles
+const diaChaseV=diaVehs.find(v=>v.chase);
+if(diaChaseV){toggleStdChase('dia');}else{diaVehs.filter(v=>!v.chase).forEach(v=>{addStdVehicle('dia');const n=S.stdDiaVehicleCount;sv('sv-vin-dia-'+n,v.vin);sv('sv-ymm-dia-'+n,v.ymm);sv('sv-stk-dia-'+n,v.stk);});}
+setStdVehTab('pat');document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');}
 function editPLInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;document.getElementById('plDate').value=inv.date||'';const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';document.getElementById('plSuffix').value=suf;updatePLInvNum();document.getElementById('plFromCity').value=inv.fromCity||'';document.getElementById('plFromLoc').value=inv.fromLoc||'';document.getElementById('plToName').value=inv.toName||'';document.getElementById('plPatMiles').value=inv.patMiles?(Number(inv.patMiles).toFixed(2)):'';document.getElementById('plPatFee').value=inv.patFee?(Number(inv.patFee).toFixed(2)):'';document.getElementById('plDiaMiles').value=inv.diaMiles?(Number(inv.diaMiles).toFixed(2)):'';document.getElementById('plDiaFee').value=inv.diaFee?(Number(inv.diaFee).toFixed(2)):'';setWash(inv.wash||'none');if(S.plPatChase)togglePLChase('pat');if(S.plDiaChase)togglePLChase('dia');document.getElementById('plPatVehicles').innerHTML='';S.plPatVehicleCount=0;(inv.patVehicles||[]).forEach(v=>{addPLVehicle('pat');const n=S.plPatVehicleCount;const ve=document.getElementById(`pl-vin-pat-${n}`);const ye=document.getElementById(`pl-ymm-pat-${n}`);const se=document.getElementById(`pl-stk-pat-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});if((inv.patVehicles||[]).length===0&&!inv.patChase)addPLVehicle('pat');if(inv.patChase)togglePLChase('pat');document.getElementById('plDiaVehicles').innerHTML='';S.plDiaVehicleCount=0;(inv.diaVehicles||[]).forEach(v=>{addPLVehicle('dia');const n=S.plDiaVehicleCount;const ve=document.getElementById(`pl-vin-dia-${n}`);const ye=document.getElementById(`pl-ymm-dia-${n}`);const se=document.getElementById(`pl-stk-dia-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';});if(inv.diaChase)togglePLChase('dia');calcPLTotal();S._filteredForDetail=null;goScreen('pl');}
 function copyInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;editInvoice(id);S.editId=null;const today=new Date();const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d=String(today.getDate()).padStart(2,'0');document.getElementById('invNumDisplay').textContent=`${y}${m}${d}`;document.getElementById('invSuffix').value='';document.getElementById('tripDate').value=`${y}-${m}-${d}`;showToast('Copied - update as needed');}
 function updateAutocomplete(inv){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('contacts2',inv.fromContact2);add('recips',inv.toName);add('recips2',inv.toName2);localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();}
@@ -826,7 +760,8 @@ function editProfile(){showToast('Profile editing – coming soon');}
 function toggleAccessibility(){const pill=document.getElementById('accessPill');const on=pill.textContent==='On';pill.textContent=on?'Off':'On';pill.className='spill '+(on?'sp-off':'sp-on');document.body.style.fontSize=on?'':'18px';showToast(on?'Accessibility off':'Larger text on');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 function saveFeedback(){const input=document.getElementById('feedbackInput');const text=input.value.trim();if(!text){showToast('Enter feedback first');return;}const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');fb.unshift({text,ts:new Date().toLocaleString()});localStorage.setItem('tl_feedback',JSON.stringify(fb.slice(0,50)));input.value='';renderFeedback();showToast('Feedback saved');}
-function renderDianaIndependenceRow(){const el=document.getElementById('dianaIndRow');if(!el)return;if(S.user!=='diana'){el.style.display='none';return;}el.style.display='flex';const on=localStorage.getItem('tl_diana_independent')==='true';el.innerHTML=`<div class="ai" style="background:#FDF0F2;font-size:20px">&#9878;</div><div class="at"><div class="at-ttl">Diana Billing Independence</div><div class="at-sub">${on?'Active — your invoices bill under your name':'Off — checks payable to Patrick Massengale'}</div></div><span class="spill ${on?'sp-on':'sp-off'}" style="cursor:pointer" onclick="toggleDianaIndependence()">${on?'On':'Off'}</span>`;}function toggleDianaIndependence(){if(S.user!=='diana')return;const on=localStorage.getItem('tl_diana_independent')==='true';if(!on){if(!confirm('\u26a0\ufe0f IMPORTANT \u2014 Read carefully before continuing.\n\nActivating this will change all your future invoices and payment requests to be made out to:\n\nDiana Massengale\n\nThis is intended ONLY for use if Patrick is unable to manage billing due to a health event or other emergency.\n\nAny unsent invoices can be regenerated under your name from this point forward.\n\nDo you want to continue?'))return;if(!confirm('Final confirmation: Are you absolutely certain you want to activate Diana Billing Independence?\n\nThis is a significant change. It can be reversed later if needed.'))return;}localStorage.setItem('tl_diana_independent',on?'false':'true');renderDianaIndependenceRow();showToast(on?'Billing restored to Patrick':'Diana independence mode activated');}function renderFeedback(){const el=document.getElementById('feedbackList');if(!el)return;const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');if(fb.length===0){el.innerHTML='';return;}el.innerHTML=fb.slice(0,5).map(f=>`<div style="border-top:0.5px solid var(--faint);padding:6px 0"><div style="font-size:11px;color:#555">${f.ts}</div><div style="font-size:13px;color:var(--text);margin-top:2px">${f.text}</div></div>`).join('');}
+function renderDianaIndependenceRow(){const el=document.getElementById('dianaIndRow');if(!el)return;if(S.user!=='diana'){el.style.display='none';return;}el.style.display='flex';const on=localStorage.getItem('tl_diana_independent')==='true';el.innerHTML=`<div class="ai" style="background:#FDF0F2;font-size:20px">&#9878;</div><div class="at"><div class="at-ttl">Diana Billing Independence</div><div class="at-sub">${on?'Active — your invoices bill under your name':'Off — checks payable to Patrick Massengale'}</div></div><span class="spill ${on?'sp-on':'sp-off'}" style="cursor:pointer" onclick="toggleDianaIndependence()">${on?'On':'Off'}</span>`;}function toggleDianaIndependence(){if(S.user!=='diana')return;const on=localStorage.getItem('tl_diana_independent')==='true';if(!on){if(!confirm('\u26a0\ufe0f IMPORTANT \u2014 Read carefully before continuing.\n\nActivating this will change all your future invoices and payment requests to be made out to:\n\nDiana Massengale\n\nThis is intended ONLY for use if Patrick is unable to manage billing due to a health event or other emergency.\n\nAny unsent invoices can be regenerated under your name from this point forward.\n\nDo you want to continue?'))return;if(!confirm('Final confirmation: Are you absolutely certain you want to activate Diana Billing Independence?\n\nThis is a significant change. It can be reversed later if needed.'))return;}localStorage.setItem('tl_diana_independent',on?'false':'true');renderDianaIndependenceRow();showToast(on?'Billing restored to Patrick':'Diana independence mode activated');}
+function renderFeedback(){const el=document.getElementById('feedbackList');if(!el)return;const fb=JSON.parse(localStorage.getItem('tl_feedback')||'[]');if(fb.length===0){el.innerHTML='';return;}el.innerHTML=fb.slice(0,5).map(f=>`<div style="border-top:0.5px solid var(--faint);padding:6px 0"><div style="font-size:11px;color:#555">${f.ts}</div><div style="font-size:13px;color:var(--text);margin-top:2px">${f.text}</div></div>`).join('');}
 function renderDiaDashboard(){const el=document.getElementById('diaDashboard');if(!el)return;if(!S.isOwner||S.user==='diana'){el.innerHTML='';return;}const diaInvs=S.invoices.filter(i=>i.driver==='diana');if(diaInvs.length===0){el.innerHTML='';return;}const drafts=diaInvs.filter(i=>i.status==='draft').length;const sent=diaInvs.filter(i=>i.status==='sent'||i.status==='ready').length;const billed=diaInvs.filter(i=>i.status==='billed'||i.billed).length;const unpaidAmt=diaInvs.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.total||0),0);el.innerHTML=`<div class="dia-dash" style="margin-top:4px"><div class="dia-dash-hdr"><span>&#9670; Diana's Status</span><span style="font-size:11px;opacity:.7">${diaInvs.length} total trips</span></div><div class="dia-dash-row"><div class="dia-stat"><div class="dia-stat-num" style="color:#444441">${drafts}</div><div class="dia-stat-lbl">Drafts</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#0C447C">${sent}</div><div class="dia-stat-lbl">Sent</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#27500A">${billed}</div><div class="dia-stat-lbl">Billed</div></div><div class="dia-stat"><div class="dia-stat-num" style="color:#c62828">${fmtMoney(unpaidAmt)}</div><div class="dia-stat-lbl">Unpaid</div></div></div></div>`;}
 document.getElementById('tripDate').addEventListener('change',updateInvNum);
 document.getElementById('plDate').addEventListener('change',updatePLInvNum);
