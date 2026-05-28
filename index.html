@@ -447,9 +447,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="ai" style="background:#E8F5E9;font-size:20px">&#128506;</div>
     <div class="at"><div class="at-ttl">Google Maps <span class="spill sp-off" id="mapsStatus">Loading…</span></div><div class="at-sub">Distance calc · Places autocomplete · GPS location</div></div>
   </div>
-  <div class="ar" onclick="connectDrive()">
+  <div class="ar" onclick="S.reportsFolderId?changeDefaultFolder():connectDrive()">
     <div class="ai" style="background:#E8F5E9;font-size:20px">&#128190;</div>
-    <div class="at"><div class="at-ttl">PDF → Google Drive <span class="spill sp-off" id="drivePill">Not connected</span></div><div class="at-sub" id="driveSub">Tap to connect · PDFs auto-save to Reports subfolders</div></div>
+    <div class="at"><div class="at-ttl">PDF → Google Drive <span class="spill sp-off" id="drivePill">Not connected</span></div><div class="at-sub" id="driveSub">Tap to connect Google Drive</div></div>
   </div>
   <div class="a-sh">Data &amp; Backup</div>
   <div class="ar" onclick="exportCSV()">
@@ -577,6 +577,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="mo" id="custEditModal"><div class="ms"><div class="mh"></div><div class="mt" id="custEditTitle">Edit Customer</div><input class="fi" id="custEditName" placeholder="Customer name" style="margin-bottom:8px"><div style="font-size:12px;color:#555;margin-bottom:6px">Accent color</div><div id="custEditColors" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div><button class="abtn pri" onclick="saveCustEdit()" style="width:100%">Save</button><button class="abtn" onclick="document.getElementById('custEditModal').classList.remove('open')" style="margin-top:6px;width:100%">Cancel</button></div></div>
 <div class="mo" id="custAddModal"><div class="ms"><div class="mh"></div><div class="mt">Add Customer</div><input class="fi" id="custAddName" placeholder="Customer name" style="margin-bottom:8px"><div style="font-size:12px;color:#555;margin-bottom:6px">Accent color</div><div id="custAddColors" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div><select id="custAddBilling" class="fi" style="margin-bottom:8px" onchange="updateAddBillingRate()"><option value="manual">Manual billing</option><option value="mileage">Per mile ($)</option><option value="hourly">Per hour ($)</option><option value="flat">Flat rate</option></select><div id="custAddRateRow" style="display:none;margin-bottom:8px"><input class="fi" id="custAddRate" type="number" step="0.01" placeholder="Rate amount"></div><button class="abtn pri" onclick="saveNewCust()" style="width:100%">Add Customer</button><button class="abtn" onclick="document.getElementById('custAddModal').classList.remove('open')" style="margin-top:6px;width:100%">Cancel</button></div></div>
 
+<div class="mo" id="folderPickerModal" style="z-index:400"><div class="ms" style="max-height:85vh;display:flex;flex-direction:column">
+  <div class="mh"></div>
+  <div class="mt">Choose Folder</div>
+  <div id="fpBreadcrumb" style="font-size:12px;color:#555;margin-bottom:8px;padding:4px 0;border-bottom:1px solid #eee;min-height:20px"></div>
+  <div id="fpContent" style="flex:1;overflow-y:auto;min-height:120px;margin-bottom:8px"></div>
+  <button class="abtn" onclick="fpCreateFolder()" style="margin-bottom:6px;font-size:13px">📁 + New Folder Here</button>
+  <button class="abtn pri" onclick="fpConfirm()" style="margin-bottom:6px">Save Here</button>
+  <button class="abtn" onclick="fpCancel()">Cancel</button>
+</div></div>
+
 <div class="toast" id="toast"></div>
 <script>
 const DRIVE_CLIENT_ID='895721792752-5uk5cnuhdseg4hj7pt8mc9jf0f786h6j.apps.googleusercontent.com';
@@ -600,7 +610,7 @@ function handleDriveToken(resp){
   if(S._driveTokenResolve){const r=S._driveTokenResolve;S._driveTokenResolve=null;r();}
   if(S._driveConnectPending){S._driveConnectPending=false;findAndStoreReportsFolder();}
 }
-function connectDrive(){
+async function changeDefaultFolder(){await ensureDriveToken();if(!S.driveToken){showToast('Reconnect Drive first');return;}const curName=await getDriveFolderName(S.reportsFolderId||'root');openFolderPicker(S.reportsFolderId||'root',curName,async(chosenId,chosenName)=>{S.reportsFolderId=chosenId;localStorage.setItem('tl_reports_folder_id',chosenId);showToast('Default folder: '+chosenName);updateDriveUI();});}function connectDrive(){
   if(!S.driveTokenClient){showToast('Drive not ready yet — try again in a moment');return;}
   S._driveConnectPending=true;S.driveTokenClient.requestAccessToken({prompt:'consent'});
 }
@@ -617,7 +627,7 @@ async function findAndStoreReportsFolder(){
 }
 function updateDriveUI(){
   const pill=document.getElementById('drivePill'),sub=document.getElementById('driveSub');if(!pill)return;
-  if(S.reportsFolderId&&S.driveToken){pill.className='spill sp-on';pill.textContent='Connected';if(sub)sub.textContent='PDFs auto-save to Reports subfolders';}
+  if(S.reportsFolderId&&S.driveToken){pill.className='spill sp-on';pill.textContent='Connected';getDriveFolderName(S.reportsFolderId).then(n=>{if(sub)sub.textContent='Default: '+n;});}
   else if(S.reportsFolderId&&!S.driveToken){pill.className='spill sp-off';pill.textContent='Reconnect';if(sub)sub.textContent='Tap to reconnect Google Drive';}
   else{pill.className='spill sp-off';pill.textContent='Not connected';if(sub)sub.textContent='Tap to connect · PDFs auto-save to Reports';}
 }
@@ -649,20 +659,7 @@ async function uploadFileToDrive(blob,filename,mimeType,folderId){
   const resp=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:'Bearer '+S.driveToken},body:form});
   if(!resp.ok)throw new Error('Upload failed: '+resp.status);return resp.json();
 }
-async function savePDFToDrive(doc,fname,custName){
-  if(S.reportsFolderId){
-    try{
-      await ensureDriveToken();if(!S.driveToken)throw new Error('No token');
-      const blob=doc.output('blob');
-      const subfolders=await getDriveSubfolders(S.reportsFolderId);
-      const subfolder=findSubfolderForCust(subfolders,custName);
-      const targetId=subfolder?subfolder.id:S.reportsFolderId;
-      await uploadFileToDrive(blob,fname,'application/pdf',targetId);
-      showToast('Saved to Drive: '+(subfolder?subfolder.name:'Reports'));return;
-    }catch(e){console.warn('Drive save error:',e);showToast('Drive save failed — downloading locally');}
-  }
-  doc.save(fname);showToast('PDF downloaded: '+fname);
-}
+async function findFileInDrive(folderId,fname,recursive=true){const q=encodeURIComponent(`'${folderId}' in parents and name='${fname}' and trashed=false and mimeType!='application/vnd.google-apps.folder'`);const resp=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+S.driveToken}});const data=await resp.json();if(data.files&&data.files.length>0)return data.files[0];if(!recursive)return null;const subs=await getDriveSubfolders(folderId);for(const sf of subs){const found=await findFileInDrive(sf.id,fname,true);if(found)return found;}return null;}async function overwriteDriveFile(fileId,blob){const resp=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:'Bearer '+S.driveToken,'Content-Type':'application/pdf'},body:blob});if(!resp.ok)throw new Error('Overwrite failed: '+resp.status);}async function createDriveFolder(name,parentId){const resp=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+S.driveToken,'Content-Type':'application/json'},body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[parentId]})});if(!resp.ok)throw new Error('Create folder failed');return resp.json();}async function getDriveFolderName(folderId){try{const resp=await fetch(`https://www.googleapis.com/drive/v3/files/${folderId}?fields=name`,{headers:{Authorization:'Bearer '+S.driveToken}});const d=await resp.json();return d.name||'Drive folder';}catch(e){return 'Drive folder';}}let _fpStack=[],_fpCallback=null,_fpFolders=[];async function openFolderPicker(startId,startName,callback){_fpCallback=callback;_fpStack=[{id:startId,name:startName}];await renderFolderPicker();document.getElementById('folderPickerModal').classList.add('open');}async function renderFolderPicker(){const cur=_fpStack[_fpStack.length-1];const crumb=document.getElementById('fpBreadcrumb');const content=document.getElementById('fpContent');if(crumb)crumb.innerHTML=_fpStack.map((f,i)=>i<_fpStack.length-1?`<span onclick="fpNavTo(${i})" style="color:var(--primary);cursor:pointer">${f.name}</span> ›`:`<strong>${f.name}</strong>`).join(' ');if(content)content.innerHTML='<div style="padding:16px;text-align:center;color:#888;font-size:13px">Loading…</div>';try{const subs=await getDriveSubfolders(cur.id);_fpFolders=subs;if(content)content.innerHTML=subs.length===0?'<div style="color:#aaa;font-size:13px;padding:12px 0;text-align:center">No subfolders — save here or create one</div>':subs.map((f,i)=>`<div onclick="fpEnter(${i})" style="padding:11px 4px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;cursor:pointer"><span style="font-size:18px">📁</span><span style="font-size:14px;flex:1">${f.name}</span><span style="color:#bbb">›</span></div>`).join('');}catch(e){if(content)content.innerHTML='<div style="color:#c00;font-size:13px;padding:12px">Could not load folders</div>';}}function fpEnter(i){_fpStack.push(_fpFolders[i]);renderFolderPicker();}function fpNavTo(i){_fpStack=_fpStack.slice(0,i+1);renderFolderPicker();}async function fpCreateFolder(){const name=prompt('New folder name:');if(!name||!name.trim())return;const cur=_fpStack[_fpStack.length-1];try{const f=await createDriveFolder(name.trim(),cur.id);_fpStack.push({id:f.id,name:f.name});renderFolderPicker();}catch(e){showToast('Could not create folder');}}function fpConfirm(){const cur=_fpStack[_fpStack.length-1];document.getElementById('folderPickerModal').classList.remove('open');if(_fpCallback){_fpCallback(cur.id,cur.name);_fpCallback=null;}}function fpCancel(){document.getElementById('folderPickerModal').classList.remove('open');_fpCallback=null;}async function savePDFToDrive(doc,fname,custName){if(!S.reportsFolderId){doc.save(fname);showToast('PDF downloaded: '+fname);return;}try{await ensureDriveToken();if(!S.driveToken)throw new Error('No token');const existing=await findFileInDrive(S.reportsFolderId,fname,true);if(existing){const blob=doc.output('blob');await overwriteDriveFile(existing.id,blob);showToast('PDF updated in Drive');return;}const subs=await getDriveSubfolders(S.reportsFolderId);const matched=findSubfolderForCust(subs,custName);const startId=matched?matched.id:S.reportsFolderId;const startName=matched?matched.name:await getDriveFolderName(S.reportsFolderId);openFolderPicker(startId,startName,async(chosenId,chosenName)=>{try{const blob=doc.output('blob');await uploadFileToDrive(blob,fname,'application/pdf',chosenId);showToast('PDF saved to '+chosenName);}catch(e){console.warn('Upload error:',e);doc.save(fname);showToast('Drive save failed — downloaded locally');}});}catch(e){console.warn('Drive error:',e);doc.save(fname);showToast('Drive save failed — downloaded locally');}}
 // ── HELPERS ───────────────────────────────────────────────────────────
 function pdfFilename(inv){
   const custLabel=(inv.custShort==='Other'&&inv.fromDealer)?inv.fromDealer.replace(/\s+/g,''):inv.custShort;
