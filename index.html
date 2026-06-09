@@ -786,35 +786,34 @@ function buildStdPDF(inv){
     doc.text(dateStr,R,y,{align:'right'});
     y+=lh*0.9;
     doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);
-    doc.setFontSize(sm);doc.setTextColor(100);
-    doc.text('Invoice #:',R,y,{align:'right'});
-    y+=lh*0.85;
+    doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(0);
+    doc.text('Invoice #: '+inv.invNum,R,y,{align:'right'});
+    y+=lh*0.9;
+    doc.setFont('helvetica','normal');doc.setTextColor(100);
     doc.text('505-203-1872',L,y);
-    doc.setFontSize(13*S);doc.setFont('helvetica','bold');doc.setTextColor(0);
-    doc.text(inv.invNum,R,y,{align:'right'});
-    y+=lh*0.7;
+    y+=lh*0.8;
     doc.setLineWidth(1.5*S);doc.line(L,y,R,y);
     y+=lh*0.9;
     doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(80);
     doc.text('FROM',L,y);
     const fromX=L+CW*0.5*S;
     doc.text('TO',fromX,y);
-    y+=lh*0.65;
+    y+=lh*0.85;
     doc.setFont('helvetica','bold');doc.setFontSize(12*S);doc.setTextColor(0);
     doc.text(inv.fromDealer||'',L,y);
     doc.text((inv.toName||'')+(inv.toName2?' / '+inv.toName2:''),fromX,y);
-    y+=lh*0.85;
+    y+=lh*1.0;
     doc.setFont('helvetica','normal');doc.setFontSize(sm);doc.setTextColor(60);
     const c1=inv.fromContact||'';const c2=inv.fromContact2||'';
     if(c1||c2){doc.text(c1+(c2?' / '+c2:''),L,y);}
     const tp=inv.toPhone||'';if(tp){doc.text(tp,fromX,y);}
-    if(c1||c2||tp)y+=lh*0.8;
+    if(c1||c2||tp)y+=lh*1.0;
     doc.setTextColor(60);
-    if(inv.toAddress){doc.text(inv.toAddress,fromX,y);y+=lh*0.8;}
-    if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(stripUSA(inv.toCity),fromX,y);y+=lh*0.8;}
-    y+=lh*0.3;
+    if(inv.toAddress){doc.text(inv.toAddress,fromX,y);y+=lh*1.0;}
+    if(inv.toCity&&inv.toCity!==inv.toAddress){doc.text(stripUSA(inv.toCity),fromX,y);y+=lh*1.0;}
+    y+=lh*0.5;
     doc.setLineWidth(0.5*S);doc.setDrawColor(180);doc.line(L,y,R,y);
-    y+=lh*0.9;
+    y+=lh*1.0;
     const vehicles=inv.vehicles||[];
     vehicles.forEach((v,vi)=>{
       if(vehicles.length>1){doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(80);doc.text('VEHICLE '+(vi+1),L,y);y+=lh*0.7;}
@@ -828,33 +827,33 @@ function buildStdPDF(inv){
         doc.text('VIN #:',L+6*S,y);
         doc.setFont('helvetica','normal');doc.setTextColor(0);doc.setFontSize(10*S);
         doc.text(v.vin||'',col2,y);
-        y+=lh*0.85;
+        y+=lh*1.0;
         if(v.ymmc||v.ymm){
           doc.setFont('helvetica','italic');doc.setFontSize(sm);doc.setTextColor(80);
-          doc.text(v.ymmc||v.ymm,col2,y);y+=lh*0.85;
+          doc.text(v.ymmc||v.ymm,col2,y);y+=lh*1.0;
         }
-        if(v.stk){doc.setFont('helvetica','bold');doc.setFontSize(sm);doc.setTextColor(80);doc.text('Stock #:',L+6*S,y);doc.setFont('helvetica','normal');doc.setTextColor(0);doc.text(v.stk,col2,y);y+=lh*0.85;}
-        if(vi===0&&inv.dealNum){doc.setFont('helvetica','bold');doc.setFontSize(sm);doc.setTextColor(80);doc.text('Deal #:',L+6*S,y);doc.setFont('helvetica','normal');doc.setTextColor(0);doc.text(inv.dealNum,col2,y);y+=lh*0.85;}
-        y+=lh*0.3;
+        if(v.stk){doc.setFont('helvetica','bold');doc.setFontSize(sm);doc.setTextColor(80);doc.text('Stock #:',L+6*S,y);doc.setFont('helvetica','normal');doc.setTextColor(0);doc.text(v.stk,col2,y);y+=lh*1.0;}
+        if(vi===0&&inv.dealNum){doc.setFont('helvetica','bold');doc.setFontSize(sm);doc.setTextColor(80);doc.text('Deal #:',L+6*S,y);doc.setFont('helvetica','normal');doc.setTextColor(0);doc.text(inv.dealNum,col2,y);y+=lh*1.0;}
+        y+=lh*0.5;
       }
     });
     doc.setDrawColor(180);doc.setLineWidth(0.5*S);doc.line(L,y,R,y);
-    y+=lh*0.9;
+    y+=lh*1.0;
     doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(80);
-    doc.text('CHARGES',L,y);y+=lh*0.7;
+    doc.text('CHARGES',L,y);y+=lh*0.85;
     doc.setFont('helvetica','normal');doc.setTextColor(0);doc.setFontSize(12*S);
-    if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh*0.85;}
+    if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh*1.0;}
     const feeAmt=Number(inv.driveFee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     let feeText='Driving Fee: $'+feeAmt;
     if(inv.drivers===2){const t2=(inv.driveFee*2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});feeText+=' x 2 Drivers = $'+t2;}
-    doc.text(feeText,L,y);doc.text(fmtMoney(inv.drivers===2?(inv.driveFee*2):inv.driveFee),R,y,{align:'right'});y+=lh*0.85;
-    if(inv.meals>0){doc.text('Meals',L,y);doc.text('$'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*0.85;}
-    if(inv.wash>0){doc.text('Wash',L,y);doc.text('$'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*0.85;}
-    if(inv.fuel>0){doc.text('Fuel',L,y);doc.text('$'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*0.85;}
-    if(inv.other>0){doc.text(inv.otherDesc||'Other',L,y);doc.text('$'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*0.85;}
-    if(inv.drivers===2){doc.setFont('helvetica','italic');doc.setFontSize(sm);doc.setTextColor(80);doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');doc.setTextColor(0);y+=lh*0.85;}
-    y+=lh*0.3;
-    doc.setDrawColor(0);doc.setLineWidth(1.5*S);doc.line(L,y,R,y);y+=lh*0.9;
+    doc.text(feeText,L,y);doc.text(fmtMoney(inv.drivers===2?(inv.driveFee*2):inv.driveFee),R,y,{align:'right'});y+=lh*1.0;
+    if(inv.meals>0){doc.text('Meals',L,y);doc.text('$'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
+    if(inv.wash>0){doc.text('Wash',L,y);doc.text('$'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
+    if(inv.fuel>0){doc.text('Fuel',L,y);doc.text('$'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
+    if(inv.other>0){doc.text(inv.otherDesc||'Other',L,y);doc.text('$'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
+    if(inv.drivers===2){doc.setFont('helvetica','italic');doc.setFontSize(sm);doc.setTextColor(80);doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');doc.setTextColor(0);y+=lh*1.0;}
+    y+=lh*0.5;
+    doc.setDrawColor(0);doc.setLineWidth(1.5*S);doc.line(L,y,R,y);y+=lh*1.0;
     doc.setFont('helvetica','bold');doc.setFontSize(13*S);doc.setTextColor(0);
     const totalLabel=inv.status==='paid'?'PAID \u2014 Total:':'Total Due This Invoice:';
     doc.text(totalLabel,L,y);doc.text(fmtMoney(inv.total),R,y,{align:'right'});
