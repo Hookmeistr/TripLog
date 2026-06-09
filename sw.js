@@ -1,4 +1,4 @@
-const VERSION = 'triplog-v3.11.9';
+const VERSION = 'triplog-v3.11.9b';
 const ASSETS = [
   '/TripLog/',
   '/TripLog/index.html',
