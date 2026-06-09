@@ -1,18 +1,15 @@
-const VERSION = 'triplog-v3.11.9e';
-const ASSETS = [
-  '/TripLog/',
-  '/TripLog/index.html',
+const VERSION = 'triplog-v3.11.9f';
+const STATIC = [
   '/TripLog/manifest.json',
   '/TripLog/icon-192.png',
   '/TripLog/icon-512.png'
 ];
 
-// Install — cache all assets under new version key
+// Install — cache only static assets, NOT index.html
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(VERSION).then(c => c.addAll(ASSETS))
+    caches.open(VERSION).then(c => c.addAll(STATIC))
   );
-  // Activate immediately without waiting for old tabs to close
   self.skipWaiting();
 });
 
@@ -23,21 +20,34 @@ self.addEventListener('activate', e => {
       Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))
     )
   );
-  // Take control of all open tabs immediately
   self.clients.claim();
 });
 
-// Fetch — network first, fall back to cache
-// Network-first ensures users always get fresh content when online
+// Fetch strategy:
+// index.html → ALWAYS network, never cache
+// everything else → network first, fall back to cache
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    fetch(e.request)
-      .then(response => {
-        // Update cache with fresh response
-        const copy = response.clone();
-        caches.open(VERSION).then(c => c.put(e.request, copy));
-        return response;
-      })
-      .catch(() => caches.match(e.request))
-  );
+  const url = new URL(e.request.url);
+  const isHTML = url.pathname === '/TripLog/' || 
+                 url.pathname === '/TripLog/index.html' ||
+                 url.pathname.endsWith('/TripLog');
+
+  if (isHTML) {
+    // Never serve index.html from cache — always fresh
+    e.respondWith(
+      fetch(e.request, { cache: 'no-store' })
+        .catch(() => caches.match(e.request))
+    );
+  } else {
+    // Static assets: network first, cache fallback
+    e.respondWith(
+      fetch(e.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(VERSION).then(c => c.put(e.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(e.request))
+    );
+  }
 });
