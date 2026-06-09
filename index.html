@@ -822,7 +822,7 @@ function buildStdPDF(inv){
         doc.setFont('helvetica','italic');doc.setFontSize(12*S);doc.setTextColor(0);
         doc.text('Chase Driver',L,y);y+=lh*0.9;
       } else {
-        doc.roundedRect(L,y-lh*0.6,CW*S,lh*(v.ymmc?2.6:2.1)*S,3*S,3*S,'S');
+        
         doc.setFont('helvetica','bold');doc.setFontSize(sm);doc.setTextColor(80);
         const col2=L+80*S;
         doc.text('VIN #:',L+6*S,y);
