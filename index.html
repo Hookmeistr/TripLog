@@ -670,8 +670,12 @@ async function findFileInDrive(folderId,fname,recursive=true){const q=encodeURIC
 // ── HELPERS ───────────────────────────────────────────────────────────
 function pdfFilename(inv){
   const custLabel=(inv.custShort==='Other'&&inv.fromDealer)?inv.fromDealer.trim():inv.custShort;
-  const city=(inv.toCity||'').split(',')[0].replace(/\s/g,'');
-  return `${custLabel}_${inv.invNum}_${city}.pdf`;
+  const raw=(inv.toCity||'').trim();
+  let city='',state='';
+  if(raw.includes(',')){city=raw.split(',')[0].trim();state=raw.split(',')[1].trim().split(/\s+/)[0]||'';}
+  else{const parts=raw.split(/\s+/);const zipIdx=parts.findIndex(p=>/^\d{5}/.test(p));if(zipIdx>=0){state=parts[zipIdx-1]||'';city=parts.slice(0,zipIdx-1).join(' ');}else{state=parts[parts.length-1]||'';city=parts.slice(0,parts.length-1).join(' ');}}
+  const cityState=city&&state?city+'_'+state:city||state;
+  return custLabel+'_'+inv.invNum+(cityState?'_'+cityState:'')+'.pdf';
 }
 let mapsReady=false,distService=null,geocoder=null,distTimer=null;
 function stripUSA(s){if(!s)return s;if(s.endsWith(', USA'))return s.slice(0,-5);if(s.endsWith(' USA'))return s.slice(0,-4);return s;}
