@@ -793,9 +793,11 @@ function buildStdPDF(inv){
     doc.text('2125 S Ensenada Cir SE, Rio Rancho NM 87124',L,y);
     doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(0);
     const _invW=doc.getTextWidth(inv.invNum);
-    doc.text(inv.invNum,R,y,{align:'right'});
     doc.setFont('helvetica','normal');doc.setTextColor(100);
-    doc.text('Invoice #: ',R-_invW,y,{align:'right'});
+    const _lblW=doc.getTextWidth('Invoice #: ');
+    doc.text('Invoice #: ',R-_invW-_lblW,y);
+    doc.setFont('helvetica','bold');doc.setTextColor(0);
+    doc.text(inv.invNum,R,y,{align:'right'});
     y+=lh*0.9;
     doc.setFont('helvetica','normal');doc.setTextColor(100);
     doc.text('505-203-1872',L,y);
