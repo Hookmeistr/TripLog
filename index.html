@@ -850,16 +850,15 @@ function buildStdPDF(inv){
     doc.setFontSize(sm);doc.setFont('helvetica','bold');doc.setTextColor(80);
     doc.text('CHARGES',L,y);y+=lh*0.85;
     doc.setFont('helvetica','normal');doc.setTextColor(0);doc.setFontSize(12*S);
-    if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh*1.0;}
-    const feeAmt=Number(inv.driveFee).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    let feeText='Driving Fee: $'+feeAmt;
-    if(inv.drivers===2){const t2=(inv.driveFee*2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});feeText+=' x 2 Drivers = $'+t2;}
-    doc.text(feeText,L,y);doc.text(fmtMoney(inv.drivers===2?(inv.driveFee*2):inv.driveFee),R,y,{align:'right'});y+=lh*1.0;
-    if(inv.meals>0){doc.text('Meals',L,y);doc.text('$'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
-    if(inv.wash>0){doc.text('Wash',L,y);doc.text('$'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
-    if(inv.fuel>0){doc.text('Fuel',L,y);doc.text('$'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
-    if(inv.other>0){doc.text(inv.otherDesc||'Other',L,y);doc.text('$'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.0;}
-    if(inv.drivers===2){doc.setFont('helvetica','italic');doc.setFontSize(sm);doc.setTextColor(80);doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');doc.setTextColor(0);y+=lh*1.0;}
+    if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh*1.3;}
+    let feeText='Driving Fee:';
+    if(inv.drivers===2){feeText='Driving Fee: x 2 Drivers';}
+    doc.text(feeText,L,y);doc.text(fmtMoney(inv.drivers===2?(inv.driveFee*2):inv.driveFee),R,y,{align:'right'});y+=lh*1.3;
+    if(inv.meals>0){doc.text('Meals',L,y);doc.text('$'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
+    if(inv.wash>0){doc.text('Wash',L,y);doc.text('$'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
+    if(inv.fuel>0){doc.text('Fuel',L,y);doc.text('$'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
+    if(inv.other>0){doc.text(inv.otherDesc||'Other',L,y);doc.text('$'+Number(inv.other).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
+    if(inv.drivers===2){doc.setFont('helvetica','italic');doc.setFontSize(sm);doc.setTextColor(80);doc.text('2nd Driver: Diana Massengale (1 check only)',L,y);doc.setFont('helvetica','normal');doc.setTextColor(0);y+=lh*1.3;}
     y+=lh*0.5;
     doc.setDrawColor(0);doc.setLineWidth(1.5*S);doc.line(L,y,R,y);y+=lh*1.0;
     doc.setFont('helvetica','bold');doc.setFontSize(13*S);doc.setTextColor(0);
