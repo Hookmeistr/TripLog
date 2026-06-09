@@ -976,7 +976,16 @@ function renderDiaDashboard(){const el=document.getElementById('diaDashboard');i
 document.getElementById('tripDate').addEventListener('change',updateInvNum);
 document.getElementById('plDate').addEventListener('change',updatePLInvNum);
 document.getElementById('totalMiles').addEventListener('input',()=>{const cust=S.customers.find(c=>c.id===selectedCustomerId);if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.ceil(miles*cust.ratePerMile/10)*10;if(auto>0)document.getElementById('driveFee').value=auto.toFixed(2);calcTotal();}});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){
+  // Unregister all old service workers first, then register fresh
+  navigator.serviceWorker.getRegistrations().then(regs=>{
+    Promise.all(regs.map(r=>r.unregister())).then(()=>{
+      navigator.serviceWorker.register('sw.js?v=3119').catch(()=>{});
+    });
+  }).catch(()=>{
+    navigator.serviceWorker.register('sw.js?v=3119').catch(()=>{});
+  });
+}
 window.addEventListener('load',init);
 window.addEventListener('popstate',function(){if(S.screen!=='list')goScreen('list');history.pushState({page:'list'},'','');});
 function initGmailAuth(){if(!window.google?.accounts?.oauth2){setTimeout(initGmailAuth,600);return;}S.gmailTokenClient=google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID,scope:GMAIL_SCOPE,callback:handleGmailToken,error_callback:()=>updateGmailUI()});updateGmailUI();}
