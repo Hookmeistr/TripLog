@@ -473,7 +473,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.13.0 (Cloud)</div><div class="at-sub">A/R tab + statements</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.13.1 (Cloud)</div><div class="at-sub">A/R drill-down fix</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -971,25 +971,35 @@ function buildStatementPDF(cust,rows,asOfDate){
 
 async function generateStatement(custId){const cust=S.customers.find(c=>c.id===custId);if(!cust){showToast('Customer not found');return;}const rows=_arOutstanding(custId);if(!rows.length){showToast('No outstanding invoices');return;}const doc=buildStatementPDF(cust,rows);await savePDFToDrive(doc,_statementFilename(cust),cust.name);}
 
-function openEmailSendStatement(custId){populateEmailContactList();const cust=S.customers.find(c=>c.id===custId)||{};const billingEmail=(cust.billingContact&&cust.billingContact.email)||'';document.getElementById('emailTo').value=_displayForEmail(billingEmail);document.getElementById('emailCc').value=_displayForEmail((cust.billingContact&&cust.billingContact.cc)||'');const M=['January','February','March','April','May','June','July','August','September','October','November','December'];const t=new Date();const asOf=M[t.getMonth()]+' '+t.getDate()+', '+t.getFullYear();document.getElementById('emailSubject').value=(cust.name||'')+' \u2014 Outstanding Invoices as of '+asOf;document.getElementById('emailAttachInfo').textContent='Attachment: '+_statementFilename(cust);document.getElementById('emailSendMsg').textContent='';document.getElementById('emailCcRow').style.display='block';_emailSendData={type:'statement',custId:custId};document.getElementById('emailSendModal').classList.add('open');}
+function openStatementEmail(cust,rows){populateEmailContactList();cust=cust||{name:'',billingContact:{}};const billingEmail=(cust.billingContact&&cust.billingContact.email)||'';document.getElementById('emailTo').value=_displayForEmail(billingEmail);document.getElementById('emailCc').value=_displayForEmail((cust.billingContact&&cust.billingContact.cc)||'');const M=['January','February','March','April','May','June','July','August','September','October','November','December'];const t=new Date();const asOf=M[t.getMonth()]+' '+t.getDate()+', '+t.getFullYear();document.getElementById('emailSubject').value=(cust.name||'')+' \u2014 Outstanding Invoices as of '+asOf;document.getElementById('emailAttachInfo').textContent='Attachment: '+_statementFilename(cust);document.getElementById('emailSendMsg').textContent='';document.getElementById('emailCcRow').style.display='block';_emailSendData={type:'statement',cust:cust,rows:rows||[]};document.getElementById('emailSendModal').classList.add('open');}
 
+
+let _arGroups=[];
+function _buildARGroups(){
+  const all=S.invoices.filter(i=>i.type!=='phillong'&&i.status==='sent');
+  const map={};
+  all.forEach(inv=>{const k=inv.custId||inv.custName||'?';if(!map[k])map[k]={custId:inv.custId||null,custName:inv.custName||'',rows:[],total:0,oldest:0};const g=map[k];g.rows.push(inv);g.total+=(inv.total||0);const dd=_daysOld(inv.date);if(dd>g.oldest)g.oldest=dd;});
+  _arGroups=Object.values(map).sort((a,b)=>b.oldest-a.oldest);
+  _arGroups.forEach(g=>{g.cust=S.customers.find(c=>(g.custId&&c.id===g.custId)||(g.custName&&c.name===g.custName))||{name:g.custName,billingContact:{}};g.count=g.rows.length;g.rows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));});
+}
+function arOpen(i){S._arCust=i;renderAR();}
+async function arGenStatement(){const g=_arGroups[S._arCust];if(!g||!g.rows.length){showToast('No outstanding invoices');return;}const cust=g.cust||{name:g.custName,billingContact:{}};const doc=buildStatementPDF(cust,g.rows);await savePDFToDrive(doc,_statementFilename(cust),cust.name);}
+function arEmailStatement(){const g=_arGroups[S._arCust];if(!g)return;openStatementEmail(g.cust||{name:g.custName,billingContact:{}},g.rows);}
 function renderAR(){
   const el=document.getElementById('arContent');if(!el)return;
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const all=S.invoices.filter(i=>i.type!=='phillong'&&i.status==='sent');
-  if(S._arCust){
-    const cust=S.customers.find(c=>c.id===S._arCust);
-    const rows=all.filter(i=>i.custId===S._arCust).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-    if(!cust||!rows.length){S._arCust=null;return renderAR();}
-    const cs=custStyle(cust.id,cust.name);const total=rows.reduce((s,i)=>s+(i.total||0),0);
+  _buildARGroups();
+  if(typeof S._arCust==='number'&&_arGroups[S._arCust]){
+    const g=_arGroups[S._arCust];const cust=g.cust||{name:g.custName,billingContact:{}};const rows=g.rows;
+    const cs=custStyle(cust.id,cust.name||g.custName);const total=g.total;
     let html=`<div class="pl-period-summary" style="margin-bottom:8px">`;
     html+=`<div class="pl-ps-title" style="cursor:pointer" onclick="S._arCust=null;renderAR()">&#8592; All Customers</div>`;
-    html+=`<div class="pl-ps-row"><span class="pl-ps-lbl" style="font-weight:800">${cust.name}</span><span class="pl-ps-amt">${fmtMoney(total)}</span></div>`;
+    html+=`<div class="pl-ps-row"><span class="pl-ps-lbl" style="font-weight:800">${cust.name||g.custName}</span><span class="pl-ps-amt">${fmtMoney(total)}</span></div>`;
     html+=`<div class="pl-ps-row"><span class="pl-ps-lbl">${rows.length} outstanding invoice${rows.length!==1?'s':''}</span></div>`;
     html+=`<hr class="pl-ps-divider">`;
     html+=`<div style="display:flex;gap:6px;margin-top:6px">`;
-    html+=`<button onclick="generateStatement('${cust.id}')" style="flex:2;padding:10px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">&#128196; Generate Statement</button>`;
-    html+=`<button onclick="openEmailSendStatement('${cust.id}')" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--primary);background:#fff;color:var(--primary);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">&#9993; Email</button>`;
+    html+=`<button onclick="arGenStatement()" style="flex:2;padding:10px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">&#128196; Generate Statement</button>`;
+    html+=`<button onclick="arEmailStatement()" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--primary);background:#fff;color:var(--primary);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">&#9993; Email</button>`;
     html+=`</div></div>`;
     rows.forEach(inv=>{
       const d=inv.date?new Date(inv.date+'T12:00:00'):null;
@@ -1004,14 +1014,11 @@ function renderAR(){
     });
     el.innerHTML=html;return;
   }
-  if(!all.length){el.innerHTML='<div class="pl-period-summary" style="text-align:center;color:#555;font-size:13px">No outstanding invoices</div>';return;}
-  const map={};
-  all.forEach(inv=>{const k=inv.custId||inv.custName;if(!map[k])map[k]={custId:inv.custId,custName:inv.custName,total:0,count:0,oldest:0};map[k].total+=(inv.total||0);map[k].count++;const dd=_daysOld(inv.date);if(dd>map[k].oldest)map[k].oldest=dd;});
-  const arr=Object.values(map).sort((a,b)=>b.oldest-a.oldest);
-  const grand=arr.reduce((s,d)=>s+d.total,0);
-  let html=`<div class="pl-period-summary" style="margin-bottom:8px"><div class="pl-ps-title">Total Receivable</div><div class="pl-ps-row"><span class="pl-ps-lbl" style="font-weight:800">${arr.length} customer${arr.length!==1?'s':''}</span><span class="pl-ps-amt" style="font-size:17px">${fmtMoney(grand)}</span></div></div>`;
-  arr.forEach(d=>{const cs=custStyle(d.custId,d.custName);const col=_arDaysColor(d.oldest);
-    html+=`<div class="inv-card2" style="background:${cs.bg};border-left-color:${cs.border}" onclick="S._arCust='${d.custId}';renderAR()">`;
+  if(!_arGroups.length){el.innerHTML='<div class="pl-period-summary" style="text-align:center;color:#555;font-size:13px">No outstanding invoices</div>';return;}
+  const grand=_arGroups.reduce((s,d)=>s+d.total,0);
+  let html=`<div class="pl-period-summary" style="margin-bottom:8px"><div class="pl-ps-title">Total Receivable</div><div class="pl-ps-row"><span class="pl-ps-lbl" style="font-weight:800">${_arGroups.length} customer${_arGroups.length!==1?'s':''}</span><span class="pl-ps-amt" style="font-size:17px">${fmtMoney(grand)}</span></div></div>`;
+  _arGroups.forEach((d,i)=>{const cs=custStyle(d.custId,d.custName);const col=_arDaysColor(d.oldest);
+    html+=`<div class="inv-card2" style="background:${cs.bg};border-left-color:${cs.border}" onclick="arOpen(${i})">`;
     html+=`<div class="ic2-top"><span class="ic2-cust" style="color:${cs.text}">${d.custName}</span><span class="ic2-amt" style="color:${cs.text}">${fmtMoney(d.total)}</span></div>`;
     html+=`<div class="ic2-div" style="border-color:${cs.div}"></div>`;
     html+=`<div class="ic2-bottom"><span style="color:${cs.sub};font-size:13px">${d.count} invoice${d.count!==1?'s':''}</span><span style="color:${col};font-weight:800;font-size:13px">oldest ${d.oldest} day${d.oldest!==1?'s':''}</span></div>`;
@@ -1019,6 +1026,7 @@ function renderAR(){
   });
   el.innerHTML=html;
 }
+
 
 
 async function generateStdPDF(inv){
@@ -1122,10 +1130,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=3122').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=3123').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=3122').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=3123').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
@@ -1143,7 +1151,7 @@ let _emailContactIndex=[];function _emailDisplay(email,name,company){if(name&&co
 function openEmailSend(invId){populateEmailContactList();const inv=S.invoices.find(i=>i.id===invId);if(!inv)return;const cust=S.customers.find(c=>c.id===inv.custId)||{};const billingEmail=(cust.billingContact&&cust.billingContact.email)||'';const cityFull=inv.toCity||'';let _scity='',_sstate='';if(cityFull.includes(',')){_scity=cityFull.split(',')[0].trim();_sstate=cityFull.split(',')[1].trim().split(' ').filter(Boolean)[0]||'NM';}else{const _sp=cityFull.trim().split(/\s+/);_sstate=_sp.length>=2?_sp[_sp.length-2]:'NM';_scity=_sp.slice(0,_sp.length>=3?_sp.length-2:1).join(' ');}const subject=_scity?(_scity+' '+_sstate+' Trip Report'):'Trip Report';document.getElementById('emailTo').value=_displayForEmail(billingEmail);document.getElementById('emailCc').value=_displayForEmail((cust.billingContact&&cust.billingContact.cc)||'');document.getElementById('emailSubject').value=subject;document.getElementById('emailAttachInfo').textContent='Attachment: '+pdfFilename(inv);document.getElementById('emailSendMsg').textContent='';document.getElementById('emailCcRow').style.display='block';_emailSendData={type:'standard',invId};document.getElementById('emailSendModal').classList.add('open');}
 function openEmailSendPL(invId){const inv=S.invoices.find(i=>i.id===invId);if(!inv)return;const plCust=S.customers.find(c=>c.id==='phillong')||{};const billingEmail=(plCust.billingContact&&plCust.billingContact.email)||'mepetree@hotmail.com';document.getElementById('emailTo').value=billingEmail;document.getElementById('emailCc').value='';document.getElementById('emailSubject').value='Trip Logs';document.getElementById('emailAttachInfo').textContent='Attachments: PhilLong_Pat_'+inv.invNum+'.pdf, PhilLong_Dia_'+inv.invNum+'.pdf';document.getElementById('emailSendMsg').textContent='';document.getElementById('emailCcRow').style.display='block';_emailSendData={type:'phillong',invId};document.getElementById('emailSendModal').classList.add('open');}
 function emailSendCancel(){document.getElementById('emailSendModal').classList.remove('open');_emailSendData=null;}
-async function emailSendConfirm(){const toEl=document.getElementById('emailTo');const to=_extractEmails(toEl.value);if(!to){toEl.focus();showToast('Please enter a recipient email');return;}const cc=_extractEmails(document.getElementById('emailCc').value);const subject=document.getElementById('emailSubject').value.trim();const msgEl=document.getElementById('emailSendMsg');const btn=document.getElementById('emailSendBtn');msgEl.textContent='';btn.textContent='Sending…';btn.disabled=true;try{await ensureGmailToken();if(!S.gmailToken){msgEl.textContent='Gmail not connected — tap Connect Gmail in Admin first';btn.textContent='✉ Send';btn.disabled=false;return;}if(_emailSendData.type==='standard'){const inv=S.invoices.find(i=>i.id===_emailSendData.invId);if(!inv)throw new Error('Invoice not found');const doc=buildStdPDF(inv);const pdfB64=doc.output('datauristring').split(',')[1];await sendGmailWithAttachments(to,cc,subject,[{name:pdfFilename(inv),data:pdfB64}]);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0&&S.invoices[idx].status==='draft'){S.invoices[idx].status='sent';S.invoices[idx].updatedAt=Date.now();save();syncInvoice(S.invoices[idx]);}}else if(_emailSendData.type==='plbatch'){if(!_plBatchDocs||!_plBatchDocs.pat)throw new Error('No PDF data — please Generate Check Requests again');const invNums=(_plBatchDocs.unbilled||[]).map(i=>i.invNum).join(',');const attachments=[{name:'PhilLong_Pat_'+invNums+'.pdf',data:_plBatchDocs.pat.output('datauristring').split(',')[1]}];if(_plBatchDocs.dia)attachments.push({name:'PhilLong_Dia_'+invNums+'.pdf',data:_plBatchDocs.dia.output('datauristring').split(',')[1]});await sendGmailWithAttachments(to,'',subject,attachments);_plBatchDocs=null;}else if(_emailSendData.type==='statement'){const cust=S.customers.find(c=>c.id===_emailSendData.custId);if(!cust)throw new Error('Customer not found');const rows=S.invoices.filter(i=>i.type!=='phillong'&&i.status==='sent'&&i.custId===cust.id);if(!rows.length)throw new Error('No outstanding invoices');const doc=buildStatementPDF(cust,rows);const pdfB64=doc.output('datauristring').split(',')[1];await sendGmailWithAttachments(to,cc,subject,[{name:_statementFilename(cust),data:pdfB64}]);}else{const inv=S.invoices.find(i=>i.id===_emailSendData.invId);if(!inv)throw new Error('Invoice not found');const patDoc=buildPLPDFDoc([inv],'Patrick Massengale','patrick');const diaDoc=buildPLPDFDoc([inv],'Diana Massengale','diana');await sendGmailWithAttachments(to,'',subject,[{name:'PhilLong_Pat_'+inv.invNum+'.pdf',data:patDoc.output('datauristring').split(',')[1]},{name:'PhilLong_Dia_'+inv.invNum+'.pdf',data:diaDoc.output('datauristring').split(',')[1]}]);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0&&S.invoices[idx].status==='draft'){S.invoices[idx].status='sent';S.invoices[idx].updatedAt=Date.now();save();syncInvoice(S.invoices[idx]);}}document.getElementById('emailSendModal').classList.remove('open');_emailSendData=null;showToast('✓ Email sent');}catch(e){console.warn('Send error:',e);msgEl.textContent='Send failed: '+(e.message||'unknown error');}btn.textContent='✉ Send';btn.disabled=false;}
+async function emailSendConfirm(){const toEl=document.getElementById('emailTo');const to=_extractEmails(toEl.value);if(!to){toEl.focus();showToast('Please enter a recipient email');return;}const cc=_extractEmails(document.getElementById('emailCc').value);const subject=document.getElementById('emailSubject').value.trim();const msgEl=document.getElementById('emailSendMsg');const btn=document.getElementById('emailSendBtn');msgEl.textContent='';btn.textContent='Sending…';btn.disabled=true;try{await ensureGmailToken();if(!S.gmailToken){msgEl.textContent='Gmail not connected — tap Connect Gmail in Admin first';btn.textContent='✉ Send';btn.disabled=false;return;}if(_emailSendData.type==='standard'){const inv=S.invoices.find(i=>i.id===_emailSendData.invId);if(!inv)throw new Error('Invoice not found');const doc=buildStdPDF(inv);const pdfB64=doc.output('datauristring').split(',')[1];await sendGmailWithAttachments(to,cc,subject,[{name:pdfFilename(inv),data:pdfB64}]);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0&&S.invoices[idx].status==='draft'){S.invoices[idx].status='sent';S.invoices[idx].updatedAt=Date.now();save();syncInvoice(S.invoices[idx]);}}else if(_emailSendData.type==='plbatch'){if(!_plBatchDocs||!_plBatchDocs.pat)throw new Error('No PDF data — please Generate Check Requests again');const invNums=(_plBatchDocs.unbilled||[]).map(i=>i.invNum).join(',');const attachments=[{name:'PhilLong_Pat_'+invNums+'.pdf',data:_plBatchDocs.pat.output('datauristring').split(',')[1]}];if(_plBatchDocs.dia)attachments.push({name:'PhilLong_Dia_'+invNums+'.pdf',data:_plBatchDocs.dia.output('datauristring').split(',')[1]});await sendGmailWithAttachments(to,'',subject,attachments);_plBatchDocs=null;}else if(_emailSendData.type==='statement'){const cust=_emailSendData.cust;const rows=_emailSendData.rows||[];if(!cust)throw new Error('Customer not found');if(!rows.length)throw new Error('No outstanding invoices');const doc=buildStatementPDF(cust,rows);const pdfB64=doc.output('datauristring').split(',')[1];await sendGmailWithAttachments(to,cc,subject,[{name:_statementFilename(cust),data:pdfB64}]);}else{const inv=S.invoices.find(i=>i.id===_emailSendData.invId);if(!inv)throw new Error('Invoice not found');const patDoc=buildPLPDFDoc([inv],'Patrick Massengale','patrick');const diaDoc=buildPLPDFDoc([inv],'Diana Massengale','diana');await sendGmailWithAttachments(to,'',subject,[{name:'PhilLong_Pat_'+inv.invNum+'.pdf',data:patDoc.output('datauristring').split(',')[1]},{name:'PhilLong_Dia_'+inv.invNum+'.pdf',data:diaDoc.output('datauristring').split(',')[1]}]);const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0&&S.invoices[idx].status==='draft'){S.invoices[idx].status='sent';S.invoices[idx].updatedAt=Date.now();save();syncInvoice(S.invoices[idx]);}}document.getElementById('emailSendModal').classList.remove('open');_emailSendData=null;showToast('✓ Email sent');}catch(e){console.warn('Send error:',e);msgEl.textContent='Send failed: '+(e.message||'unknown error');}btn.textContent='✉ Send';btn.disabled=false;}
 async function sendGmailWithAttachments(to,cc,subject,attachments){const sender=getDefaultSender();const boundary='TripLog_'+Date.now();let raw='From: '+sender+'\r\nTo: '+to+'\r\n';if(cc)raw+='Cc: '+cc+'\r\n';raw+='Subject: '+subject+'\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary="'+boundary+'"\r\n\r\n';raw+='--'+boundary+'\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nPlease find the attached trip report(s).\r\n\r\n';attachments.forEach(att=>{raw+='--'+boundary+'\r\nContent-Type: application/pdf\r\nContent-Transfer-Encoding: base64\r\n';raw+='Content-Disposition: attachment; filename="'+att.name+'"\r\n\r\n'+att.data+'\r\n';});raw+='--'+boundary+'--';const encoded=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/, '');const resp=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+S.gmailToken,'Content-Type':'application/json'},body:JSON.stringify({raw:encoded})});if(!resp.ok){const err=await resp.json().catch(()=>({}));throw new Error(err.error?.message||'Gmail API error '+resp.status);}}
 function reverseBatch(batchId){if(!confirm('Reverse this batch? All trips will return to In Period.'))return;let count=0;S.invoices.forEach((inv,idx)=>{if(inv.batchId===batchId&&inv.status==='billed'){S.invoices[idx].billed=false;S.invoices[idx].status='ready';delete S.invoices[idx].batchId;delete S.invoices[idx].billedAt;syncInvoice(S.invoices[idx]);count++;}});save();updatePLBanner();S.filter='inperiod';document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));const inPeriodTab=document.querySelector('[onclick*="inperiod"]');if(inPeriodTab)inPeriodTab.classList.add('on');renderList();showToast(count+' trip'+(count!==1?'s':'')+' moved back to In Period');}
 function onPLVehDestInput(who,n){const srcEl=document.getElementById(`pl-to-${who}-${n}`);if(!srcEl)return;const val=srcEl.value;const other=who==='pat'?'dia':'pat';const srcCards=Array.from(document.querySelectorAll(`#pl${who==='pat'?'Pat':'Dia'}Vehicles .vcard`));const srcIdx=srcCards.findIndex(c=>c.id===`pl-${who}-${n}`);if(srcIdx<0)return;const otherCards=Array.from(document.querySelectorAll(`#pl${other==='pat'?'Pat':'Dia'}Vehicles .vcard`));if(srcIdx>=otherCards.length)return;const otherCard=otherCards[srcIdx];const otherN=otherCard.id.split('-')[2];const otherEl=document.getElementById(`pl-to-${other}-${otherN}`);if(otherEl)otherEl.value=val;}
