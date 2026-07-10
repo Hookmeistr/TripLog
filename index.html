@@ -484,7 +484,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.14 (Cloud)</div><div class="at-sub">Email contact picker</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.15 (Cloud)</div><div class="at-sub">Per-driver hourly line items on invoice</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -878,10 +878,18 @@ function renderStdInvoicePage(doc,inv,scale){
     doc.text('CHARGES',L,y);y+=lh*1.2;
     doc.setFont('helvetica','normal');doc.setTextColor(0);doc.setFontSize(12*S);
     if(inv.totalMiles){doc.text('Total Miles: '+inv.totalMiles,L,y);y+=lh*1.3;}
-    let feeText='Driving Fee:';let feeAmt=inv.driveFee;
-    if(inv.billingType==='hourly'){feeText='Driving Fee (Hourly):';feeAmt=(inv.patCharge||0)+(inv.diaCharge||0);if(!feeAmt)feeAmt=inv.driveFee;}
-    else if(inv.drivers===2){feeText='Driving Fee: x 2 Drivers';feeAmt=inv.driveFee*2;}
-    doc.text(feeText,L,y);doc.text(fmtMoney(feeAmt),R,y,{align:'right'});y+=lh*1.3;
+    if(inv.billingType==='hourly'){
+      const _rate=inv.hourlyRate||25;
+      const _ph=(inv.patHours!=null&&inv.patHours!=='')?Number(inv.patHours):0;
+      const _pc=(inv.patCharge!=null)?Number(inv.patCharge):_ph*_rate;
+      doc.text('Patrick — '+_ph.toFixed(2)+' hrs × $'+_rate+'/hr',L,y);doc.text(fmtMoney(_pc),R,y,{align:'right'});y+=lh*1.3;
+      const _dc=(inv.diaCharge!=null)?Number(inv.diaCharge):0;
+      if(inv.drivers===2&&_dc>0){const _dh=(inv.diaHours!=null&&inv.diaHours!=='')?Number(inv.diaHours):0;doc.text('Diana — '+_dh.toFixed(2)+' hrs × $'+_rate+'/hr',L,y);doc.text(fmtMoney(_dc),R,y,{align:'right'});y+=lh*1.3;}
+    } else {
+      let feeText='Driving Fee:';let feeAmt=inv.driveFee;
+      if(inv.drivers===2){feeText='Driving Fee: x 2 Drivers';feeAmt=inv.driveFee*2;}
+      doc.text(feeText,L,y);doc.text(fmtMoney(feeAmt),R,y,{align:'right'});y+=lh*1.3;
+    }
     if(inv.meals>0){doc.text('Meals',L,y);doc.text('$'+Number(inv.meals).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
     if(inv.wash>0){doc.text('Wash',L,y);doc.text('$'+Number(inv.wash).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
     if(inv.fuel>0){doc.text('Fuel',L,y);doc.text('$'+Number(inv.fuel).toLocaleString('en-US',{minimumFractionDigits:2}),R,y,{align:'right'});y+=lh*1.3;}
@@ -1148,10 +1156,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31414').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31415').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31414').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31415').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
