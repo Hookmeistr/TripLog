@@ -232,7 +232,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
   <div class="sh">From (Origin / Dealer)</div>
   <div class="fg">
-    <div class="fr"><span class="fl">Dealer</span><input class="fi" id="fromDealer" placeholder="Search dealer name or address" autocomplete="off" onfocus="setupFromDealerAC()"><datalist id="dealerHist"></datalist></div>
+    <div class="fr"><span class="fl">Dealer</span><input class="fi" id="fromDealer" placeholder="Search dealer name or address" autocomplete="off" oninput="scheduleDistCalc()" onfocus="setupFromDealerAC()"><datalist id="dealerHist"></datalist></div>
     <div class="fr" style="min-height:40px">
       <span class="fl">Contact 1</span>
       <input class="fi" id="fromContact" placeholder="Name" list="contactHist" style="flex:2">
@@ -252,7 +252,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="fr"><span class="fl">City</span>
       <input class="fi" id="fromCity" placeholder="Origin city" autocomplete="off" oninput="scheduleDistCalc()">
       <button class="icon-btn" onclick="useMyLocation()" title="Use my location">&#128205;</button>
-      <span class="dist-badge" id="distBadge"></span>
+      <span class="dist-badge" id="distBadge" onclick="calcDistanceIfReady(true)" title="Tap to recalculate mileage" style="cursor:pointer"></span>
     </div>
   </div>
   <div class="sh">To (Delivery Destination)</div>
@@ -484,7 +484,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.17 (Cloud)</div><div class="at-sub">Data-loss proof edits + hours tracking</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.18 (Cloud)</div><div class="at-sub">Mileage auto-calc fixed</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -726,7 +726,67 @@ function stripUSA(s){if(!s)return s;if(s.endsWith(', USA'))return s.slice(0,-5);
 function initMaps(){mapsReady=true;window.mapsReady=true;distService=new google.maps.DistanceMatrixService();geocoder=new google.maps.Geocoder();const ms=document.getElementById('mapsStatus');if(ms){ms.textContent='Active';ms.className='spill sp-on';}}
 
 function scheduleDistCalc(){clearTimeout(distTimer);distTimer=setTimeout(calcDistanceIfReady,1200);}
-function calcDistanceIfReady(){if(!mapsReady||!distService)return;const fromCity=document.getElementById('fromCity').value.trim();const fromDealer=document.getElementById('fromDealer').value.trim();const toAddr=document.getElementById('toAddress').value.trim();const toCity=document.getElementById('toCity').value.trim();const origin=fromDealer?(fromDealer+(fromCity?', '+fromCity:'')):fromCity;const dest=toAddr||toCity;if(!origin||!dest)return;distService.getDistanceMatrix({origins:[origin],destinations:[dest],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.IMPERIAL},(resp,status)=>{if(status!=='OK')return;const el=resp.rows[0]?.elements[0];if(el?.status==='OK'){const miles=Math.round(el.distance.value/1609.34)*2;const mEl=document.getElementById('totalMiles');if(mEl){mEl.value=miles;recalcMileageFee();}const badge=document.getElementById('distBadge');if(badge){badge.textContent='~'+miles+' mi';badge.style.display='inline-block';}showToast('Round trip: ~'+miles+' miles');}});}
+/* Build the DESTINATION query. A bare street address ("4320 Delta Dr") is ambiguous and
+   fails to geocode, so the address and the city/state are combined. */
+function _distDest(){
+  var a=(document.getElementById('toAddress').value||'').trim();
+  var c=(document.getElementById('toCity').value||'').trim();
+  if(a&&c&&a.toLowerCase().indexOf(c.split(',')[0].trim().toLowerCase())<0)return a+', '+c;
+  return a||c;
+}
+/* Resolve the ORIGIN. A dealership NAME is not a reliable geocoding query, which is why
+   mileage silently stopped calculating. Priority:
+     1. the customer's saved GPS  (exact, instant)
+     2. the customer's saved street address
+     3. geocode "dealer, city" ONCE, then cache the result on the customer so every later
+        calculation is exact. Self-healing: no manual setup required. */
+function _distOriginResolve(cb){
+  var cust=S.customers.find(function(c){return c.id===selectedCustomerId;});
+  var bc=(cust&&cust.billingContact)||{};
+  if(bc.lat!=null&&bc.lng!=null&&window.google&&google.maps){cb(new google.maps.LatLng(bc.lat,bc.lng));return;}
+  if(bc.address){cb(bc.address);return;}
+  var dealer=(document.getElementById('fromDealer').value||'').trim();
+  var city=(document.getElementById('fromCity').value||'').trim();
+  var q=dealer?(dealer+(city?', '+city:'')):city;
+  if(!q){cb(null);return;}
+  if(!geocoder){cb(q);return;}
+  geocoder.geocode({address:q},function(res,status){
+    if(status==='OK'&&res&&res[0]){
+      var loc=res[0].geometry.location;
+      if(cust){
+        if(!cust.billingContact)cust.billingContact={};
+        cust.billingContact.address=res[0].formatted_address;
+        cust.billingContact.lat=loc.lat();cust.billingContact.lng=loc.lng();
+        save();
+      }
+      cb(loc);
+    }else{cb(q);}
+  });
+}
+function calcDistanceIfReady(force){
+  var badge=document.getElementById('distBadge');
+  function setBadge(txt){if(badge){badge.textContent=txt;badge.style.display='inline-block';}}
+  if(!mapsReady||!distService){if(force)showToast('Maps still loading — tap the badge again in a moment');return;}
+  var dest=_distDest();
+  if(!dest){if(force)showToast('Enter the delivery address first');return;}
+  _distOriginResolve(function(origin){
+    if(!origin){if(force)showToast('Enter the dealer or origin city first');return;}
+    distService.getDistanceMatrix({origins:[origin],destinations:[dest],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.IMPERIAL},function(resp,status){
+      if(status!=='OK'){setBadge('calc failed');showToast('Distance lookup failed ('+status+')');return;}
+      var el=resp&&resp.rows&&resp.rows[0]&&resp.rows[0].elements&&resp.rows[0].elements[0];
+      if(!el||el.status!=='OK'){
+        setBadge('no route');
+        showToast('Could not find a route. Check the delivery address, or set this dealer’s address under Admin › Customer Billing.');
+        return;
+      }
+      var miles=Math.round(el.distance.value/1609.34)*2;   /* round trip */
+      var mEl=document.getElementById('totalMiles');
+      if(mEl){mEl.value=miles;recalcMileageFee();}
+      setBadge('~'+miles+' mi');
+      showToast('Round trip: ~'+miles+' miles');
+    });
+  });
+}
 function useMyLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city){document.getElementById('fromCity').value=city;scheduleDistCalc();}showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
 function usePLLocation(){if(!navigator.geolocation){showToast('Location not available');return;}showToast('Getting location…');navigator.geolocation.getCurrentPosition(pos=>{if(!mapsReady||!geocoder){showToast('Maps not ready');return;}geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{if(status==='OK'&&results[0]){const city=results[0].address_components.find(c=>c.types.includes('locality'))?.long_name||'';if(city)document.getElementById('plFromCity').value=city;showToast('Location: '+(city||'found'));}});},()=>showToast('Could not get location'));}
 function dialPhone(inputId){const val=(document.getElementById(inputId)||{}).value||'';const clean=val.replace(/\D/g,'');if(clean.length>=10)window.location.href='tel:'+clean;else showToast('No valid phone entered');}
@@ -813,7 +873,10 @@ function addStdVehicle(who){const key=who==='pat'?'stdPatVehicles':'stdDiaVehicl
 function addPLVehicle(who){const key=who==='pat'?'plPatVehicles':'plDiaVehicles';const count=who==='pat'?++S.plPatVehicleCount:++S.plDiaVehicleCount;const existingCards=document.querySelectorAll('#'+key+' .vcard');const displayNum=existingCards.length+1;let firstYmm='';if(existingCards.length>0){const yEl=existingCards[0].querySelector('[id^="pl-ymm-'+who+'"]');firstYmm=yEl?yEl.value:'';}const vinId=`pl-vin-${who}-${count}`,ymmId=`pl-ymm-${who}-${count}`,stkId=`pl-stk-${who}-${count}`,dlId=`pl-dl-${who}-${count}`;const hdrBg=who==='pat'?'#E8EDF5':'#FDF0F2';const hdrColor=who==='pat'?'#003594':'#722F37';const label=who==='pat'?'Patrick':'Diana';const toId=`pl-to-${who}-${count}`;const div=document.createElement('div');div.className='vcard';div.id=`pl-${who}-${count}`;div.innerHTML=`<div class="vcard-hdr" style="background:${hdrBg};color:${hdrColor}">${label} \u2013 Vehicle ${displayNum}<button class="rm-btn" onclick="this.closest('.vcard').remove();renumberPLVehicles('${who}')">&#10005;</button></div><div class="vr"><span class="vl">VIN out (last 8)</span><input class="vi" id="${vinId}" placeholder="Last 8 digits" maxlength="8" autocomplete="off" oninput="checkStkAutofill(document.getElementById('${stkId}'),this,'${dlId}')"></div><div class="vr"><span class="vl">&nbsp;Year / Make / Model / Color</span><input class="vi" id="${ymmId}" placeholder="Year Make Model Color" value="${firstYmm}" style="padding-left:6px"></div><div class="vr"><span class="vl">Stock #</span><input class="vi" id="${stkId}" placeholder="Stock number" list="${dlId}" autocomplete="off" oninput="checkStkAutofill(this,document.getElementById('${vinId}'),'${dlId}')" onkeydown="stkKeydown(event,this,'${dlId}')"><datalist id="${dlId}"></datalist></div><div class="vr"><span class="vl">Destination</span><input class="vi" id="${toId}" placeholder="Destination name" list="plDestHist" autocomplete="off" oninput="onPLVehDestInput('${who}',${count})"></div>`;document.getElementById(key).appendChild(div);}
 let selectedCustomerId=null;
 function newStandardInvoice(){S.editId=null;S._editingExisting=false;selectedCustomerId=null;clearStdForm();document.getElementById('selectedCustName').textContent='Select Customer ›';goScreen('form');updateInvNum();}
-function clearStdForm(){['fromDealer','fromContact','fromContact2','fromPhone','fromPhone2','fromCity','toName','toName2','toPhone','toPhone2','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal','departTime','returnTime','hoursWorked','stdPatHours','stdDiaHours'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['stdPatHourly','stdDiaHourly'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});['stdPatCharge','stdDiaCharge'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='$0.00';});document.getElementById('stdPatVehicles').innerHTML='';document.getElementById('stdDiaVehicles').innerHTML='';S.stdPatVehicleCount=0;S.stdDiaVehicleCount=0;if(S.stdPatChase)toggleStdChase('pat');if(S.stdDiaChase)toggleStdChase('dia');addStdVehicle('pat');setStdVehTab('pat');setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb">&#128247;<input type="file" class="ph-input" accept="image/*" onchange="addPhoto(this)" multiple></label>`;const b=document.getElementById('distBadge');if(b)b.style.display='none';}
+function clearStdForm(){['fromDealer','fromContact','fromContact2','fromPhone','fromPhone2','fromCity','toName','toName2','toPhone','toPhone2','toAddress','toCity','dealNum','totalMiles','driveFee','fuel','meals','wash','otherAmt','otherDesc','invoiceNotes','receiptTotal','departTime','returnTime','hoursWorked','stdPatHours','stdDiaHours'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['stdPatHourly','stdDiaHourly'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});['stdPatCharge','stdDiaCharge'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='$0.00';});document.getElementById('stdPatVehicles').innerHTML='';document.getElementById('stdDiaVehicles').innerHTML='';S.stdPatVehicleCount=0;S.stdDiaVehicleCount=0;if(S.stdPatChase)toggleStdChase('pat');if(S.stdDiaChase)toggleStdChase('dia');addStdVehicle('pat');setStdVehTab('pat');setDrivers(1);document.getElementById('invSuffix').value='';updateInvNum();document.getElementById('totalDisplay').textContent='$0.00';document.getElementById('photoList').innerHTML=`<label class="ph-add" style="cursor:pointer;width:44px;height:44px;border:1.5px dashed #ccd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#bbb">&#128247;<input type="file" class="ph-input" accept="image/*" onchange="addPhoto(this)" multiple></label>`;resetDistBadge();}
+/* The badge doubles as a manual "recalculate mileage" button, so it must be visible even
+   before a calculation has run. */
+function resetDistBadge(){var b=document.getElementById('distBadge');if(b){b.textContent='↻ calc';b.style.display='inline-block';}}
 function openCustModal(){const el=document.getElementById('custOptions');el.innerHTML=S.customers.filter(c=>c.id!=='phillong').map(c=>`<div class="co ${selectedCustomerId===c.id?'sel':''}" onclick="selectCustomer('${c.id}')"><div class="co-dot" style="background:${c.color}"></div><div><div class="co-name">${c.name}</div><div class="co-rate">${c.billing==='mileage'?'$'+c.ratePerMile+'/mile':c.billing==='hourly'?'$'+c.hourlyRate+'/hour':c.billing==='flat'?'Rate':'Manual billing'}</div></div></div>`).join('')+`<div class="co" onclick="selectCustomer('custom')"><div class="co-dot" style="background:#888"></div><div><div class="co-name">Other / New Customer</div><div class="co-rate">Enter manually</div></div></div>`;document.getElementById('custModal').classList.add('open');}
 function closeCustModal(){document.getElementById('custModal').classList.remove('open');}
 function selectCustomer(id){selectedCustomerId=id;const cust=S.customers.find(c=>c.id===id);if(cust){document.getElementById('selectedCustName').textContent=cust.name+' ›';const isChalmers=id==='chalmers';const isMarco=id==='marco';const isHourly=cust.billing==='hourly';const _rt=cust.hourlyRate||25;
@@ -825,7 +888,7 @@ const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display=''
 const _noteTxt=isHourly?('× $'+_rt+'/hr'):'tracked only';
 const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent=_noteTxt;
 const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent=_noteTxt;
-document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display=isHourly?'none':'flex';document.getElementById('feeNote').textContent=isHourly?'hrs × $'+_rt:isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='ABQ Auto Deals';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='flex';document.getElementById('returnRow').style.display='flex';document.getElementById('hoursRow').style.display='none';const _phb=document.getElementById('stdPatHourly');if(_phb)_phb.style.display='';const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display='';const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent='tracked only';const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent='tracked only';document.getElementById('rateRow').style.display='flex';}closeCustModal();calcTotal();}
+document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display=isHourly?'none':'flex';document.getElementById('feeNote').textContent=isHourly?'hrs × $'+_rt:isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='ABQ Auto Deals';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='flex';document.getElementById('returnRow').style.display='flex';document.getElementById('hoursRow').style.display='none';const _phb=document.getElementById('stdPatHourly');if(_phb)_phb.style.display='';const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display='';const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent='tracked only';const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent='tracked only';document.getElementById('rateRow').style.display='flex';}closeCustModal();calcTotal();scheduleDistCalc();}
 function setDrivers(n){S.stdDrivers=n;document.getElementById('dt1').className='dt '+(n===1?'p-on':'');document.getElementById('dt2').className='dt '+(n===2?'d-on':'');calcTotal();}
 function calcChalmersHours(){const dep=document.getElementById('departTime').value;const ret=document.getElementById('returnTime').value;if(!dep||!ret)return;const [dh,dm]=dep.split(':').map(Number);const [rh,rm]=ret.split(':').map(Number);let mins=(rh*60+rm)-(dh*60+dm);if(mins<0)mins+=1440;const hrs=(Math.round(mins/15)*0.25).toFixed(2);const ph=document.getElementById('stdPatHours');if(ph)ph.value=hrs;const dhh=document.getElementById('stdDiaHours');if(dhh)dhh.value=hrs;const hw=document.getElementById('hoursWorked');if(hw)hw.value=hrs;calcTotal();}
 function onDriverHoursInput(who){const ph=document.getElementById('stdPatHours');const hw=document.getElementById('hoursWorked');if(hw&&ph)hw.value=ph.value||'';calcTotal();}
@@ -1207,7 +1270,7 @@ if(patChaseV){toggleStdChase('pat');}else{patVehs.filter(v=>!v.chase).forEach(v=
 if(!patChaseV&&patVehs.filter(v=>!v.chase).length===0)addStdVehicle('pat');
 const diaChaseV=diaVehs.find(v=>v.chase);
 if(diaChaseV){toggleStdChase('dia');}else{diaVehs.filter(v=>!v.chase).forEach(v=>{addStdVehicle('dia');const n=S.stdDiaVehicleCount;sv('sv-vin-dia-'+n,v.vin);sv('sv-ymm-dia-'+n,v.ymm);sv('sv-stk-dia-'+n,v.stk);});}
-setStdVehTab('pat');calcTotal();document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');}
+setStdVehTab('pat');calcTotal();resetDistBadge();document.getElementById('totalDisplay').textContent=fmtMoney(inv.total||0);S._filteredForDetail=null;goScreen('form');}
 function editPLInvoice(id){const inv=S.invoices.find(i=>i.id===id);if(!inv)return;S.editId=id;S._editingExisting=true;document.getElementById('plDate').value=inv.date||'';const base=dateToInvNum(inv.date);const suf=inv.invNum&&inv.invNum.startsWith(base)?inv.invNum.slice(base.length):'';document.getElementById('plSuffix').value=suf;updatePLInvNum();document.getElementById('plFromCity').value=inv.fromCity||'';document.getElementById('plFromLoc').value=inv.fromLoc||'';document.getElementById('plPatMiles').value=inv.patMiles?(Number(inv.patMiles).toFixed(2)):'';document.getElementById('plPatFee').value=inv.patFee?(Number(inv.patFee).toFixed(2)):'';document.getElementById('plDiaMiles').value=inv.diaMiles?(Number(inv.diaMiles).toFixed(2)):'';document.getElementById('plDiaFee').value=inv.diaFee?(Number(inv.diaFee).toFixed(2)):'';setWash(inv.wash||'none');if(S.plPatChase)togglePLChase('pat');if(S.plDiaChase)togglePLChase('dia');document.getElementById('plPatVehicles').innerHTML='';S.plPatVehicleCount=0;const _patDest=(inv.patDest||{}).name||inv.toName||'';(inv.patVehicles||[]).forEach(v=>{addPLVehicle('pat');const n=S.plPatVehicleCount;const ve=document.getElementById(`pl-vin-pat-${n}`);const ye=document.getElementById(`pl-ymm-pat-${n}`);const se=document.getElementById(`pl-stk-pat-${n}`);const te=document.getElementById(`pl-to-pat-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';if(te)te.value=v.toName||_patDest;});if((inv.patVehicles||[]).length===0&&!inv.patChase)addPLVehicle('pat');if(inv.patChase)togglePLChase('pat');document.getElementById('plDiaVehicles').innerHTML='';S.plDiaVehicleCount=0;const _diaDest=(inv.diaDest||{}).name||(inv.patDest||{}).name||inv.toName||'';(inv.diaVehicles||[]).forEach(v=>{addPLVehicle('dia');const n=S.plDiaVehicleCount;const ve=document.getElementById(`pl-vin-dia-${n}`);const ye=document.getElementById(`pl-ymm-dia-${n}`);const se=document.getElementById(`pl-stk-dia-${n}`);const te=document.getElementById(`pl-to-dia-${n}`);if(ve)ve.value=v.vin||'';if(ye)ye.value=v.ymm||'';if(se)se.value=v.stk||'';if(te)te.value=v.toName||_diaDest;});if(inv.diaChase)togglePLChase('dia');calcPLTotal();S._filteredForDetail=null;goScreen('pl');}
 
 function updateAutocomplete(inv){const hist=JSON.parse(localStorage.getItem('tl_hist')||'{}');const add=(key,val)=>{if(!val)return;if(!hist[key])hist[key]=[];if(!hist[key].includes(val))hist[key].unshift(val);hist[key]=hist[key].slice(0,20);};add('dealers',inv.fromDealer);add('contacts',inv.fromContact);add('contacts2',inv.fromContact2);add('recips',inv.toName);add('recips2',inv.toName2);localStorage.setItem('tl_hist',JSON.stringify(hist));populateAutocomplete();}
@@ -1231,10 +1294,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31417').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31418').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31417').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31418').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
