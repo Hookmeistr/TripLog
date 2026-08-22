@@ -484,7 +484,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.22 (Cloud)</div><div class="at-sub">Folder chooser · saved-PDF email · custom colors</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.23 (Cloud)</div><div class="at-sub">Folder chooser · saved-PDF email · custom colors</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -1306,7 +1306,7 @@ async function generatePLPDF(trips,name,who){
 }
 async function generatePLCheckRequests(){const unbilled=S.invoices.filter(i=>i.type==='phillong'&&!i.billed&&i.status!=='draft');if(unbilled.length===0){showToast('No unbilled Phil Long trips');return;}if(!confirm(`Generate Check Requests for ${unbilled.length} trip(s)?\nThis will mark them as billed.`))return;const patDoc=await buildPLPDFDoc(unbilled,'Patrick Massengale','patrick');const withDiana=unbilled.filter(i=>(i.diaVehicles&&i.diaVehicles.length>0)||i.diaChase);const diaDoc=withDiana.length>0?await buildPLPDFDoc(withDiana,'Diana Massengale','diana'):null;await generatePLPDF(unbilled,'Patrick Massengale','patrick');if(withDiana.length>0)await generatePLPDF(withDiana,'Diana Massengale','diana');const batchId='batch_'+Date.now();const now=Date.now();unbilled.forEach(inv=>{const idx=S.invoices.findIndex(i=>i.id===inv.id);if(idx>=0){S.invoices[idx].billed=true;S.invoices[idx].status='billed';S.invoices[idx].billedAt=now;S.invoices[idx].batchId=batchId;syncInvoice(S.invoices[idx]);}});save();updatePLBanner();renderList();_plBatchDocs={pat:patDoc,dia:diaDoc,unbilled:[...unbilled]};openEmailSendPLBatch();}
 
-const CUST_CARD_STYLES={phillong:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',sub:'#3B6D11',div:'#C0DD97'},chalmers:{bg:'#E6F1FB',border:'#185FA5',text:'#042C53',sub:'#185FA5',div:'#85B7EB'},reliable:{bg:'#B5D4F4',border:'#0C447C',text:'#042C53',sub:'#0C447C',div:'#378ADD'},marco:{bg:'#EDE4F5',border:'#7048A0',text:'#2E1157',sub:'#7048A0',div:'#C4A8E6'}};
+const CUST_CARD_STYLES={phillong:_cardFromColor('#C3D69B'),chalmers:_cardFromColor('#93CDDD'),reliable:_cardFromColor('#558ED5'),marco:_cardFromColor('#CCC1DA')};
 function _hex2rgb(h){h=String(h||'').trim().replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];if(!/^[0-9a-fA-F]{6}$/.test(h))return null;var n=parseInt(h,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
 function _rgb2hex(r,g,b){function c(v){v=Math.max(0,Math.min(255,Math.round(v)));return('0'+v.toString(16)).slice(-2);}return'#'+c(r)+c(g)+c(b);}
 function _tint(hex,pct){var c=_hex2rgb(hex);if(!c)return'#fff';return _rgb2hex(c.r+(255-c.r)*pct,c.g+(255-c.g)*pct,c.b+(255-c.b)*pct);}
@@ -1393,10 +1393,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31422').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31423').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31422').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31423').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
