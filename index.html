@@ -484,7 +484,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.23 (Cloud)</div><div class="at-sub">Folder chooser · saved-PDF email · custom colors</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.24 (Cloud)</div><div class="at-sub">Folder chooser · saved-PDF email · custom colors</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -1313,15 +1313,10 @@ function _tint(hex,pct){var c=_hex2rgb(hex);if(!c)return'#fff';return _rgb2hex(c
 function _shade(hex,pct){var c=_hex2rgb(hex);if(!c)return'#333';return _rgb2hex(c.r*(1-pct),c.g*(1-pct),c.b*(1-pct));}
 function _lum(hex){var c=_hex2rgb(hex);if(!c)return 0;return (0.299*c.r+0.587*c.g+0.114*c.b)/255;}
 function _cardFromColor(col){
-  var L=_lum(col);
-  if(L>0.6){
-    /* A light identity colour (e.g. a pastel chosen to match the master
-       spreadsheet): show it close to as-picked instead of whitening it to
-       almost nothing, and darken the border/text enough to stay readable. */
-    var bgp=Math.max(0.15,0.55-(L-0.6)*0.9);
-    return{bg:_tint(col,bgp),border:_shade(col,0.30),text:_shade(col,0.62),sub:_shade(col,0.42),div:_tint(col,0.4)};
-  }
-  return{bg:_tint(col,.88),border:col,text:_shade(col,.45),sub:_shade(col,.15),div:_tint(col,.6)};
+  /* One consistent tint for every colour so a darker colour always makes a
+     darker card and a lighter colour a lighter card (no inversion). The chosen
+     colour is the accent/border; the fill is a light tint of the same colour. */
+  return{bg:_tint(col,.60),border:col,text:_shade(col,.55),sub:_shade(col,.30),div:_tint(col,.35)};
 }
 /* Build a card palette from ANY customer's chosen colour. Custom customers added in
    Admin previously fell through to a generic grey card because only the four built-ins
@@ -1393,10 +1388,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31423').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31424').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31423').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31424').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
