@@ -486,7 +486,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.28 (Cloud)</div><div class="at-sub">$0-invoice guard - no blank or $0 bill can be made or sent</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.29 (Cloud)</div><div class="at-sub">Data-loss fix - a stale sync can't wipe your hours/fee/receipt</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -626,6 +626,12 @@ function mergeInvoiceRecord(local,cloud){
   Object.keys(win).forEach(function(k){out[k]=win[k];});
   /* Receipt scans are irreplaceable: a version without photos must never erase one with photos. */
   if(_photoCount(other)>_photoCount(win))out.photos=other.photos;
+  /* A blank/stale version must never wipe populated money/hours fields (mirrors the photos rule).
+     Per-field: keep a real value over an empty one. Whole-record: a $0 version cannot clobber a >$0 one. */
+  var _PREC=['patHours','diaHours','departTime','returnTime','hoursWorked','driveFee','patCharge','diaCharge','total','totalMiles','fuel','meals','wash','other','vehicles','billingType','hourlyRate','drivers','toAddress','toName','toCity','fromDealer','fromCity','fromContact','fromPhone','dealNum'];
+  var _emp=function(v){return v==null||v===''||(Array.isArray(v)&&v.length===0);};
+  var _winPoor=!(Number(win.total)>0)&&Number(other.total)>0;
+  _PREC.forEach(function(k){if(_emp(out[k])&&!_emp(other[k]))out[k]=other[k];else if(_winPoor&&!_emp(other[k]))out[k]=other[k];});
   return out;
 }
 /* ---- Customer-settings cloud sync ----
@@ -939,6 +945,10 @@ function guardInvoiceWrite(next){
   if(!prev)return next;
   Object.keys(prev).forEach(function(k){if(!(k in next))next[k]=prev[k];});
   if(_photoCount(prev)>_photoCount(next))next.photos=prev.photos;
+  /* A $0/blank re-save cannot wipe a populated record's money/hours fields. */
+  var _PREC=['patHours','diaHours','departTime','returnTime','hoursWorked','driveFee','patCharge','diaCharge','total','totalMiles','fuel','meals','wash','other','vehicles','billingType','hourlyRate','drivers','toAddress','toName','toCity','fromDealer','fromCity','fromContact','fromPhone','dealNum'];
+  var _emp=function(v){return v==null||v===''||(Array.isArray(v)&&v.length===0);};
+  if(!(Number(next.total)>0)&&Number(prev.total)>0){_PREC.forEach(function(k){if(!_emp(prev[k]))next[k]=prev[k];});}
   return next;
 }
 /* Keep a bounded local history of prior versions so nothing is ever unrecoverable. */
@@ -1493,10 +1503,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31428').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31429').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31428').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31429').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
