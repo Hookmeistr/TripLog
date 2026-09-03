@@ -250,8 +250,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <button class="icon-btn" onclick="pickContact('fromContact2','fromPhone2')" title="Pick contact">&#128101;</button>
     </div>
     <div class="fr"><span class="fl">City</span>
-      <input class="fi" id="fromCity" placeholder="Origin city" autocomplete="off" oninput="scheduleDistCalc()">
+      <input class="fi" id="fromCity" placeholder="Origin address or city" autocomplete="off" oninput="scheduleDistCalc()">
       <button class="icon-btn" onclick="useMyLocation()" title="Use my location">&#128205;</button>
+      <button class="icon-btn" onclick="setCustDefaultOrigin()" title="Save this address as the selected customer's default origin">&#11088;</button>
       <span class="dist-badge" id="distBadge" onclick="calcDistanceIfReady(true)" title="Tap to recalculate mileage" style="cursor:pointer"></span>
     </div>
   </div>
@@ -485,7 +486,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.31 (Cloud)</div><div class="at-sub">Mileage now uses the Directions API (legacy distance service retired)</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.32 (Cloud)</div><div class="at-sub">Pick a customer and its saved address fills the origin; edit for one trip, or tap the star to set a new default</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -968,6 +969,10 @@ function migrateCustomers(){let changed=false;if(!S.customers.find(c=>c.id==='ma
    customer record and any local invoice still carrying the old name so it can never reappear on a
    card or PDF. Idempotent (nothing left to change once healed); local only. */
 (function(){var m=S.customers.find(function(c){return c.id==='marco';});if(m&&m.name==='ABQ Auto Deals'){m.name='DriveNow Automotive';m.updatedAt=Date.now();changed=true;}(S.invoices||[]).forEach(function(inv){if(!inv)return;if(inv.custId==='marco'||inv.custName==='ABQ Auto Deals'){if(inv.custName==='ABQ Auto Deals'){inv.custName='DriveNow Automotive';changed=true;}if(inv.fromDealer==='ABQ Auto Deals'){inv.fromDealer='DriveNow Automotive';changed=true;}}});})();
+/* Per-customer DEFAULT ORIGIN address (v3.14.32): pre-seed known dealer addresses if not already set,
+   so selecting a customer auto-fills the origin. Idempotent + only-if-missing (never overwrites Patrick's
+   own edits). Phil Long also keeps its Raton pickup address. Syncs via the customer record. */
+(function(){var DEFO={chalmers:'2500 Rio Rancho Blvd SE, Rio Rancho, NM 87124',reliable:'9901 Coors Blvd NW, Albuquerque, NM 87114',marco:'6917 Lomas Blvd NE, Albuquerque, NM 87110',phillong:'9501 Coors Blvd NW, Albuquerque, NM 87114'};(S.customers||[]).forEach(function(c){if(c&&DEFO[c.id]&&!c.defOrigin){c.defOrigin=DEFO[c.id];c.updatedAt=Date.now();changed=true;}});var _pl=(S.customers||[]).find(function(c){return c&&c.id==='phillong';});if(_pl&&!_pl.pickupOrigin){_pl.pickupOrigin='223 S 2nd St, Raton, NM 87740';_pl.updatedAt=Date.now();changed=true;}})();
 if(changed)save();}
 function goScreen(name){if(S.screen==='form'&&name!=='form'){autoSaveDraftIfNeeded();}if(S.screen==='pl'&&name!=='pl'){autoSavePLDraftIfNeeded();}document.querySelectorAll('.sc').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.nt').forEach(e=>e.classList.remove('on'));document.getElementById('sc-'+name).classList.add('on');const ntEl=document.getElementById('nt-'+name);if(ntEl)ntEl.classList.add('on');S.prevScreen=S.screen;S.screen=name;const fab=document.getElementById('fab');const bb=document.getElementById('backBtn');if(name==='list'){fab.style.display='flex';bb.style.display='none';document.getElementById('appTitle').innerHTML='&#128663; TripLog<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}else{fab.style.display='none';bb.style.display='flex';const titles={form:'New Standard Invoice',ar:'Accounts Receivable',pl:'Phil Long Ford',detail:'Invoice Detail',admin:'Admin &amp; Settings',customers:'Customer Billing Contacts'};document.getElementById('appTitle').innerHTML=(titles[name]||name)+'<span class="ab-sub" id="appSub">'+(S.isOwner?(S.user==='patrick'?'Patrick':'Diana')+' Massengale':S.driverName)+'</span>';}document.getElementById('mainScroll').scrollTop=0;if(name==='list'){S._editingExisting=false;S._filteredForDetail=null;renderList();renderDiaDashboard();}if(name==='pl')updatePLBanner();if(name==='admin'){renderFeedback();renderDianaIndependenceRow();updateDriveUI();updateGmailUI();loadDefaultSenderInput();}if(name==='ar'){S._arCust=null;renderAR();}if(name==='reports'){initReportsScreen();}if(name==='customers')renderCustMgmt();if(name!=='form'){const b=document.getElementById('distBadge');if(b)b.style.display='none';const _adEl=document.getElementById('toAddress');if(_adEl)_adEl._acDone=false;}}
 function goBack(){goScreen(S.prevScreen==='customers'?'admin':'list');}
@@ -995,7 +1000,8 @@ const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display=''
 const _noteTxt=isHourly?('× $'+_rt+'/hr'):'tracked only';
 const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent=_noteTxt;
 const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent=_noteTxt;
-document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display=isHourly?'none':'flex';document.getElementById('feeNote').textContent=isHourly?'hrs × $'+_rt:isMarco?'flat rate':'editable';if(id!=='custom'&&id!=='marco'){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value=cust.name;}if(isMarco){const cur=document.getElementById('fromDealer').value;if(!cur)document.getElementById('fromDealer').value='DriveNow Automotive';}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='flex';document.getElementById('returnRow').style.display='flex';document.getElementById('hoursRow').style.display='none';const _phb=document.getElementById('stdPatHourly');if(_phb)_phb.style.display='';const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display='';const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent='tracked only';const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent='tracked only';document.getElementById('rateRow').style.display='flex';}closeCustModal();calcTotal();scheduleDistCalc();}
+document.getElementById('milesRow').style.display='flex';document.getElementById('rateRow').style.display=isHourly?'none':'flex';document.getElementById('feeNote').textContent=isHourly?'hrs × $'+_rt:isMarco?'flat rate':'editable';if(id!=='custom'){const _fd=document.getElementById('fromDealer');if(_fd&&!_fd.value)_fd.value=(id==='marco'?'DriveNow Automotive':cust.name);const _fc=document.getElementById('fromCity');if(_fc&&!_fc.value&&cust.defOrigin)_fc.value=cust.defOrigin;}}else{document.getElementById('selectedCustName').textContent='Other / New Customer ›';document.getElementById('timeRow').style.display='flex';document.getElementById('returnRow').style.display='flex';document.getElementById('hoursRow').style.display='none';const _phb=document.getElementById('stdPatHourly');if(_phb)_phb.style.display='';const _dhb=document.getElementById('stdDiaHourly');if(_dhb)_dhb.style.display='';const _pn=document.getElementById('stdPatHrNote');if(_pn)_pn.textContent='tracked only';const _dn=document.getElementById('stdDiaHrNote');if(_dn)_dn.textContent='tracked only';document.getElementById('rateRow').style.display='flex';}closeCustModal();calcTotal();scheduleDistCalc();}
+function setCustDefaultOrigin(){var c=S.customers.find(function(x){return x.id===selectedCustomerId;});if(!c){showToast('Pick a customer first');return;}var city=((document.getElementById('fromCity')||{}).value||'').trim();if(!city){showToast('Enter the origin address first');return;}c.defOrigin=city;c.updatedAt=Date.now();save();if(typeof syncCustomersChanged==='function')syncCustomersChanged();showToast('Saved as '+c.name+' default origin');}
 function setDrivers(n){S.stdDrivers=n;document.getElementById('dt1').className='dt '+(n===1?'p-on':'');document.getElementById('dt2').className='dt '+(n===2?'d-on':'');calcTotal();}
 function calcChalmersHours(){const dep=document.getElementById('departTime').value;const ret=document.getElementById('returnTime').value;if(!dep||!ret)return;const [dh,dm]=dep.split(':').map(Number);const [rh,rm]=ret.split(':').map(Number);let mins=(rh*60+rm)-(dh*60+dm);if(mins<0)mins+=1440;const hrs=(Math.round(mins/15)*0.25).toFixed(2);const ph=document.getElementById('stdPatHours');if(ph)ph.value=hrs;const dhh=document.getElementById('stdDiaHours');if(dhh)dhh.value=hrs;const hw=document.getElementById('hoursWorked');if(hw)hw.value=hrs;calcTotal();}
 function onDriverHoursInput(who){const ph=document.getElementById('stdPatHours');const hw=document.getElementById('hoursWorked');if(hw&&ph)hw.value=ph.value||'';calcTotal();}
@@ -1503,10 +1509,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31431').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31432').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31431').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31432').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
