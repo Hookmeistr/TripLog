@@ -492,7 +492,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.45 (Cloud)</div><div class="at-sub">Mark Sent: if you email an invoice outside the app, open it and tap Mark Sent to record it as sent (Undo available)</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.46 (Cloud)</div><div class="at-sub">Mark Sent: if you email an invoice outside the app, open it and tap Mark Sent to record it as sent (Undo available)</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -1360,12 +1360,18 @@ async function generateStdPDF(inv){
 }
 async function shareStdPDF(inv){if(_guardZeroPDF(inv))return;const doc=buildStdPDF(inv);const fname=pdfFilename(inv);if(navigator.canShare&&navigator.canShare({files:[new File([doc.output('blob')],fname,{type:'application/pdf'})]})){try{const blob=doc.output('blob');const file=new File([blob],fname,{type:'application/pdf'});await navigator.share({files:[file],title:fname.replace('.pdf','')});showToast('Shared!');return;}catch(e){if(e.name==='AbortError')return;}}await savePDFToDrive(doc,fname,inv.custName);}
 async function pdfOutStd(inv){if(_guardZeroPDF(inv))return;const doc=buildStdPDF(inv);const fname=pdfFilename(inv);await savePDFToDrive(doc,fname,inv.custName);let shared=false;if(navigator.canShare){try{const blob=doc.output('blob');const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fname.replace('.pdf','')});shared=true;}}catch(e){if(e&&e.name==='AbortError')return;}}if(!shared)showToast('PDF saved to Drive');}
+/* PL check-request PDF -- EMAILED copy. KEEP IN SYNC with generatePLPDF (the saved/preview/shared copy):
+   any change to line items, charges, or totals MUST be applied to BOTH builders. Enforced by the parity
+   checks in _test_persveh.js. See design-and-architecture.md "Phil Long PDF builders". */
 async function buildPLPDFDoc(trips,name,who){const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const L=50,C_STK=106,C_TRIP=163,C_AMT=558;const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)+(t.persVehUse?(Number(t.persVehAmt)||0):0)),0);const totalStr=Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});const today=new Date();const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;let y=44;doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('CHECK REQUEST FORM',(L+C_AMT)/2,y,{align:'center'});y+=18;doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('TO',L,y);doc.setFontSize(9);doc.text(name,L+16,y);doc.line(L+13,y+1,318,y+1);doc.setFontSize(8);doc.text('DATE',322,y);doc.setFontSize(9);doc.text(ds,346,y);doc.line(342,y+1,C_AMT,y+1);y+=15;doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('ADDRESS',L,y);doc.setFontSize(9);doc.text('2125 S Ensenada Cir SE',L+46,y);doc.setFontSize(8);doc.text('$',C_AMT-58,y);doc.setFontSize(9);doc.text(totalStr,C_AMT,y,{align:'right'});doc.line(C_AMT-56,y+1,C_AMT,y+1);y+=13;doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('CITY & STATE',L,y);doc.setFontSize(9);doc.text('Rio Rancho NM  87124',L+58,y);y+=13;doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('FOR',L,y);doc.line(L+18,y+1,C_AMT,y+1);y+=11;doc.line(L,y+1,C_AMT,y+1);y+=11;doc.line(L,y+1,C_AMT,y+1);y+=14;doc.text('CHARGE TO ACCOUNT #',L,y);doc.line(L+107,y+1,C_AMT,y+1);y+=14;doc.text('REQUESTED BY:',L,y);doc.line(L+74,y+1,264,y+1);doc.text('AUTHORITY',272,y);doc.line(310,y+1,C_AMT,y+1);y+=11;doc.setFontSize(6.5);doc.text('The Reynolds and Reynolds Company  CC676231 Q (11/07)',C_AMT,y,{align:'right'});y+=18;doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text('Date',L,y);doc.text('Stock #',C_STK,y);doc.text('Trip Info',C_TRIP,y);doc.text('Amount',C_AMT,y,{align:'right'});doc.line(L,y+3,C_AMT,y+3);y+=15;doc.setFont('helvetica','normal');doc.setFontSize(9);const sortedTrips=[...trips].sort((a,b)=>new Date(a.date)-new Date(b.date));sortedTrips.forEach(trip=>{const dateObj=new Date(trip.date+'T12:00:00');const ds2=`${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')}/${String(dateObj.getFullYear()).slice(2)}`;const isChase=who==='diana'?trip.diaChase:trip.patChase;const vehicles=isChase?null:(who==='diana'?(trip.diaVehicles||[]):(trip.patVehicles||[]));const fee=who==='diana'?(trip.diaFee||0):(trip.patFee||0);const wash=who==='diana'?(trip.washDia||0):(trip.washPat||0);const fromCity=trip.fromCity||'';const fromLoc=trip.fromLoc||'';const fromPart=fromCity+(fromLoc?' - '+fromLoc:'');if(isChase){const chaseTo=who==='diana'?(trip.diaDest&&trip.diaDest.name||trip.toName||''):(trip.patDest&&trip.patDest.name||trip.toName||'');const tripInfo=fromPart+(chaseTo?' -> '+chaseTo:'');const lines=doc.splitTextToSize(tripInfo,C_AMT-C_TRIP-4);doc.text(ds2,L,y);doc.text('Chase',C_STK,y);doc.text(lines,C_TRIP,y);doc.text('$'+fee.toFixed(2),C_AMT,y,{align:'right'});y+=Math.max(lines.length*11,11)+3;}else if(vehicles&&vehicles.length>0){vehicles.forEach((v,vi)=>{const toName=v.toName||'';const tripInfo=fromPart+(toName?' -> '+toName:'');const lines=doc.splitTextToSize(tripInfo,C_AMT-C_TRIP-4);const rowFee=vi===vehicles.length-1?fee:0;const rowWash=vi===vehicles.length-1&&wash>0?wash:0;doc.text(vi===0?ds2:'',L,y);doc.text(v.stk||'',C_STK,y);doc.text(lines,C_TRIP,y);if(rowFee>0||rowWash>0)doc.text('$'+(rowFee+(rowWash||0)).toFixed(2),C_AMT,y,{align:'right'});y+=Math.max(lines.length*11,11)+3;});}else{doc.text(ds2,L,y);doc.text('',C_STK,y);doc.text(fromPart,C_TRIP,y);doc.text('$'+fee.toFixed(2),C_AMT,y,{align:'right'});y+=14;}if(wash>0&&!isChase&&(vehicles||[]).length<=1){doc.text('','',y);doc.text('Car wash',C_TRIP,y);doc.text('$'+wash.toFixed(2),C_AMT,y,{align:'right'});y+=14;}var _pv=(who!=='diana'&&trip.persVehUse)?(Number(trip.persVehAmt)||0):0;if(_pv>0){doc.text('',L,y);doc.text('Pers Veh',C_STK,y);doc.text('Personal Vehicle Use as Chase Car',C_TRIP,y);doc.text('$'+_pv.toFixed(2),C_AMT,y,{align:'right'});y+=14;}});doc.line(L,y,C_AMT,y);y+=12;doc.setFont('helvetica','bold');doc.text('TOTAL',C_TRIP,y);doc.text('$'+totalStr,C_AMT,y,{align:'right'});return doc;}
 function plCheckReqFname(who){const d=new Date();const ds=String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+d.getFullYear();return `PhilLong_${ds}_${who==='diana'?'Diana':'Patrick'}_CheckRequest.pdf`;}
+/* PL check-request PDF -- SAVED/PREVIEW/SHARED copy. KEEP IN SYNC with buildPLPDFDoc (the emailed copy):
+   any change to line items, charges, or totals MUST be applied to BOTH builders. Enforced by the parity
+   checks in _test_persveh.js. See design-and-architecture.md "Phil Long PDF builders". */
 async function generatePLPDF(trips,name,who){
   const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});
   const L=50,C_STK=106,C_TRIP=163,C_AMT=558,T_W=C_AMT-C_TRIP-4;
-  const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)),0);
+  const total=trips.reduce((s,t)=>s+(who==='diana'?(t.diaFee||0)+(t.washDia||0):(t.patFee||0)+(t.washPat||0)+(t.persVehUse?(Number(t.persVehAmt)||0):0)),0);
   const totalStr=Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const today=new Date();const ds=`${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}/${today.getFullYear()}`;
   let y=44;
@@ -1392,6 +1398,7 @@ async function generatePLPDF(trips,name,who){
     const fromCity=pdfCity(trip.fromCity);const fromLoc=trip.fromLoc?pdfTrunc(trip.fromLoc,22):'';const _pDest=who==='dia'?(trip.diaDest||trip.patDest||{}):(trip.patDest||{});const _fallbackDest=_pDest.name||trip.toName||'';
     if(isChase||!vehicles||vehicles.length===0){const _ti=doc.splitTextToSize((fromCity+(fromLoc?' - '+fromLoc:''))+(_fallbackDest?' -> '+pdfTrunc(_fallbackDest,28):''),T_W);const _rh=Math.max(_ti.length*11,11);doc.text(ds2,L,y);if(isChase)doc.text('Chase Driver',C_STK,y);doc.text(_ti,C_TRIP,y);doc.text(feeStr,C_AMT,y,{align:'right'});y+=_rh+3;}
     else{vehicles.forEach((v,i)=>{const vDest=pdfTrunc(v.toName||_fallbackDest,28);const ti=doc.splitTextToSize((fromCity+(fromLoc?' - '+fromLoc:''))+(vDest?' -> '+vDest:''),T_W);const rowH=Math.max(ti.length*11,11);doc.text(ds2,L,y);doc.text(pdfTrunc(v.stk||'',10),C_STK,y);doc.text(ti,C_TRIP,y);if(i===vehicles.length-1)doc.text(feeStr,C_AMT,y,{align:'right'});y+=rowH+3;});}
+    if(who!=='diana'&&trip.persVehUse){var _pv=Number(trip.persVehAmt)||0;if(_pv>0){doc.text('',L,y);doc.text('Pers Veh',C_STK,y);doc.text('Personal Vehicle Use as Chase Car',C_TRIP,y);doc.text('$'+_pv.toFixed(2),C_AMT,y,{align:'right'});y+=14;}}
     if(y>710){doc.addPage();y=46;}
   });
   const fname=plCheckReqFname(who);
@@ -1559,10 +1566,10 @@ if('serviceWorker' in navigator){
   // Unregister all old service workers first, then register fresh
   navigator.serviceWorker.getRegistrations().then(regs=>{
     Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31445').catch(()=>{});
+      navigator.serviceWorker.register('sw.js?v=31446').catch(()=>{});
     });
   }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31445').catch(()=>{});
+    navigator.serviceWorker.register('sw.js?v=31446').catch(()=>{});
   });
 }
 window.addEventListener('load',init);
