@@ -496,7 +496,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.52 (Cloud)</div><div class="at-sub">Mark Sent: if you email an invoice outside the app, open it and tap Mark Sent to record it as sent (Undo available)</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.53 (Cloud)</div><div class="at-sub">Mark Sent: if you email an invoice outside the app, open it and tap Mark Sent to record it as sent (Undo available)</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -1316,7 +1316,7 @@ function openStatementEmail(cust,rows){populateEmailContactList();cust=cust||{na
 
 let _arGroups=[];
 function _buildARGroups(){
-  const all=S.invoices.filter(i=>i.type!=='phillong'&&i.status==='sent');
+  const all=S.invoices.filter(i=>i.status!=='paid'&&(i.type==='phillong'?(i.status==='billed'||i.status==='sent'):i.status==='sent'));
   const map={};
   all.forEach(inv=>{const k=inv.custId||inv.custName||'?';if(!map[k])map[k]={custId:inv.custId||null,custName:inv.custName||'',rows:[],total:0,oldest:0};const g=map[k];g.rows.push(inv);g.total+=(inv.total||0);const dd=_daysOld(inv.date);if(dd>g.oldest)g.oldest=dd;});
   _arGroups=Object.values(map).sort((a,b)=>b.oldest-a.oldest);
@@ -1549,14 +1549,11 @@ document.getElementById('tripDate').addEventListener('change',updateInvNum);
 document.getElementById('plDate').addEventListener('change',updatePLInvNum);
 document.getElementById('totalMiles').addEventListener('input',()=>{const cust=S.customers.find(c=>c.id===selectedCustomerId);if(cust&&cust.billing==='mileage'){const miles=parseFloat(document.getElementById('totalMiles').value)||0;const auto=Math.ceil(miles*cust.ratePerMile/10)*10;if(auto>0)document.getElementById('driveFee').value=auto.toFixed(2);calcTotal();}});
 if('serviceWorker' in navigator){
-  // Unregister all old service workers first, then register fresh
-  navigator.serviceWorker.getRegistrations().then(regs=>{
-    Promise.all(regs.map(r=>r.unregister())).then(()=>{
-      navigator.serviceWorker.register('sw.js?v=31452').catch(()=>{});
-    });
-  }).catch(()=>{
-    navigator.serviceWorker.register('sw.js?v=31452').catch(()=>{});
-  });
+  // v3.14.53: auto-update - register, poll for new versions, reload once when a new SW takes control (loop-guarded). No manual force-close needed to get updates.
+  var _tlSWReloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){if(_tlSWReloading)return;_tlSWReloading=true;location.reload();});
+  navigator.serviceWorker.register('sw.js?v=31453').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){navigator.serviceWorker.getRegistration().then(function(r){if(r){try{r.update();}catch(e){}}}).catch(function(){});}});
 }
 window.addEventListener('load',init);
 window.addEventListener('popstate',function(){if(S.screen==='ar'&&typeof S._arCust==='number'){S._arCust=null;renderAR();history.pushState({page:'ar'},'','');return;}if(S.screen!=='list')goScreen('list');history.pushState({page:'list'},'','');});
