@@ -1,4 +1,4 @@
-const VERSION = 'triplog-v3.14.72';
+const VERSION = 'triplog-v3.14.73';
 const STATIC = [
   '/TripLog/manifest.json',
   '/TripLog/icon-192.png',
