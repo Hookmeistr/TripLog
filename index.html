@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAO-5nWu6iv24cTD4A83QMsYKiQRsBIPs&libraries=places&loading=async&v=weekly&callback=initMaps" async defer></script>
 <style>
@@ -212,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="stab" id="st-status" onclick="setSort('status')">Status</button>
     <button class="stab" id="st-driver" onclick="setSort('driver')">Driver</button>
   </div>
-  <div id="plPeriodSummary"></div>
+  <div id="authBanner" style="display:none;margin:8px 12px;padding:10px 12px;border-radius:10px;background:#fff7e0;border:1px solid #e8c766;color:#3a3000;font-size:14px;line-height:1.35">Protect your trip records: sign in with Google <b>once</b> on this device. Everything keeps working if you skip it.<div style="margin-top:8px"><button type="button" onclick="tlSignIn()" style="padding:7px 14px;border-radius:8px;border:0;background:#1a73e8;color:#fff;font-weight:600">Sign in</button></div></div><div id="plPeriodSummary"></div>
   <div id="invoiceList"></div>
   <div id="diaDashboard"></div>
 </div>
@@ -497,7 +498,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
   <div class="ar">
     <div class="ai" style="background:#E8F5E9;font-size:20px">&#9729;</div>
-    <div class="at"><div class="at-ttl">Cloud Sync <span class="spill sp-off" id="syncBadge">Connecting…</span></div><div class="at-sub" id="syncSub">Connecting to Firebase…</div></div>
+    <div class="at"><div class="at-ttl">Cloud Sync <span class="spill sp-off" id="syncBadge">Connecting…</span></div><div class="at-sub" id="authSub"></div><div class="at-sub" id="syncSub">Connecting to Firebase…</div></div>
   </div>
   <div id="dianaIndRow" class="ar" style="display:none"></div>
   <div class="a-sh">Feedback &amp; Issues</div>
@@ -510,7 +511,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.79 (Cloud)</div><div class="at-sub">This update: your trips and receipt photos are now kept in the phone&#39;s large storage, which grows with the phone&#39;s free space instead of stopping at a small fixed limit. If the phone ever cannot save, the app now tells you.</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.80 (Cloud)</div><div class="at-sub">This update: a one-time Google sign-in on each device, to protect your trip records. Tap Sign in once on the main screen; after that the app never asks again. Until then everything works as before.</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -644,7 +645,7 @@ const DRIVE_CLIENT_ID='895721792752-5uk5cnuhdseg4hj7pt8mc9jf0f786h6j.apps.google
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';const GMAIL_SCOPE='https://mail.google.com/';
 const firebaseConfig={apiKey:"AIzaSyApwbUUT_XeixGvxCduZ8iBkt7tdwvXdvQ",authDomain:"triplog-6b5ab.firebaseapp.com",projectId:"triplog-6b5ab",storageBucket:"triplog-6b5ab.firebasestorage.app",messagingSenderId:"895721792752",appId:"1:895721792752:web:8738716cbe13ded3130e35"};
 let db=null;
-function initFirebase(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();db.enablePersistence({synchronizeTabs:true}).then(function(){console.log('Offline persistence ON');}).catch(function(e){console.warn('Persistence not enabled:',e&&e.code);}).finally(function(){setupFirestoreListener();setupCustomerListener();seedCustomersToCloud();setupPaletteListener();});}catch(e){console.warn('Firebase init error:',e);updateSyncUI('offline');}}
+function initFirebase(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();_tlAuthInit();db.enablePersistence({synchronizeTabs:true}).then(function(){console.log('Offline persistence ON');}).catch(function(e){console.warn('Persistence not enabled:',e&&e.code);}).finally(function(){setupFirestoreListener();setupCustomerListener();seedCustomersToCloud();setupPaletteListener();});}catch(e){console.warn('Firebase init error:',e);updateSyncUI('offline');}}
 function _photoCount(r){return ((r&&r.photos)||[]).length;}
 function mergeInvoiceRecord(local,cloud,baseH){
   if(!local)return cloud; if(!cloud)return local;
@@ -763,6 +764,23 @@ function _tlSaveOnHide(){try{if(S.screen==='form')autoSaveDraftIfNeeded();else i
 window.addEventListener('pagehide',_tlSaveOnHide);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')_tlSaveOnHide();});
 function updateSyncUI(s){const b=document.getElementById('syncBadge'),sub=document.getElementById('syncSub');if(!b)return;if(s==='saving'){b.textContent='Saving\u2026';b.className='spill sp-off';if(sub)sub.textContent='Saving \u2014 not yet confirmed to cloud';return;}if(s==='synced'){b.textContent='Synced';b.className='spill sp-on';if(sub)sub.textContent='Cloud sync active · data backed up';}else{b.textContent='Offline';b.className='spill sp-off';if(sub)sub.textContent='No cloud connection · using local data';}}
+/* v3.14.80 (#48 sign-in STAGE 1): Google sign-in through Firebase, once per device, silent afterwards (Firebase keeps the session
+   on the device). It reuses the Google library the app already loads for Drive/Gmail, so no pop-up web address is needed. The
+   database rules are NOT changed by this version: signed in or not, the app works exactly as before. A signed-in device leaves a
+   proof record deviceProof/<uid>_<device id> after one read + one save made while signed in. */
+var _tlAuth=null;const AUTH_SCOPE='openid email profile';
+function _tlDeviceId(){var d='';try{d=localStorage.getItem('tl_device_id')||'';if(!d){d='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem('tl_device_id',d);}}catch(e){d=d||'unknown';}return d;}
+function _tlDriverName(){try{return localStorage.getItem('tl_driver_name')||'';}catch(e){return '';}}
+function _tlDeviceLabel(){var u=String(navigator.userAgent||''),k=/Android/i.test(u)?'Android phone':/iPhone|iPad/i.test(u)?'iPhone':/Windows/i.test(u)?'Windows PC':/Macintosh/i.test(u)?'Mac':'Other device',n=_tlDriverName();return (n?n+' - ':'')+k;}
+function _tlAuthInit(){try{if(!window.firebase||typeof firebase.auth!=='function')return;_tlAuth=firebase.auth();_tlAuth.onAuthStateChanged(function(u){S._authReady=true;S.authUser=u?{uid:u.uid,email:u.email||''}:null;_tlAuthUI();if(u)_tlDeviceProof(u);},function(e){console.warn('Auth state error:',e);S._authReady=true;_tlAuthUI();});}catch(e){console.warn('Auth init error:',e);_tlAuth=null;}}
+function _tlAuthUI(){try{var b=document.getElementById('authBanner'),s=document.getElementById('authSub'),on=!!S.authUser;if(b)b.style.display=(_tlAuth&&S._authReady&&!on)?'block':'none';if(s)s.textContent=!_tlAuth?'':(on?('Signed in as '+(S.authUser.email||'your Google account')):'Not signed in yet on this device - tap Sign in on the main screen (one time).');}catch(e){}}
+function _tlSignInFail(why){console.warn('Sign-in did not finish:',why);S._lastSignInError=String(why||'');try{showToast('Sign-in did not finish. The app keeps working as before - you can try again later.');}catch(e){}_tlAuthUI();}
+function tlSignIn(){if(!_tlAuth){showToast('Sign-in is not available right now - the app keeps working as before.');return;}if(!window.google||!google.accounts||!google.accounts.oauth2){showToast('Google is still loading - try again in a moment.');return;}
+  var dia=/diana/i.test(_tlDriverName());try{var c=google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID,scope:AUTH_SCOPE,callback:function(r){if(!r||!r.access_token){_tlSignInFail(r&&(r.error||r.error_description));return;}var cred;try{cred=firebase.auth.GoogleAuthProvider.credential(null,r.access_token);}catch(e){_tlSignInFail(String(e));return;}
+    _tlAuth.signInWithCredential(cred).then(function(){try{showToast('Signed in - this device will not ask again.');}catch(e){}}).catch(function(e){_tlSignInFail(e&&(e.code||e.message));});},error_callback:function(e){_tlSignInFail(e&&(e.type||e.message));}});
+    c.requestAccessToken(dia?{prompt:'select_account'}:{prompt:'',login_hint:getDefaultSender()});}catch(e){_tlSignInFail(String(e));}}
+function _tlDeviceProof(u){try{if(!db||!u)return;var ref=db.collection('deviceProof').doc(u.uid+'_'+_tlDeviceId());var rd=(typeof ref.get==='function')?ref.get({source:'server'}):Promise.reject(new Error('no-read'));
+  rd.then(function(){return ref.set({uid:u.uid,email:u.email||'',device:_tlDeviceLabel(),deviceId:_tlDeviceId(),readOk:true,writeAt:Date.now(),app:'3.14.80'},{merge:true});}).then(function(){S._deviceProofOk=true;}).catch(function(e){console.warn('Device proof not recorded yet:',e&&(e.code||e.message));});}catch(e){}}
 function initDriveAuth(){
   if(!window.google?.accounts?.oauth2){setTimeout(initDriveAuth,600);return;}
   S.driveTokenClient=google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID,scope:DRIVE_SCOPE,callback:handleDriveToken,error_callback:()=>updateDriveUI()});if((!S.driveToken||Date.now()>=S.driveTokenExpiry-30000)&&localStorage.getItem('tl_drive_tok')){try{S.driveTokenClient.requestAccessToken({prompt:'',login_hint:getDefaultSender()});}catch(e){}}
@@ -1717,7 +1735,7 @@ if('serviceWorker' in navigator){
   // v3.14.53: auto-update - register, poll for new versions, reload once when a new SW takes control (loop-guarded). No manual force-close needed to get updates.
   var _tlSWReloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',function(){if(_tlSWReloading)return;var _safe=true;try{_safe=!(window.S&&(S.screen==='form'||S.screen==='pl'));}catch(e){_safe=true;}if(_safe){_tlSWReloading=true;location.reload();}else{try{S._pendingReload=true;}catch(e){}}});
-  navigator.serviceWorker.register('sw.js?v=31479').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
+  navigator.serviceWorker.register('sw.js?v=31480').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){navigator.serviceWorker.getRegistration().then(function(r){if(r){try{r.update();}catch(e){}}}).catch(function(){});}});
 }
 /* v3.14.70 #1: suppress password-manager autofill popups (Proton Pass/Chrome/1Password/LastPass) on all app fields, including dynamically added ones. Does not affect the app's own datalist suggestions. */
