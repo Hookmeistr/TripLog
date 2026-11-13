@@ -1,4 +1,4 @@
-const VERSION = 'triplog-v3.14.74';
+const VERSION = 'triplog-v3.14.75';
 const STATIC = [
   '/TripLog/manifest.json',
   '/TripLog/icon-192.png',
@@ -36,7 +36,8 @@ self.addEventListener('fetch', e => {
     // Never serve index.html from cache — always fresh
     e.respondWith(
       fetch(e.request, { cache: 'no-store' })
-        .catch(() => caches.match(e.request))
+        .then(r => { if (r && r.ok) { const c = r.clone(); caches.open(VERSION).then(ch => ch.put('/TripLog/index.html', c)); } return r; })
+        .catch(() => caches.match('/TripLog/index.html'))
     );
   } else {
     // Static assets: network first, cache fallback
