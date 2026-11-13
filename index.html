@@ -510,7 +510,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.77 (Cloud)</div><div class="at-sub">This update: on a Phil Long check request the chase driver&#39;s line now always shows the destination, the same as the other driver&#39;s line. Also: Paid reaches the Excel report by itself, and changes made on one device no longer undo newer changes on another.</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.78 (Cloud)</div><div class="at-sub">This update: when you use the app on two devices, a change made on one can no longer be undone later by the other. Each device now only sends what was changed on it.</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -646,15 +646,21 @@ const firebaseConfig={apiKey:"AIzaSyApwbUUT_XeixGvxCduZ8iBkt7tdwvXdvQ",authDomai
 let db=null;
 function initFirebase(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();db.enablePersistence({synchronizeTabs:true}).then(function(){console.log('Offline persistence ON');}).catch(function(e){console.warn('Persistence not enabled:',e&&e.code);}).finally(function(){setupFirestoreListener();setupCustomerListener();seedCustomersToCloud();setupPaletteListener();});}catch(e){console.warn('Firebase init error:',e);updateSyncUI('offline');}}
 function _photoCount(r){return ((r&&r.photos)||[]).length;}
-function mergeInvoiceRecord(local,cloud){
+function mergeInvoiceRecord(local,cloud,baseH){
   if(!local)return cloud; if(!cloud)return local;
   var lu=Number(local.updatedAt||0),cu=Number(cloud.updatedAt||0);
   var win=(cu>lu)?cloud:local,other=(cu>lu)?local:cloud;
   var out={};
+  if(baseH&&typeof baseH==='object'){
+    /* v3.14.78 three-way: per field, the side that changed it since the cloud last confirmed it wins; changed on both = the newer copy. */
+    var _ks={},_u=_tlH(undefined);Object.keys(local).forEach(function(k){_ks[k]=1;});Object.keys(cloud).forEach(function(k){_ks[k]=1;});
+    Object.keys(_ks).forEach(function(k){var b=Object.prototype.hasOwnProperty.call(baseH,k)?baseH[k]:_u,lc=_tlH(local[k])!==b,cc=_tlH(cloud[k])!==b,v=!lc?cloud[k]:(!cc?local[k]:win[k]);if(v!==undefined)out[k]=v;});
+    if(Math.max(lu,cu)>0)out.updatedAt=Math.max(lu,cu);
+  }else{
   Object.keys(other).forEach(function(k){out[k]=other[k];});
   Object.keys(win).forEach(function(k){out[k]=win[k];});
   /* Receipt scans are irreplaceable: a version without photos must never erase one with photos. */
-  ['batchId','billedAt','paidAt','sentAt','patPaidAt','diaPaidAt','pushError'].forEach(function(k){if(!(k in win))delete out[k];});if(out.invNum!=null&&typeof out.invNum!=='string')out.invNum=String(out.invNum);if(_photoCount(other)>_photoCount(win))out.photos=other.photos;
+  ['batchId','billedAt','paidAt','sentAt','patPaidAt','diaPaidAt','pushError'].forEach(function(k){if(!(k in win))delete out[k];});}if(out.invNum!=null&&typeof out.invNum!=='string')out.invNum=String(out.invNum);if(_photoCount(other)>_photoCount(win))out.photos=other.photos;
   /* A blank/stale version must never wipe populated money/hours fields (mirrors the photos rule).
      Per-field: keep a real value over an empty one. Whole-record: a $0 version cannot clobber a >$0 one. */
   var _PREC=['patHours','diaHours','departTime','returnTime','hoursWorked','driveFee','patCharge','diaCharge','total','totalMiles','fuel','meals','wash','other','vehicles','billingType','hourlyRate','drivers','toAddress','toName','toCity','fromDealer','fromCity','fromContact','fromPhone','dealNum'];
@@ -724,8 +730,9 @@ function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnap
      cloud copy must not be able to destroy data held on this device. */
   var byId={};(S.invoices||[]).forEach(function(i){if(i&&i.id)byId[i.id]=i;});
   var removed=snap.docChanges().filter(function(c){return c.type==='removed';}).map(function(c){return c.doc.id;});
-  removed.forEach(function(id){delete byId[id];try{delete _tlSynced[id];}catch(e){}});
-  snap.forEach(function(d){var c=d.data();if(!c||!c.id)return;try{_tlSynced[c.id]=JSON.parse(JSON.stringify(c));}catch(e){}var _m=mergeInvoiceRecord(byId[c.id],c);if(_m&&_m.invNum!=null&&typeof _m.invNum!=='string')_m.invNum=String(_m.invNum);byId[c.id]=_m;try{if(_m&&Number(_m.total)>0&&!(Number(c.total)>0)&&db){_m.updatedAt=Date.now();db.collection('invoices').doc(_m.id).set(_m).catch(function(){});try{_tlSynced[_m.id]=JSON.parse(JSON.stringify(_m));}catch(e){}}}catch(e){}});
+  removed.forEach(function(id){delete byId[id];try{delete _tlSynced[id];}catch(e){}_tlDropBase(id);});
+  snap.forEach(function(d){var c=d.data();if(!c||!c.id)return;try{_tlSynced[c.id]=JSON.parse(JSON.stringify(c));}catch(e){}var _m=mergeInvoiceRecord(byId[c.id],c,_tlBaseH[c.id]);_tlSeenCloud(c.id,c,d,snap);if(_m&&_m.invNum!=null&&typeof _m.invNum!=='string')_m.invNum=String(_m.invNum);byId[c.id]=_m;try{if(_m&&Number(_m.total)>0&&!(Number(c.total)>0)&&db){_m.updatedAt=Date.now();db.collection('invoices').doc(_m.id).set(_m).catch(function(){});try{_tlSynced[_m.id]=JSON.parse(JSON.stringify(_m));}catch(e){}}}catch(e){}});
+  _tlFlushBase();
   var merged=Object.keys(byId).map(function(k){return byId[k];});
   merged.sort(function(a,b){return String(b.invNum||'').localeCompare(String(a.invNum||''));});
   S.invoices=merged;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));
@@ -737,10 +744,20 @@ function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnap
    differ from it, so a write that waits for signal cannot undo newer changes made on another device, and a status
    tap no longer re-sends the whole trip. A trip the cloud has not shown yet is still written whole. */
 var _tlSynced={};
+/* v3.14.78 (#48): _tlBaseH = a short fingerprint of every field of each trip as the cloud last CONFIRMED it to this device
+   (a save still waiting for the cloud does not count), kept across restarts in tl_synced_h. The merge uses it to tell which
+   fields this device changed; a field it did not change always takes the cloud's value. A save the cloud refuses therefore
+   stays on the device (it still differs from what the cloud confirmed) and is sent again with the next save. */
+var _tlBaseH={};try{_tlBaseH=JSON.parse(localStorage.getItem('tl_synced_h')||'{}')||{};}catch(e){_tlBaseH={};}
+function _tlH(v){var s=_tlStable(v),h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)+'.'+s.length.toString(36);}
+function _tlSeenCloud(id,c,d,snap){try{var pend=(d&&d.metadata)?!!d.metadata.hasPendingWrites:!!(snap&&snap.metadata&&snap.metadata.hasPendingWrites);if(pend)return;var m={},k;for(k in c){if(Object.prototype.hasOwnProperty.call(c,k)&&c[k]!==undefined)m[k]=_tlH(c[k]);}_tlBaseH[id]=m;}catch(e){}}
+function _tlDropBase(id){try{delete _tlBaseH[id];}catch(e){}}
+function _tlFlushBase(){try{localStorage.setItem('tl_synced_h',JSON.stringify(_tlBaseH));}catch(e){}}
+function _tlDiffH(bh,inv){var FV=null;try{FV=firebase.firestore.FieldValue;}catch(e){}var out={},k;for(k in inv){if(!Object.prototype.hasOwnProperty.call(inv,k)||inv[k]===undefined)continue;if(!Object.prototype.hasOwnProperty.call(bh,k)||_tlH(inv[k])!==bh[k])out[k]=JSON.parse(JSON.stringify(inv[k]));}for(k in bh){if(!Object.prototype.hasOwnProperty.call(bh,k))continue;if(!(k in inv)||inv[k]===undefined){if(!FV||typeof FV.delete!=='function')return null;out[k]=FV.delete();}}return out;}
 function _tlStable(v){if(v===undefined)return 'u';if(v===null||typeof v!=='object')return JSON.stringify(v);if(Array.isArray(v))return '['+v.map(_tlStable).join(',')+']';return '{'+Object.keys(v).sort().map(function(k){return JSON.stringify(k)+':'+_tlStable(v[k]);}).join(',')+'}';}
 function _tlDiff(base,inv){var FV=null;try{FV=firebase.firestore.FieldValue;}catch(e){}var out={},k;for(k in inv){if(!Object.prototype.hasOwnProperty.call(inv,k)||inv[k]===undefined)continue;if(!(k in base)||_tlStable(base[k])!==_tlStable(inv[k]))out[k]=JSON.parse(JSON.stringify(inv[k]));}for(k in base){if(!Object.prototype.hasOwnProperty.call(base,k))continue;if(!(k in inv)||inv[k]===undefined){if(!FV||typeof FV.delete!=='function')return null;out[k]=FV.delete();}}return out;}
-function syncInvoice(inv){if(!inv)return;inv.updatedAt=Date.now();try{localStorage.setItem('tl_inv',JSON.stringify(S.invoices));}catch(e){}if(!db)return;var ref=db.collection('invoices').doc(inv.id),p=null,clean=null,upd=false;try{clean=JSON.parse(JSON.stringify(inv));}catch(e){clean=inv;}try{var base=_tlSynced&&_tlSynced[inv.id];if(base&&typeof ref.update==='function'){var d=_tlDiff(base,inv);if(d){p=ref.update(d);upd=true;}}}catch(e){p=null;upd=false;}if(!p)p=ref.set(clean);try{_tlSynced[inv.id]=clean;}catch(e){}if(upd)p=p.catch(function(){try{delete _tlSynced[inv.id];}catch(_e){}return ref.set(clean).then(function(){try{_tlSynced[inv.id]=clean;}catch(_e){}});});p.catch(function(e){try{delete _tlSynced[inv.id];}catch(_e){}console.warn('Sync error:',e);updateSyncUI('offline');showToast('Cloud save failed — kept on this device');});}
-function deleteFromFirestore(id){try{delete _tlSynced[id];}catch(e){}if(!db)return;db.collection('invoices').doc(id).delete().catch(e=>console.warn('Delete error:',e));}
+function syncInvoice(inv){if(!inv)return;inv.updatedAt=Date.now();try{localStorage.setItem('tl_inv',JSON.stringify(S.invoices));}catch(e){}if(!db)return;var ref=db.collection('invoices').doc(inv.id),p=null,clean=null,upd=false;try{clean=JSON.parse(JSON.stringify(inv));}catch(e){clean=inv;}try{var base=_tlSynced&&_tlSynced[inv.id],bh=_tlBaseH&&_tlBaseH[inv.id];if((base||bh)&&typeof ref.update==='function'){var d=base?_tlDiff(base,inv):_tlDiffH(bh,inv);if(d){p=ref.update(d);upd=true;}}}catch(e){p=null;upd=false;}if(!p)p=ref.set(clean);try{_tlSynced[inv.id]=clean;}catch(e){}if(upd)p=p.catch(function(){try{delete _tlSynced[inv.id];}catch(_e){}return ref.set(clean).then(function(){try{_tlSynced[inv.id]=clean;}catch(_e){}});});p.catch(function(e){try{delete _tlSynced[inv.id];}catch(_e){}console.warn('Sync error:',e);updateSyncUI('offline');showToast('Cloud save failed — kept on this device');});}
+function deleteFromFirestore(id){try{delete _tlSynced[id];}catch(e){}_tlDropBase(id);_tlFlushBase();if(!db)return;db.collection('invoices').doc(id).delete().catch(e=>console.warn('Delete error:',e));}
 /* v3.14.49 #5: capture an in-progress NEW invoice if the app is backgrounded/closed without navigating away. Reuses the guarded autosave (won't overwrite committed records). */
 function _tlSaveOnHide(){try{if(S.screen==='form')autoSaveDraftIfNeeded();else if(S.screen==='pl')autoSavePLDraftIfNeeded();}catch(e){}}
 window.addEventListener('pagehide',_tlSaveOnHide);
@@ -1675,7 +1692,7 @@ if('serviceWorker' in navigator){
   // v3.14.53: auto-update - register, poll for new versions, reload once when a new SW takes control (loop-guarded). No manual force-close needed to get updates.
   var _tlSWReloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',function(){if(_tlSWReloading)return;var _safe=true;try{_safe=!(window.S&&(S.screen==='form'||S.screen==='pl'));}catch(e){_safe=true;}if(_safe){_tlSWReloading=true;location.reload();}else{try{S._pendingReload=true;}catch(e){}}});
-  navigator.serviceWorker.register('sw.js?v=31477').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
+  navigator.serviceWorker.register('sw.js?v=31478').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){navigator.serviceWorker.getRegistration().then(function(r){if(r){try{r.update();}catch(e){}}}).catch(function(){});}});
 }
 /* v3.14.70 #1: suppress password-manager autofill popups (Proton Pass/Chrome/1Password/LastPass) on all app fields, including dynamically added ones. Does not affect the app's own datalist suggestions. */
