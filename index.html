@@ -510,7 +510,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="a-sh">App Info</div>
   <div class="ar">
     <div class="ai" style="background:#f5f5f5;font-size:20px">&#8505;</div>
-    <div class="at"><div class="at-ttl">TripLog v3.14.78 (Cloud)</div><div class="at-sub">This update: when you use the app on two devices, a change made on one can no longer be undone later by the other. Each device now only sends what was changed on it.</div></div>
+    <div class="at"><div class="at-ttl">TripLog v3.14.79 (Cloud)</div><div class="at-sub">This update: your trips and receipt photos are now kept in the phone&#39;s large storage, which grows with the phone&#39;s free space instead of stopping at a small fixed limit. If the phone ever cannot save, the app now tells you.</div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -735,7 +735,7 @@ function setupFirestoreListener(){if(!db)return;db.collection('invoices').onSnap
   _tlFlushBase();
   var merged=Object.keys(byId).map(function(k){return byId[k];});
   merged.sort(function(a,b){return String(b.invNum||'').localeCompare(String(a.invNum||''));});
-  S.invoices=merged;localStorage.setItem('tl_inv',JSON.stringify(S.invoices));
+  S.invoices=merged;_tlPersistInv();
   if(removed.length&&S.screen==='detail'&&removed.indexOf(S.editId)>=0){showToast('Deleted on another device');goScreen('list');}
   renderList();updatePLBanner();renderDiaDashboard();if(S.screen==='ar')renderAR();if(S.screen==='history')renderHistory();
   if(snap.metadata.hasPendingWrites)updateSyncUI('saving');else if(snap.metadata.fromCache)updateSyncUI('offline');else updateSyncUI('synced');
@@ -756,7 +756,7 @@ function _tlFlushBase(){try{localStorage.setItem('tl_synced_h',JSON.stringify(_t
 function _tlDiffH(bh,inv){var FV=null;try{FV=firebase.firestore.FieldValue;}catch(e){}var out={},k;for(k in inv){if(!Object.prototype.hasOwnProperty.call(inv,k)||inv[k]===undefined)continue;if(!Object.prototype.hasOwnProperty.call(bh,k)||_tlH(inv[k])!==bh[k])out[k]=JSON.parse(JSON.stringify(inv[k]));}for(k in bh){if(!Object.prototype.hasOwnProperty.call(bh,k))continue;if(!(k in inv)||inv[k]===undefined){if(!FV||typeof FV.delete!=='function')return null;out[k]=FV.delete();}}return out;}
 function _tlStable(v){if(v===undefined)return 'u';if(v===null||typeof v!=='object')return JSON.stringify(v);if(Array.isArray(v))return '['+v.map(_tlStable).join(',')+']';return '{'+Object.keys(v).sort().map(function(k){return JSON.stringify(k)+':'+_tlStable(v[k]);}).join(',')+'}';}
 function _tlDiff(base,inv){var FV=null;try{FV=firebase.firestore.FieldValue;}catch(e){}var out={},k;for(k in inv){if(!Object.prototype.hasOwnProperty.call(inv,k)||inv[k]===undefined)continue;if(!(k in base)||_tlStable(base[k])!==_tlStable(inv[k]))out[k]=JSON.parse(JSON.stringify(inv[k]));}for(k in base){if(!Object.prototype.hasOwnProperty.call(base,k))continue;if(!(k in inv)||inv[k]===undefined){if(!FV||typeof FV.delete!=='function')return null;out[k]=FV.delete();}}return out;}
-function syncInvoice(inv){if(!inv)return;inv.updatedAt=Date.now();try{localStorage.setItem('tl_inv',JSON.stringify(S.invoices));}catch(e){}if(!db)return;var ref=db.collection('invoices').doc(inv.id),p=null,clean=null,upd=false;try{clean=JSON.parse(JSON.stringify(inv));}catch(e){clean=inv;}try{var base=_tlSynced&&_tlSynced[inv.id],bh=_tlBaseH&&_tlBaseH[inv.id];if((base||bh)&&typeof ref.update==='function'){var d=base?_tlDiff(base,inv):_tlDiffH(bh,inv);if(d){p=ref.update(d);upd=true;}}}catch(e){p=null;upd=false;}if(!p)p=ref.set(clean);try{_tlSynced[inv.id]=clean;}catch(e){}if(upd)p=p.catch(function(){try{delete _tlSynced[inv.id];}catch(_e){}return ref.set(clean).then(function(){try{_tlSynced[inv.id]=clean;}catch(_e){}});});p.catch(function(e){try{delete _tlSynced[inv.id];}catch(_e){}console.warn('Sync error:',e);updateSyncUI('offline');showToast('Cloud save failed — kept on this device');});}
+function syncInvoice(inv){if(!inv)return;inv.updatedAt=Date.now();_tlPersistInv();if(!db)return;var ref=db.collection('invoices').doc(inv.id),p=null,clean=null,upd=false;try{clean=JSON.parse(JSON.stringify(inv));}catch(e){clean=inv;}try{var base=_tlSynced&&_tlSynced[inv.id],bh=_tlBaseH&&_tlBaseH[inv.id];if((base||bh)&&typeof ref.update==='function'){var d=base?_tlDiff(base,inv):_tlDiffH(bh,inv);if(d){p=ref.update(d);upd=true;}}}catch(e){p=null;upd=false;}if(!p)p=ref.set(clean);try{_tlSynced[inv.id]=clean;}catch(e){}if(upd)p=p.catch(function(){try{delete _tlSynced[inv.id];}catch(_e){}return ref.set(clean).then(function(){try{_tlSynced[inv.id]=clean;}catch(_e){}});});p.catch(function(e){try{delete _tlSynced[inv.id];}catch(_e){}console.warn('Sync error:',e);updateSyncUI('offline');showToast('Cloud save failed — kept on this device');});}
 function deleteFromFirestore(id){try{delete _tlSynced[id];}catch(e){}_tlDropBase(id);_tlFlushBase();if(!db)return;db.collection('invoices').doc(id).delete().catch(e=>console.warn('Delete error:',e));}
 /* v3.14.49 #5: capture an in-progress NEW invoice if the app is backgrounded/closed without navigating away. Reuses the guarded autosave (won't overwrite committed records). */
 function _tlSaveOnHide(){try{if(S.screen==='form')autoSaveDraftIfNeeded();else if(S.screen==='pl')autoSavePLDraftIfNeeded();}catch(e){}}
@@ -1017,11 +1017,36 @@ function _fmtAllCurrency(){['driveFee','fuel','meals','wash','otherAmt','diaDriv
    drivers was never saved (legacy records) do we fall back to the old hours/vehicle heuristic
    so pre-existing 2-driver invoices still recover. Used by the detail, the PDF, and edit-load. */
 function _invHas2(inv){if(!inv)return false;if(Number(inv.drivers)===2)return true;if(Number(inv.drivers)===1)return false;return Number(inv.diaHours)>0||(inv.vehicles||[]).some(function(v){return v&&v.drvWho==='diana';});}
-function init(){history.pushState({page:'list'},'','');loadData();seedCustomers();migrateCustomers();initFirebase();checkDriverReg();S.reportsFolderId=localStorage.getItem('tl_reports_folder_id')||null;try{var _dt=JSON.parse(localStorage.getItem('tl_drive_tok')||'null');if(_dt&&_dt.t&&_dt.e>Date.now()+30000){S.driveToken=_dt.t;S.driveTokenExpiry=_dt.e;}var _gt=JSON.parse(localStorage.getItem('tl_gmail_tok')||'null');if(_gt&&_gt.t&&_gt.e>Date.now()+30000){S.gmailToken=_gt.t;S.gmailTokenExpiry=_gt.e;}}catch(e){}setDate();setPLDate();addStdVehicle('pat');addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();setTimeout(initDriveAuth,1200);setTimeout(initGmailAuth,1400);loadTheme();}
+/* v3.14.79 (#48): trips + receipt photos live in the browser's large database (IndexedDB 'triplog_store', key tl_inv =
+   {at, list}); it grows with the phone's free space and the app asks the browser to keep it (persistent storage). The old
+   localStorage copy (tl_inv + tl_inv_at) is still written while it fits; when it no longer fits AND a read-back has proven the
+   large copy (tl_inv_idb=1), it is removed and tl_inv_where=idb. Start-up uses whichever copy is newer. Nothing is written
+   until the stored trips are loaded; if the large database cannot be read this session, it is never written this session. */
+var _tlInvLoaded=false,_tlIdbBlocked=false,_tlIdbProven=false,_tlStoreWarnAt=0,_tlIDB=null;
+try{_tlIdbProven=localStorage.getItem('tl_inv_idb')==='1';}catch(e){}
+function _tlIdbOpen(){return new Promise(function(res,rej){try{var r=indexedDB.open('triplog_store',1);r.onupgradeneeded=function(){try{r.result.createObjectStore('kv');}catch(e){}};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error||new Error('idb-open'));};r.onblocked=function(){rej(new Error('idb-blocked'));};}catch(e){rej(e);}});}
+try{if(window.indexedDB){_tlIDB=_tlIdbOpen();_tlIDB.catch(function(){});}}catch(e){_tlIDB=null;}
+function _tlIdbGet(key){return _tlIDB.then(function(db){return new Promise(function(res,rej){try{var q=db.transaction('kv','readonly').objectStore('kv').get(key);q.onsuccess=function(){res(q.result);};q.onerror=function(){rej(q.error||new Error('idb-get'));};}catch(e){rej(e);}});});}
+function _tlIdbPut(key,val){return _tlIDB.then(function(db){return new Promise(function(res,rej){try{var t=db.transaction('kv','readwrite');t.oncomplete=function(){res();};t.onerror=function(){rej(t.error||new Error('idb-put'));};t.onabort=function(){rej(t.error||new Error('idb-abort'));};t.objectStore('kv').put(val,key);}catch(e){rej(e);}});});}
+function _tlStoreWarn(){var n=Date.now();if(n-_tlStoreWarnAt<60000)return;_tlStoreWarnAt=n;try{showToast('This phone could not save a copy of your trips (storage full or blocked). Keep the app open until it shows Synced.');}catch(e){}}
+function _tlStoreWarnLoad(){_tlStoreWarnAt=Date.now();setTimeout(function(){try{showToast('Could not open the trips saved on this phone. Showing the cloud copy - close and reopen the app.');}catch(e){}},600);}
+function _tlPersistInv(){if(!_tlInvLoaded)return;var json,at=Date.now(),lsOk=false,where='';try{json=JSON.stringify(S.invoices||[]);}catch(e){return;}try{where=localStorage.getItem('tl_inv_where')||'';}catch(e){}
+  if(where!=='idb'){try{localStorage.setItem('tl_inv',json);localStorage.setItem('tl_inv_at',String(at));lsOk=true;}catch(e){if(_tlIDB&&!_tlIdbBlocked&&_tlIdbProven){try{localStorage.removeItem('tl_inv');localStorage.removeItem('tl_inv_at');localStorage.setItem('tl_inv_where','idb');}catch(_e){}}}}
+  if(!_tlIDB||_tlIdbBlocked){if(!lsOk)_tlStoreWarn();return;}
+  var n=json.length,rec;try{rec={at:at,list:JSON.parse(json)};}catch(e){return;}var c=rec.list.length;
+  _tlIdbPut('tl_inv',rec).then(function(){if(_tlIdbProven)return;return _tlIdbGet('tl_inv').then(function(b){if(b&&Array.isArray(b.list)&&b.list.length===c&&JSON.stringify(b.list).length===n){_tlIdbProven=true;try{localStorage.setItem('tl_inv_idb','1');}catch(e){}}});}).catch(function(e){console.warn('Trip storage error:',e);if(!lsOk)_tlStoreWarn();});}
+function _tlLoadInvStore(done){var ls=null,lsAt=0,where='';try{where=localStorage.getItem('tl_inv_where')||'';lsAt=Number(localStorage.getItem('tl_inv_at')||0);ls=JSON.parse(localStorage.getItem('tl_inv')||'null');}catch(e){ls=null;}
+  S.invoices=Array.isArray(ls)?ls:[];var fin=false;function go(){if(fin)return;fin=true;_tlInvLoaded=true;done();}
+  try{if(navigator.storage&&navigator.storage.persist){(navigator.storage.persisted?navigator.storage.persisted():Promise.resolve(false)).then(function(p){if(!p)return navigator.storage.persist();}).catch(function(){});}}catch(e){}
+  if(!_tlIDB){if(where==='idb')_tlStoreWarnLoad();go();return;}
+  var to=setTimeout(function(){if(fin)return;_tlIdbBlocked=true;if(where==='idb')_tlStoreWarnLoad();go();},4000);
+  _tlIdbGet('tl_inv').then(function(rec){if(fin)return;clearTimeout(to);if(rec&&Array.isArray(rec.list)&&(!Array.isArray(ls)||Number(rec.at||0)>lsAt))S.invoices=rec.list;go();},function(e){if(fin)return;clearTimeout(to);_tlIdbBlocked=true;console.warn('Trip storage open error:',e);if(where==='idb')_tlStoreWarnLoad();go();});}
+function init(){history.pushState({page:'list'},'','');_tlLoadInvStore(_tlInit2);}
+function _tlInit2(){loadData();seedCustomers();migrateCustomers();initFirebase();checkDriverReg();S.reportsFolderId=localStorage.getItem('tl_reports_folder_id')||null;try{var _dt=JSON.parse(localStorage.getItem('tl_drive_tok')||'null');if(_dt&&_dt.t&&_dt.e>Date.now()+30000){S.driveToken=_dt.t;S.driveTokenExpiry=_dt.e;}var _gt=JSON.parse(localStorage.getItem('tl_gmail_tok')||'null');if(_gt&&_gt.t&&_gt.e>Date.now()+30000){S.gmailToken=_gt.t;S.gmailTokenExpiry=_gt.e;}}catch(e){}setDate();setPLDate();addStdVehicle('pat');addPLVehicle('pat');renderList();updateSortBar();updatePLBanner();renderDiaDashboard();populateAutocomplete();setTimeout(initDriveAuth,1200);setTimeout(initGmailAuth,1400);loadTheme();}
 function setDate(){document.getElementById('tripDate').value=_tlTodayISO();updateInvNum();}
 function setPLDate(){document.getElementById('plDate').value=_tlTodayISO();updatePLInvNum();}
-function loadData(){S.invoices=JSON.parse(localStorage.getItem('tl_inv')||'[]');try{S.invoices.forEach(function(i){if(i&&i.invNum!=null&&typeof i.invNum!=='string')i.invNum=String(i.invNum);});}catch(e){}S.customers=JSON.parse(localStorage.getItem('tl_cust')||'[]');try{(S.customers||[]).forEach(function(c){if(c&&c.id)_lastCustHash[c.id]=_custHash(c);});}catch(e){}}
-function save(){localStorage.setItem('tl_inv',JSON.stringify(S.invoices));localStorage.setItem('tl_cust',JSON.stringify(S.customers));syncCustomersChanged();}
+function loadData(){if(!_tlInvLoaded){try{S.invoices=JSON.parse(localStorage.getItem('tl_inv')||'[]');}catch(e){S.invoices=[];}}if(!Array.isArray(S.invoices))S.invoices=[];try{S.invoices.forEach(function(i){if(i&&i.invNum!=null&&typeof i.invNum!=='string')i.invNum=String(i.invNum);});}catch(e){}S.customers=JSON.parse(localStorage.getItem('tl_cust')||'[]');try{(S.customers||[]).forEach(function(c){if(c&&c.id)_lastCustHash[c.id]=_custHash(c);});}catch(e){}}
+function save(){_tlPersistInv();try{localStorage.setItem('tl_cust',JSON.stringify(S.customers));}catch(e){_tlStoreWarn();}syncCustomersChanged();}
 /* Single choke point for writing an invoice record. A write may CHANGE values, but it may
    never silently DROP information that was already stored: fields absent from the new
    payload are carried forward, and receipt photos are never replaced by an empty list.
@@ -1692,7 +1717,7 @@ if('serviceWorker' in navigator){
   // v3.14.53: auto-update - register, poll for new versions, reload once when a new SW takes control (loop-guarded). No manual force-close needed to get updates.
   var _tlSWReloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',function(){if(_tlSWReloading)return;var _safe=true;try{_safe=!(window.S&&(S.screen==='form'||S.screen==='pl'));}catch(e){_safe=true;}if(_safe){_tlSWReloading=true;location.reload();}else{try{S._pendingReload=true;}catch(e){}}});
-  navigator.serviceWorker.register('sw.js?v=31478').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
+  navigator.serviceWorker.register('sw.js?v=31479').then(function(reg){try{reg.update();}catch(e){}setInterval(function(){try{reg.update();}catch(e){}},30*60*1000);}).catch(function(){});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){navigator.serviceWorker.getRegistration().then(function(r){if(r){try{r.update();}catch(e){}}}).catch(function(){});}});
 }
 /* v3.14.70 #1: suppress password-manager autofill popups (Proton Pass/Chrome/1Password/LastPass) on all app fields, including dynamically added ones. Does not affect the app's own datalist suggestions. */
